@@ -86,4 +86,4 @@ def scan_chunk(tickers_chunk):
             if avg_vol == 0 or pd.isna(avg_vol):
                 continue
             rel_vol = last_vol / avg_vol
-            if rel_v
+            if rel_v:
