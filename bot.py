@@ -85,5 +85,35 @@ def scan_chunk(tickers_chunk):
             last_vol = df["Volume"].iloc[-1]
             if avg_vol == 0 or pd.isna(avg_vol):
                 continue
+            
             rel_vol = last_vol / avg_vol
-            if rel_v:
+            if rel_vol < MIN_RELATIVE_VOLUME:
+                continue
+
+            today_volume_sum = df["Volume"].tail(26).sum()
+            dollar_liquidity = today_volume_sum * last_close
+
+            tk = yf.Ticker(ticker)
+            info = tk.info
+            shares_outstanding = info.get("sharesOutstanding") or info.get("floatShares") or 0
+            market_cap = info.get("marketCap") or (shares_outstanding * last_close)
+
+            send_telegram_alert(ticker, last_close, gain_pct, rel_vol, dollar_liquidity, shares_outstanding, market_cap)
+
+        except Exception:
+            continue
+
+
+def main():
+    print("جاري تجهيز قائمة الأسهم...")
+    all_tickers = get_all_tickers()
+    print(f"تم تحميل {len(all_tickers)} سهم. بدء الفحص...")
+
+    for i in range(0, len(all_tickers), CHUNK_SIZE):
+        scan_chunk(all_tickers[i:i + CHUNK_SIZE])
+
+    print("انتهى الفحص.")
+
+
+if __name__ == "__main__":
+    main()
