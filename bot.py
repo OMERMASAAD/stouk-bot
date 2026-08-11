@@ -1,5 +1,21 @@
 """
-بوت قنص الزخم اللحظي - نسخة v3 (استراتيجية Penny Stocks & Low-Float الاحترافية)
+بوت استراتيجية "التجميع" - يعتمد على شمعة فوليوم ضخمة (50 مليون+) كأول إشارة تجميع،
+ثم يراقب الارتداد لمنطقة الشراء (فوق سعر الافتتاح وحتى 20% فوقه) خلال الأيام التالية.
+
+هذي استراتيجية "بطيئة" (أيام مو دقائق)، فالفحص مرتين باليوم كافي ومناسب.
+
+الشروط المطبقة:
+1) السعر بين 1$ و4$
+2) حجم تداول الشمعة اليومية 50 مليون سهم+
+3) "أول شمعة فقط" - ما فيه شمعة سابقة بآخر 20 جلسة وصلت نفس الحجم (يستبعد الأسهم
+   اللي أصلاً حجمها عالي دايماً زي الشركات الكبيرة)
+4) الإشارة لازم تكون حديثة (خلال آخر 15 جلسة) لسه فعالة
+5) السعر الحالي داخل منطقة الشراء (من سعر الافتتاح وحتى 20% فوقه)
+6) وقف الخسارة (السعر الحالي ما كسر 15% تحت سعر افتتاح شمعة الإشارة) لسه ما انكسر
+7) فلوت أكبر من 100 مليون سهم (الاستراتيجية مصممة لأسهم فلوت أكبر، مو بيني ستوك صغير)
+
+ملاحظة: نسبة النجاح المذكورة بمصدر الاستراتيجية (95%) ادعاء غير موثق، والبوت هنا
+بس يطبق المنطق الفني للفلترة، مو ضمان لأي نتيجة.
 """
 
 import os
@@ -13,41 +29,18 @@ from datetime import datetime
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN") or "ضع_التوكن_هنا"
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID") or "ضع_الشات_آيدي_هنا"
 
-MIN_PRICE = 0.10
-MAX_PRICE = 3.00
-MIN_DAILY_VOLUME_SHARES = 1_000_000
-MIN_RELATIVE_VOLUME = 3.0
-MAX_FLOAT = 50_000_000
+MIN_PRICE = 1.00
+MAX_PRICE = 4.00
+MIN_DAILY_VOLUME_SHARES = 50_000_000
+FRESHNESS_LOOKBACK_DAYS = 20      # ما فيه شمعة سابقة بنفس الحجم خلال هالمدة
+SIGNAL_RECENCY_DAYS = 15          # الإشارة لازم تكون خلال آخر كم جلسة
+BUY_ZONE_UPPER_MULTIPLIER = 1.20  # سقف منطقة الشراء = 20% فوق الافتتاح
+STOP_LOSS_MULTIPLIER = 0.85       # وقف الخسارة = 15% تحت الافتتاح
+TARGET_MULTIPLIER = 2.0           # الهدف المتوقع = ضعف منطقة الشراء العليا
+MIN_FLOAT = 100_000_000           # الاستراتيجية لأسهم فلوت أكبر، مو بيني ستوك صغير جداً
 
-RSI_LOW = 60
-RSI_HIGH = 80
-MIN_BODY_RATIO = 0.6
-MAX_UPPER_WICK_RATIO = 0.3
-
-MAX_DAY_GAIN_PCT = 100
-MAX_EXTENSION_FROM_RECENT_LOW_PCT = 15
-RECENT_LOW_LOOKBACK_CANDLES = 3
-STOP_LOSS_PCT = 0.04
-
-CHUNK_SIZE = 150
-alerted_today = set()
-current_day = datetime.now().date()
-
-funnel_counts = {
-    "total_scanned": 0,
-    "passed_price_range": 0,
-    "passed_gain_not_parabolic": 0,
-    "passed_breakout": 0,
-    "passed_freshness": 0,
-    "passed_relative_volume": 0,
-    "passed_daily_volume": 0,
-    "passed_ema": 0,
-    "passed_rsi": 0,
-    "passed_vwap": 0,
-    "passed_candle_body": 0,
-    "passed_float": 0,
-    "alerts_sent": 0,
-}
+CHUNK_SIZE = 100
+alerted_signals = set()  # (ticker, signal_date) عشان ما نكرر نفس الإشارة
 
 
 def get_all_tickers():
@@ -67,41 +60,19 @@ def get_all_tickers():
     return sorted(set(t for t in tickers if isinstance(t, str) and t.isalpha() and len(t) <= 5))
 
 
-def compute_rsi(series, period=14):
-    delta = series.diff()
-    gain = delta.clip(lower=0)
-    loss = -delta.clip(upper=0)
-    avg_gain = gain.rolling(period).mean()
-    avg_loss = loss.rolling(period).mean()
-    rs = avg_gain / avg_loss
-    return 100 - (100 / (1 + rs))
-
-
-def compute_ema(series, span):
-    return series.ewm(span=span, adjust=False).mean()
-
-
-def compute_vwap(df_today):
-    typical_price = (df_today["High"] + df_today["Low"] + df_today["Close"]) / 3
-    cum_pv = (typical_price * df_today["Volume"]).cumsum()
-    cum_vol = df_today["Volume"].cumsum()
-    return cum_pv / cum_vol
-
-
-def send_telegram_alert(ticker, price, gain_pct, rel_vol, dollar_liquidity, shares_outstanding,
-                         market_cap, extension_pct, rsi_val, float_shares, stop_loss):
+def send_telegram_alert(ticker, signal_date, signal_open, buy_low, buy_high, stop_loss,
+                         target, current_price, float_shares, signal_volume):
     message = (
-        f"🚀 تنبيه دخول قوي: {ticker}\n"
-        f"نسبة الارتفاع (من فتح اليوم) -> {gain_pct:.0f}%\n"
-        f"الامتداد عن آخر قاع -> {extension_pct:.0f}%\n"
-        f"السعر -> {price:.2f} دولار\n"
-        f"RSI(14) -> {rsi_val:.0f} | فوق EMA9/EMA20 و VWAP ✅\n"
-        f"القيمة السوقية -> {market_cap/1_000_000:.1f} مليون\n"
-        f"الحجم النسبي -> {rel_vol:.0f}X مرة\n"
-        f"السيولة الحالية -> {dollar_liquidity/1_000_000:.2f}M$\n"
+        f"📊 فرصة تجميع: {ticker}\n"
+        f"تاريخ شمعة الفوليوم -> {signal_date}\n"
+        f"حجم شمعة الإشارة -> {signal_volume/1_000_000:.1f} مليون سهم\n"
+        f"السعر الحالي -> {current_price:.2f} دولار\n"
+        f"منطقة الشراء المقترحة -> ${buy_low:.2f} - ${buy_high:.2f} (على دفعات، مو دفعة وحدة)\n"
+        f"وقف الخسارة -> ${stop_loss:.2f}\n"
+        f"الهدف المتوقع -> ${target:.2f}\n"
         f"الفلوت -> {float_shares/1_000_000:.1f} مليون\n"
-        f"وقف خسارة ابتدائي مقترح -> ${stop_loss:.2f} (مو وقف متحرك حي، راقبه بنفسك)\n"
-        f"⚠️ الأسعار المجانية متأخرة 15-20 دقيقة، تحقق من الشارت الفعلي قبل القرار."
+        f"مدة الاحتفاظ المتوقعة -> يوم إلى أسبوعين حسب حركة السهم\n"
+        f"⚠️ هذي استراتيجية أيام مو دقائق، التأخير هنا مو مؤثر. راجع الأخبار والشارت بنفسك، مو توصية."
     )
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
     try:
@@ -112,126 +83,78 @@ def send_telegram_alert(ticker, price, gain_pct, rel_vol, dollar_liquidity, shar
 
 
 def scan_chunk(tickers_chunk, chunk_num, total_chunks):
-    global alerted_today
+    global alerted_signals
     print(f"[دفعة {chunk_num}/{total_chunks}] جاري تحميل بيانات {len(tickers_chunk)} سهم...", flush=True)
     try:
         data = yf.download(
-            tickers=tickers_chunk, period="2d", interval="15m",
+            tickers=tickers_chunk, period="90d", interval="1d",
             group_by="ticker", threads=True, progress=False,
         )
     except Exception as e:
-        print(f"[دفعة {chunk_num}] خطأ بتحميل الدفعة كاملة (تجاهلناها وكملنا): {e}", flush=True)
+        print(f"[دفعة {chunk_num}] خطأ بتحميل الدفعة (تجاهلناها وكملنا): {e}", flush=True)
         return
 
     for ticker in tickers_chunk:
         try:
-            funnel_counts["total_scanned"] += 1
             df = data[ticker] if len(tickers_chunk) > 1 else data
             df = df.dropna()
-            if df.empty or len(df) < 25:
+            if df.empty or len(df) < FRESHNESS_LOOKBACK_DAYS + SIGNAL_RECENCY_DAYS:
                 continue
 
-            last_date = df.index[-1].date()
-            df_today = df[df.index.date == last_date]
-            if len(df_today) < 5:
+            current_price = df["Close"].iloc[-1]
+            if not (MIN_PRICE <= current_price <= MAX_PRICE):
                 continue
 
-            last_close = df_today["Close"].iloc[-1]
-            if not (MIN_PRICE <= last_close <= MAX_PRICE):
+            # نبحث عن أحدث "شمعة إشارة" (فوليوم 50 مليون+) خلال آخر SIGNAL_RECENCY_DAYS جلسة
+            recent_window = df.tail(SIGNAL_RECENCY_DAYS)
+            signal_candidates = recent_window[recent_window["Volume"] >= MIN_DAILY_VOLUME_SHARES]
+            if signal_candidates.empty:
                 continue
-            funnel_counts["passed_price_range"] += 1
 
-            day_open = df_today["Open"].iloc[0]
-            if day_open <= 0:
-                continue
-            gain_pct = ((last_close - day_open) / day_open) * 100
-            if gain_pct > MAX_DAY_GAIN_PCT:
-                continue
-            funnel_counts["passed_gain_not_parabolic"] += 1
+            # نأخذ أقدم إشارة بالنطاق الحديث (أقرب لبداية الحركة، مو آخر يوم صعد فيه الفوليوم)
+            signal_idx = signal_candidates.index[0]
+            signal_pos = df.index.get_loc(signal_idx)
 
-            prior_bars = df_today.iloc[:-1]
-            if prior_bars.empty:
-                continue
-            day_high_so_far = prior_bars["High"].max()
-            if last_close <= day_high_so_far:
-                continue
-            funnel_counts["passed_breakout"] += 1
+            # شرط "أول شمعة": ما فيه فوليوم مشابه بآخر FRESHNESS_LOOKBACK_DAYS يوم قبلها
+            lookback_start = max(0, signal_pos - FRESHNESS_LOOKBACK_DAYS)
+            prior_window = df.iloc[lookback_start:signal_pos]
+            if not prior_window.empty and (prior_window["Volume"] >= MIN_DAILY_VOLUME_SHARES).any():
+                continue  # فيه فوليوم مشابه سابق، مو أول شمعة فعلية
 
-            recent_low = df["Low"].tail(RECENT_LOW_LOOKBACK_CANDLES).min()
-            if recent_low <= 0:
+            signal_row = df.loc[signal_idx]
+            signal_open = signal_row["Open"]
+            signal_volume = signal_row["Volume"]
+            if signal_open <= 0:
                 continue
-            extension_pct = ((last_close - recent_low) / recent_low) * 100
-            if extension_pct > MAX_EXTENSION_FROM_RECENT_LOW_PCT:
-                continue
-            funnel_counts["passed_freshness"] += 1
 
-            avg_vol = df["Volume"].rolling(20).mean().iloc[-1]
-            last_vol = df["Volume"].iloc[-1]
-            if avg_vol == 0 or pd.isna(avg_vol):
-                continue
-            rel_vol = last_vol / avg_vol
-            if rel_vol < MIN_RELATIVE_VOLUME:
-                continue
-            funnel_counts["passed_relative_volume"] += 1
+            buy_low = signal_open
+            buy_high = signal_open * BUY_ZONE_UPPER_MULTIPLIER
+            stop_loss = signal_open * STOP_LOSS_MULTIPLIER
+            target = buy_high * TARGET_MULTIPLIER
 
-            daily_volume_shares = df_today["Volume"].sum()
-            if daily_volume_shares < MIN_DAILY_VOLUME_SHARES:
+            # السعر الحالي لازم يكون داخل منطقة الشراء
+            if not (buy_low <= current_price <= buy_high):
                 continue
-            funnel_counts["passed_daily_volume"] += 1
 
-            ema9 = compute_ema(df["Close"], 9)
-            ema20 = compute_ema(df["Close"], 20)
-            if pd.isna(ema9.iloc[-1]) or pd.isna(ema20.iloc[-1]) or pd.isna(ema9.iloc[-2]):
-                continue
-            if not (ema9.iloc[-1] > ema20.iloc[-1] and ema9.iloc[-1] > ema9.iloc[-2]):
-                continue
-            funnel_counts["passed_ema"] += 1
-
-            rsi_series = compute_rsi(df["Close"])
-            last_rsi = rsi_series.iloc[-1]
-            if pd.isna(last_rsi) or not (RSI_LOW <= last_rsi <= RSI_HIGH):
-                continue
-            funnel_counts["passed_rsi"] += 1
-
-            vwap_series = compute_vwap(df_today)
-            last_vwap = vwap_series.iloc[-1]
-            if pd.isna(last_vwap) or last_close <= last_vwap:
-                continue
-            funnel_counts["passed_vwap"] += 1
-
-            last_bar = df_today.iloc[-1]
-            candle_range = last_bar["High"] - last_bar["Low"]
-            if candle_range <= 0:
-                continue
-            body_ratio = abs(last_bar["Close"] - last_bar["Open"]) / candle_range
-            upper_wick_ratio = (last_bar["High"] - last_bar["Close"]) / candle_range
-            if body_ratio < MIN_BODY_RATIO or upper_wick_ratio > MAX_UPPER_WICK_RATIO:
-                continue
-            funnel_counts["passed_candle_body"] += 1
-
-            today_volume_sum = df["Volume"].tail(26).sum()
-            dollar_liquidity = today_volume_sum * last_close
+            # وقف الخسارة ما ينكسر: نتأكد ما فيه إغلاق تحته من يوم الإشارة لين الحين
+            after_signal = df.loc[signal_idx:]
+            if (after_signal["Close"] < stop_loss).any():
+                continue  # الوقف انكسر سابقاً، الفرصة انتهت
 
             tk = yf.Ticker(ticker)
             info = tk.info
             float_shares = info.get("floatShares") or 0
-            if float_shares == 0 or float_shares > MAX_FLOAT:
+            if float_shares < MIN_FLOAT:
                 continue
-            funnel_counts["passed_float"] += 1
 
-            shares_outstanding = info.get("sharesOutstanding") or float_shares
-            market_cap = info.get("marketCap") or (shares_outstanding * last_close)
-
-            stop_loss = last_close * (1 - STOP_LOSS_PCT)
-
-            if ticker not in alerted_today:
+            signal_date_str = str(signal_idx.date())
+            key = (ticker, signal_date_str)
+            if key not in alerted_signals:
                 send_telegram_alert(
-                    ticker, last_close, gain_pct, rel_vol, dollar_liquidity,
-                    shares_outstanding, market_cap, extension_pct, last_rsi,
-                    float_shares, stop_loss,
+                    ticker, signal_date_str, signal_open, buy_low, buy_high,
+                    stop_loss, target, current_price, float_shares, signal_volume,
                 )
-                alerted_today.add(ticker)
-                funnel_counts["alerts_sent"] += 1
+                alerted_signals.add(key)
 
         except Exception as e:
             print(f"[{ticker}] خطأ فردي (تجاهلناه وكملنا): {e}", flush=True)
@@ -239,7 +162,6 @@ def scan_chunk(tickers_chunk, chunk_num, total_chunks):
 
 
 def main():
-    global current_day, alerted_today
     print("جاري تجهيز قائمة الأسهم...", flush=True)
     try:
         all_tickers = get_all_tickers()
@@ -253,10 +175,6 @@ def main():
 
     print(f"تم تحميل {len(all_tickers)} سهم. بدء الفحص.", flush=True)
 
-    if datetime.now().date() != current_day:
-        alerted_today = set()
-        current_day = datetime.now().date()
-
     total_chunks = (len(all_tickers) + CHUNK_SIZE - 1) // CHUNK_SIZE
     start = time.time()
     for idx, i in enumerate(range(0, len(all_tickers), CHUNK_SIZE), start=1):
@@ -264,22 +182,6 @@ def main():
 
     elapsed = time.time() - start
     print(f"انتهى الفحص خلال {elapsed:.1f} ثانية.", flush=True)
-
-    print("\n========== ملخص الفلترة التشخيصي ==========", flush=True)
-    print(f"إجمالي الأسهم المفحوصة: {funnel_counts['total_scanned']}", flush=True)
-    print(f"اجتازوا نطاق السعر (0.10-3$): {funnel_counts['passed_price_range']}", flush=True)
-    print(f"اجتازوا شرط عدم التضخم (<=100%): {funnel_counts['passed_gain_not_parabolic']}", flush=True)
-    print(f"اجتازوا الاختراق (Breakout): {funnel_counts['passed_breakout']}", flush=True)
-    print(f"اجتازوا فلتر حداثة الحركة: {funnel_counts['passed_freshness']}", flush=True)
-    print(f"اجتازوا الحجم النسبي (RVol>=3): {funnel_counts['passed_relative_volume']}", flush=True)
-    print(f"اجتازوا حجم التداول اليومي (>=1M سهم): {funnel_counts['passed_daily_volume']}", flush=True)
-    print(f"اجتازوا EMA9>EMA20: {funnel_counts['passed_ema']}", flush=True)
-    print(f"اجتازوا RSI(60-80): {funnel_counts['passed_rsi']}", flush=True)
-    print(f"اجتازوا VWAP: {funnel_counts['passed_vwap']}", flush=True)
-    print(f"اجتازوا جسم الشمعة القوي: {funnel_counts['passed_candle_body']}", flush=True)
-    print(f"اجتازوا فلتر الفلوت (<=50M): {funnel_counts['passed_float']}", flush=True)
-    print(f"التنبيهات المرسلة فعلياً: {funnel_counts['alerts_sent']}", flush=True)
-    print("=============================================\n", flush=True)
 
 
 if __name__ == "__main__":
