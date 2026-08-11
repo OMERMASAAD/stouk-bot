@@ -1,13 +1,17 @@
 name: Stock Scanner
 on:
   schedule:
-    - cron: "*/15 13 * * 1-5"
-    - cron: "*/15 14-19 * * 1-5"
-    - cron: "0 20 * * 1-5"
+    - cron: "*/15 8-20 * * 1-5"
   workflow_dispatch:
+
+concurrency:
+  group: stock-scanner
+  cancel-in-progress: true
+
 jobs:
   scan:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
