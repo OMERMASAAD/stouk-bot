@@ -1,248 +1,279 @@
 # -*- coding: utf-8 -*-
-
 """
-============================================================
 PULLBACK RECOVERY RADAR
-نظام مراقبة الأسهم التي صعدت بقوة ثم صححت وبدأت بالتعافي
-============================================================
-
-الفكرة:
-
-1) السعر بين 1$ و5$.
-2) السهم حقق صعوداً سابقاً لا يقل عن 100%.
-3) الصعود حدث خلال 4 إلى 20 جلسة.
-4) الصعود حديث، وأقصى عمر للقمة 31 يوماً.
-5) نراقب رجوع السهم إلى دعم بداية الصعود.
-6) ننتظر اختبار الدعم ثم إعادة اختباره.
-7) نريد استقراراً وليس مجرد سقوط للسهم.
-8) تحليل الاتجاه على 4 ساعات.
-9) تأكيد الدخول على 15 دقيقة.
-10) RSI يتحسن.
-11) MACD إيجابي أو يتحسن/يتقاطع إيجابياً.
-12) حجم التصحيح يكون هادئاً نسبياً.
-13) المتوسطات المتحركة عامل تأكيد.
-14) الأخبار الإيجابية عامل مساعد.
-15) Short أقل من 50 ألف عامل إيجابي وليس شرطاً قاتلاً.
-16) Fibonacci + المقاومات لتحديد الأهداف.
-17) الدخول على دفعات.
-18) Telegram فقط بعد اكتمال إشارة الدخول.
-19) لا يتم إرسال تنبيهات أثناء مرحلة المراقبة.
-20) الفحص يتم كل ساعة من GitHub Actions.
-
-هذه أداة فلترة فنية وليست ضماناً للربح.
+يراقب الأسهم التي صعدت 100%+ ثم صححت إلى دعم بداية الصعود.
+لا يرسل Telegram أثناء المراقبة؛ يرسل فقط عند اكتمال إشارة دخول إيجابية.
+التحليل الرئيسي 4H مبني من 1H، والتأكيد النهائي 15m.
 """
 
 import os
 import time
 import warnings
-import requests
+from datetime import datetime
+
 import numpy as np
 import pandas as pd
+import requests
 import yfinance as yf
 
 warnings.filterwarnings("ignore")
 
-
-# ============================================================
-# TELEGRAM
-# ============================================================
-
+# =========================
+# Telegram
+# =========================
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN", "")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 
+# =========================
+# الاستراتيجية
+# =========================
+MIN_PRICE = 1.0
+MAX_PRICE = 5.0
 
-# ============================================================
-# الإعدادات
-# ============================================================
-
-MIN_PRICE = 1.00
-MAX_PRICE = 5.00
-
-# الصعود السابق
 MIN_RALLY_PERCENT = 100.0
-
-# مدة الصعود
 MIN_RALLY_SESSIONS = 4
 MAX_RALLY_SESSIONS = 20
-
-# أقصى عمر للصعود
 MAX_RALLY_AGE_DAYS = 31
 
-# الفلوت والـ Short عوامل مساعدة
+DAILY_PERIOD = "180d"
+ONE_HOUR_PERIOD = "30d"
+ENTRY_PERIOD = "10d"
+
 MIN_FLOAT = 5_000_000
 MAX_FLOAT = 500_000_000
-MAX_SHORT_SHARES = 50_000
+
+# Short أقل من 50 ألف عامل إيجابي فقط
+MAX_SHORT = 50_000
 
 # منطقة الدعم
-SUPPORT_ZONE_LOW = 0.90
-SUPPORT_ZONE_HIGH = 1.12
+SUPPORT_LOW = 0.90
+SUPPORT_HIGH = 1.12
+SUPPORT_BREAK = 0.97
 
-# كسر الدعم
-SUPPORT_BREAK_MULTIPLIER = 0.97
-
-# عدد اختبارات الدعم
+# نحتاج اختبارين للدعم
 MIN_SUPPORT_TESTS = 2
 
-# ارتداد أدنى من الاختبار
-MIN_REBOUND_PERCENT = 3.0
+# ارتداد من الدعم
+MIN_REBOUND = 0.03
 
 # RSI
-RSI_MAX_ENTRY = 68.0
-RSI_MIN_IMPROVEMENT = 1.5
+RSI_IMPROVEMENT = 1.5
+RSI_MAX = 70.0
 
 # حجم التداول
-QUIET_VOLUME_RATIO = 1.60
 ENTRY_VOLUME_RATIO = 1.05
 
-# عدد الأسهم في دفعة التحميل
+# الحد الأدنى لنقاط الدخول
+MIN_SCORE = 6
+
+# حجم دفعة الفحص
 CHUNK_SIZE = 100
 
-# البيانات
-DAILY_PERIOD = "120d"
-HOURLY_PERIOD = "30d"
-SMALL_PERIOD = "10d"
+# الأخبار الإيجابية
+POSITIVE_KEYWORDS = [
+    "approval",
+    "approved",
+    "contract",
+    "partnership",
+    "agreement",
+    "acquisition",
+    "merger",
+    "launch",
+    "trial",
+    "phase 3",
+    "phase 2",
+    "fda",
+    "revenue",
+    "earnings",
+    "profit",
+    "guidance",
+    "upgrade",
+    "order",
+    "deal",
+    "strategic",
+    "positive",
+]
+
+# منع تكرار نفس التنبيه
+alerted = set()
 
 
-# ============================================================
-# الذاكرة أثناء تشغيل واحد
-# ============================================================
+# =========================
+# أدوات عامة
+# =========================
 
-ALERTED = set()
-
-
-# ============================================================
-# أدوات مساعدة
-# ============================================================
-
-def safe_float(value):
-
+def num(x):
     try:
-
-        if value is None:
+        if x is None:
             return None
 
-        value = float(value)
+        x = float(x)
 
-        if np.isnan(value):
+        if np.isnan(x) or np.isinf(x):
             return None
 
-        if np.isinf(value):
-            return None
-
-        return value
+        return x
 
     except Exception:
-
         return None
 
 
-def fmt_price(value):
+def price(x):
+    x = num(x)
 
-    value = safe_float(value)
-
-    if value is None:
+    if x is None:
         return "غير متوفر"
 
-    return f"${value:.2f}"
+    return f"${x:.2f}"
 
 
-def fmt_number(value):
+def millions(x):
+    x = num(x)
 
-    value = safe_float(value)
-
-    if value is None:
+    if x is None:
         return "غير متوفر"
 
-    return f"{value:,.0f}"
+    return f"{x / 1_000_000:.1f} مليون"
 
 
-def fmt_millions(value):
+def number(x):
+    x = num(x)
 
-    value = safe_float(value)
-
-    if value is None:
+    if x is None:
         return "غير متوفر"
 
-    return f"{value / 1_000_000:.1f} مليون"
+    return f"{x:,.0f}"
 
 
-def clean_columns(df):
-
+def clean_df(df):
     if df is None or df.empty:
         return pd.DataFrame()
 
-    if isinstance(df.columns, pd.MultiIndex):
+    d = df.copy()
 
-        df.columns = [
-            c[0] if isinstance(c, tuple) else c
-            for c in df.columns
-        ]
+    if isinstance(d.columns, pd.MultiIndex):
 
-    return df
+        names = list(
+            d.columns.get_level_values(0)
+        )
+
+        if all(
+            c in names
+            for c in [
+                "Open",
+                "High",
+                "Low",
+                "Close",
+                "Volume",
+            ]
+        ):
+            d.columns = d.columns.get_level_values(0)
+
+        else:
+            d.columns = d.columns.get_level_values(-1)
+
+    d.columns = [
+        str(c).strip()
+        for c in d.columns
+    ]
+
+    needed = [
+        "Open",
+        "High",
+        "Low",
+        "Close",
+        "Volume",
+    ]
+
+    if not all(
+        c in d.columns
+        for c in needed
+    ):
+        return pd.DataFrame()
+
+    return d.dropna(
+        subset=needed
+    )
 
 
-# ============================================================
-# تحميل البيانات
-# ============================================================
+# =========================
+# قائمة الأسهم
+# =========================
 
-def download_data(ticker, period, interval):
+def get_all_tickers():
+
+    out = []
 
     try:
 
-        df = yf.download(
-
-            ticker,
-
-            period=period,
-
-            interval=interval,
-
-            auto_adjust=False,
-
-            progress=False,
-
-            threads=False,
+        x = pd.read_csv(
+            "https://www.nasdaqtrader.com/dynamic/SymDir/nasdaqlisted.txt",
+            sep="|",
         )
 
-        df = clean_columns(df)
-
-        if df.empty:
-            return pd.DataFrame()
-
-        required = [
-            "Open",
-            "High",
-            "Low",
-            "Close",
-            "Volume",
+        x = x[
+            x["Test Issue"] == "N"
         ]
 
-        for column in required:
-
-            if column not in df.columns:
-                return pd.DataFrame()
-
-        df = df.dropna(
-            subset=required
+        out += (
+            x["Symbol"]
+            .dropna()
+            .astype(str)
+            .tolist()
         )
-
-        return df
 
     except Exception as e:
 
         print(
-            f"[{ticker}] خطأ تحميل {interval}: {e}",
-            flush=True
+            "خطأ NASDAQ:",
+            e,
+            flush=True,
         )
 
-        return pd.DataFrame()
+    try:
+
+        x = pd.read_csv(
+            "https://www.nasdaqtrader.com/dynamic/SymDir/otherlisted.txt",
+            sep="|",
+        )
+
+        x = x[
+            x["Test Issue"] == "N"
+        ]
+
+        out += (
+            x["ACT Symbol"]
+            .dropna()
+            .astype(str)
+            .tolist()
+        )
+
+    except Exception as e:
+
+        print(
+            "خطأ NYSE/AMEX:",
+            e,
+            flush=True,
+        )
+
+    return sorted(
+        {
+            x.strip().upper()
+            for x in out
+            if x.strip().isalpha()
+            and len(x.strip()) <= 5
+        }
+    )
 
 
-# ============================================================
+# =========================
 # RSI
-# ============================================================
+# =========================
 
-def calculate_rsi(close, period=14):
+def rsi(
+    close,
+    period=14,
+):
 
     delta = close.diff()
 
@@ -254,22 +285,19 @@ def calculate_rsi(close, period=14):
         upper=0
     )
 
-    avg_gain = gain.ewm(
+    ag = gain.ewm(
         alpha=1 / period,
-        adjust=False
+        adjust=False,
     ).mean()
 
-    avg_loss = loss.ewm(
+    al = loss.ewm(
         alpha=1 / period,
-        adjust=False
+        adjust=False,
     ).mean()
 
-    rs = (
-        avg_gain
-        / avg_loss.replace(
-            0,
-            np.nan
-        )
+    rs = ag / al.replace(
+        0,
+        np.nan,
     )
 
     return 100 - (
@@ -277,74 +305,354 @@ def calculate_rsi(close, period=14):
     )
 
 
-# ============================================================
+# =========================
 # MACD
-# ============================================================
+# =========================
 
-def calculate_macd(close):
+def macd(close):
 
-    ema12 = close.ewm(
+    e12 = close.ewm(
         span=12,
-        adjust=False
+        adjust=False,
     ).mean()
 
-    ema26 = close.ewm(
+    e26 = close.ewm(
         span=26,
-        adjust=False
+        adjust=False,
     ).mean()
 
-    macd_line = (
-        ema12 - ema26
-    )
+    m = e12 - e26
 
-    signal = macd_line.ewm(
+    s = m.ewm(
         span=9,
-        adjust=False
+        adjust=False,
     ).mean()
-
-    histogram = (
-        macd_line - signal
-    )
 
     return (
-        macd_line,
-        signal,
-        histogram
+        m,
+        s,
+        m - s,
     )
 
 
-# ============================================================
-# بناء فريم 4 ساعات من 1 ساعة
-# ============================================================
+# =========================
+# اكتشاف الصعود 100%+
+# =========================
 
-def build_4h(hourly):
+def detect_rally(df):
 
-    if hourly.empty:
+    d = clean_df(df)
+
+    if len(d) < 60:
+        return None
+
+    today = datetime.now().date()
+
+    best = None
+
+    start_search = max(
+        1,
+        len(d) - 55,
+    )
+
+    for end in range(
+        start_search,
+        len(d),
+    ):
+
+        high = num(
+            d.iloc[end]["High"]
+        )
+
+        if high is None or high <= 0:
+            continue
+
+        high_date = (
+            pd.Timestamp(
+                d.index[end]
+            ).date()
+        )
+
+        age = (
+            today - high_date
+        ).days
+
+        if age < 1 or age > MAX_RALLY_AGE_DAYS:
+            continue
+
+        for sessions in range(
+            MIN_RALLY_SESSIONS,
+            MAX_RALLY_SESSIONS + 1,
+        ):
+
+            start = end - sessions
+
+            if start < 0:
+                continue
+
+            low = num(
+                d.iloc[start]["Low"]
+            )
+
+            close_end = num(
+                d.iloc[end]["Close"]
+            )
+
+            if (
+                low is None
+                or low <= 0
+                or close_end is None
+            ):
+                continue
+
+            pct = (
+                (high - low)
+                / low
+                * 100
+            )
+
+            if pct < MIN_RALLY_PERCENT:
+                continue
+
+            # منع اعتبار spike منفصل جدًا فرصة مثالية
+            if close_end < (
+                low
+                + (high - low) * 0.30
+            ):
+                continue
+
+            candidate = {
+                "start": start,
+                "end": end,
+                "low": low,
+                "high": high,
+                "percent": pct,
+                "sessions": sessions,
+                "start_date": pd.Timestamp(
+                    d.index[start]
+                ).date(),
+                "high_date": high_date,
+            }
+
+            if (
+                best is None
+                or (
+                    candidate["high_date"],
+                    candidate["percent"],
+                )
+                > (
+                    best["high_date"],
+                    best["percent"],
+                )
+            ):
+                best = candidate
+
+    return best
+
+
+# =========================
+# تحديد الدعم
+# =========================
+
+def support_level(
+    df,
+    rally,
+):
+
+    d = clean_df(df)
+
+    if d.empty or rally is None:
+        return None
+
+    a = max(
+        0,
+        rally["start"] - 5,
+    )
+
+    b = min(
+        len(d),
+        rally["start"] + 2,
+    )
+
+    lows = (
+        d.iloc[a:b]["Low"]
+        .dropna()
+    )
+
+    if lows.empty:
+        return None
+
+    return num(
+        lows.min()
+    )
+
+
+# =========================
+# اختبار الدعم
+# =========================
+
+def support_tests(
+    df,
+    rally,
+    support,
+):
+
+    result = {
+        "tests": 0,
+        "successful": 0,
+        "second": False,
+        "stable": False,
+    }
+
+    d = clean_df(df)
+
+    if (
+        d.empty
+        or rally is None
+        or support is None
+    ):
+        return result
+
+    after = d.iloc[
+        rally["start"]:
+    ]
+
+    lo = support * SUPPORT_LOW
+    hi = support * SUPPORT_HIGH
+
+    tests = []
+
+    for idx, row in after.iterrows():
+
+        low = num(
+            row["Low"]
+        )
+
+        close = num(
+            row["Close"]
+        )
+
+        if (
+            low is None
+            or close is None
+            or not (
+                lo <= low <= hi
+            )
+        ):
+            continue
+
+        dt = pd.Timestamp(
+            idx
+        ).date()
+
+        rebound = (
+            close
+            >= low
+            * (1 + MIN_REBOUND)
+        )
+
+        if (
+            not tests
+            or (
+                dt
+                - tests[-1]["date"]
+            ).days >= 2
+        ):
+
+            tests.append(
+                {
+                    "date": dt,
+                    "rebound": rebound,
+                }
+            )
+
+        elif rebound:
+
+            tests[-1][
+                "rebound"
+            ] = True
+
+    result["tests"] = len(
+        tests
+    )
+
+    result["successful"] = sum(
+        1
+        for t in tests
+        if t["rebound"]
+    )
+
+    result["second"] = (
+        result["tests"]
+        >= MIN_SUPPORT_TESTS
+    )
+
+    result["stable"] = (
+        result["successful"]
+        >= 1
+    )
+
+    return result
+
+
+# =========================
+# هل الدعم انكسر؟
+# =========================
+
+def support_not_broken(
+    df,
+    rally,
+    support,
+):
+
+    d = clean_df(df)
+
+    if (
+        d.empty
+        or rally is None
+        or support is None
+    ):
+        return False
+
+    closes = (
+        d.iloc[
+            rally["start"]:
+        ]["Close"]
+        .dropna()
+    )
+
+    return not (
+        closes
+        < support * SUPPORT_BREAK
+    ).any()
+
+
+# =========================
+# بناء 4H من 1H
+# =========================
+
+def build_4h(df):
+
+    d = clean_df(df)
+
+    if d.empty:
         return pd.DataFrame()
 
     try:
 
-        data = hourly.copy()
-
-        data = data.sort_index()
-
-        result = data.resample(
+        result = d.resample(
             "4h"
-        ).agg({
+        ).agg(
+            {
+                "Open": "first",
+                "High": "max",
+                "Low": "min",
+                "Close": "last",
+                "Volume": "sum",
+            }
+        )
 
-            "Open": "first",
-
-            "High": "max",
-
-            "Low": "min",
-
-            "Close": "last",
-
-            "Volume": "sum",
-
-        })
-
-        result = result.dropna(
+        return result.dropna(
             subset=[
                 "Open",
                 "High",
@@ -353,205 +661,1133 @@ def build_4h(hourly):
             ]
         )
 
-        return result
-
-    except Exception as e:
-
-        print(
-            f"خطأ بناء فريم 4H: {e}",
-            flush=True
-        )
+    except Exception:
 
         return pd.DataFrame()
 
 
-# ============================================================
-# قائمة الأسهم
-# ============================================================
+# =========================
+# تحليل 4H
+# =========================
 
-def get_all_tickers():
+def analyze_4h(df):
 
-    tickers = []
+    out = {
+        "ready": False,
+        "rsi": None,
+        "rsi_up": False,
+        "macd_positive": False,
+        "macd_up": False,
+        "macd_cross": False,
+        "volume_ratio": 0,
+        "volume_ok": False,
+        "ma20": False,
+        "ma50": False,
+    }
 
-    sources = [
+    d = clean_df(df)
+
+    if len(d) < 55:
+        return out
+
+    c = d["Close"]
+
+    d["RSI"] = rsi(c)
+
+    (
+        d["MACD"],
+        d["SIGNAL"],
+        d["HIST"],
+    ) = macd(c)
+
+    d["MA20"] = (
+        c.rolling(20).mean()
+    )
+
+    d["MA50"] = (
+        c.rolling(50).mean()
+    )
+
+    a = d.iloc[-1]
+    b = d.iloc[-2]
+
+    rv = num(a["RSI"])
+    rp = num(b["RSI"])
+
+    m = num(a["MACD"])
+    s = num(a["SIGNAL"])
+
+    h = num(a["HIST"])
+    hp = num(b["HIST"])
+
+    mp = num(b["MACD"])
+    sp = num(b["SIGNAL"])
+
+    vol = num(a["Volume"])
+
+    av = num(
+        d["Volume"]
+        .tail(20)
+        .mean()
+    )
+
+    out.update(
+        {
+            "ready": True,
+
+            "rsi": rv,
+
+            "rsi_up": (
+                rv is not None
+                and rp is not None
+                and rv - rp
+                >= RSI_IMPROVEMENT
+            ),
+
+            "macd_positive": (
+                m is not None
+                and s is not None
+                and m > s
+            ),
+
+            "macd_up": (
+                h is not None
+                and hp is not None
+                and h > hp
+            ),
+
+            "macd_cross": (
+                m is not None
+                and s is not None
+                and mp is not None
+                and sp is not None
+                and m > s
+                and mp <= sp
+            ),
+
+            "volume_ratio": (
+                vol / av
+                if (
+                    vol is not None
+                    and av
+                    and av > 0
+                )
+                else 0
+            ),
+
+            "volume_ok": (
+                vol is not None
+                and av is not None
+                and av > 0
+                and vol
+                >= av
+                * ENTRY_VOLUME_RATIO
+            ),
+
+            "ma20": (
+                num(a["MA20"])
+                is not None
+                and c.iloc[-1]
+                >= a["MA20"]
+            ),
+
+            "ma50": (
+                num(a["MA50"])
+                is not None
+                and c.iloc[-1]
+                >= a["MA50"]
+            ),
+        }
+    )
+
+    return out
+
+
+# =========================
+# تأكيد 15 دقيقة
+# =========================
+
+def confirm_15m(
+    ticker,
+):
+
+    out = {
+        "confirmed": False,
+        "rsi": None,
+        "score": 0,
+    }
+
+    try:
+
+        raw = yf.download(
+            ticker,
+            period=ENTRY_PERIOD,
+            interval="15m",
+            auto_adjust=False,
+            progress=False,
+            threads=False,
+        )
+
+        d = clean_df(raw)
+
+        if len(d) < 50:
+            return out
+
+        c = d["Close"]
+
+        d["RSI"] = rsi(c)
 
         (
-            "https://www.nasdaqtrader.com/dynamic/SymDir/nasdaqlisted.txt",
-            "Symbol"
-        ),
+            d["MACD"],
+            d["SIGNAL"],
+            _,
+        ) = macd(c)
 
-        (
-            "https://www.nasdaqtrader.com/dynamic/SymDir/otherlisted.txt",
-            "ACT Symbol"
-        ),
+        a = d.iloc[-1]
+        b = d.iloc[-2]
 
+        rv = num(a["RSI"])
+        rp = num(b["RSI"])
+
+        m = num(a["MACD"])
+        s = num(a["SIGNAL"])
+
+        vol = num(
+            a["Volume"]
+        )
+
+        av = num(
+            d["Volume"]
+            .tail(20)
+            .mean()
+        )
+
+        out["rsi"] = rv
+
+        if (
+            rv is not None
+            and rp is not None
+            and rv > rp
+        ):
+            out["score"] += 1
+
+        if (
+            m is not None
+            and s is not None
+            and m > s
+        ):
+            out["score"] += 1
+
+        if (
+            vol is not None
+            and av
+            and av > 0
+            and vol
+            >= av * 1.05
+        ):
+            out["score"] += 1
+
+        out["confirmed"] = (
+            out["score"] >= 2
+        )
+
+    except Exception as e:
+
+        print(
+            f"[{ticker}] خطأ 15m: {e}",
+            flush=True,
+        )
+
+    return out
+
+
+# =========================
+# Float / Short
+# =========================
+
+def get_float_short(
+    ticker,
+):
+
+    try:
+
+        info = (
+            yf.Ticker(
+                ticker
+            ).info
+        )
+
+        return (
+            num(
+                info.get(
+                    "floatShares"
+                )
+            ),
+            num(
+                info.get(
+                    "sharesShort"
+                )
+            ),
+        )
+
+    except Exception:
+
+        return (
+            None,
+            None,
+        )
+
+
+# =========================
+# الأخبار الإيجابية
+# =========================
+
+def positive_news(
+    ticker,
+):
+
+    out = []
+
+    try:
+
+        news = (
+            yf.Ticker(
+                ticker
+            ).news
+            or []
+        )
+
+        for item in news[:10]:
+
+            title = ""
+
+            content = item.get(
+                "content",
+                {},
+            )
+
+            if isinstance(
+                content,
+                dict,
+            ):
+                title = (
+                    content.get(
+                        "title"
+                    )
+                    or ""
+                )
+
+            if not title:
+
+                title = (
+                    item.get(
+                        "title"
+                    )
+                    or ""
+                )
+
+            title = str(
+                title
+            )
+
+            if any(
+                k in title.lower()
+                for k in POSITIVE_KEYWORDS
+            ):
+
+                out.append(
+                    title
+                )
+
+    except Exception:
+
+        pass
+
+    return out[:3]
+
+
+# =========================
+# المقاومات
+# =========================
+
+def resistances(
+    df,
+    current,
+    rally_high,
+):
+
+    d = clean_df(df)
+
+    if d.empty:
+        return []
+
+    current = num(
+        current
+    )
+
+    levels = []
+
+    for x in (
+        d["High"]
+        .dropna()
+        .tail(90)
+    ):
+
+        x = num(x)
+
+        if x is None:
+            continue
+
+        if (
+            x
+            <= current * 1.03
+        ):
+            continue
+
+        if (
+            x
+            > current * 4
+        ):
+            continue
+
+        if not any(
+            abs(x - y)
+            / y
+            < 0.04
+            for y in levels
+        ):
+
+            levels.append(x)
+
+    if (
+        rally_high
+        and rally_high
+        > current * 1.03
+        and not any(
+            abs(
+                rally_high - y
+            )
+            / y
+            < 0.04
+            for y in levels
+        )
+    ):
+
+        levels.append(
+            rally_high
+        )
+
+    return sorted(
+        levels
+    )
+
+
+# =========================
+# Fibonacci
+# =========================
+
+def fib_targets(
+    low,
+    high,
+):
+
+    diff = high - low
+
+    if diff <= 0:
+        return []
+
+    return [
+        high + diff * 0.272,
+        high + diff * 0.618,
+        high + diff,
+        high + diff * 1.618,
     ]
 
-    for url, column in sources:
 
-        try:
+def make_targets(
+    current,
+    low,
+    high,
+    levels,
+):
 
-            table = pd.read_csv(
-                url,
-                sep="|"
-            )
+    vals = [
+        x
+        for x in fib_targets(
+            low,
+            high,
+        )
+        if x
+        > current * 1.05
+    ]
 
-            table = table[
-                table["Test Issue"] == "N"
-            ]
+    vals += [
+        x
+        for x in levels
+        if x
+        > current * 1.05
+    ]
 
-            tickers.extend(
-                table[column]
-                .dropna()
-                .astype(str)
-                .tolist()
-            )
+    vals = sorted(
+        vals
+    )
 
-        except Exception as e:
+    out = []
+
+    for x in vals:
+
+        if not any(
+            abs(x - y)
+            / y
+            < 0.04
+            for y in out
+        ):
+
+            out.append(x)
+
+    return out[:5]
+
+
+# =========================
+# Telegram
+# =========================
+
+def send_alert(r):
+
+    if (
+        not TELEGRAM_TOKEN
+        or not TELEGRAM_CHAT_ID
+    ):
+
+        print(
+            "⚠️ Telegram غير مضبوط.",
+            flush=True,
+        )
+
+        return False
+
+    targets = "\n".join(
+        f"🎯 الهدف {i}: {price(x)}"
+        for i, x in enumerate(
+            r["targets"],
+            1,
+        )
+    )
+
+    news = (
+        "\n".join(
+            f"• {x}"
+            for x in r["news"]
+        )
+        if r["news"]
+        else
+        "لا يوجد محفز إيجابي واضح في البيانات المتاحة."
+    )
+
+    short_ok = (
+        r["short"] is not None
+        and r["short"] < MAX_SHORT
+    )
+
+    msg = (
+
+        "🚨 إشارة دخول إيجابية 🚨\n\n"
+
+        f"📌 السهم: {r['ticker']}\n"
+
+        f"💵 السعر الحالي: "
+        f"{price(r['price'])}\n\n"
+
+        "📈 الصعود السابق:\n"
+
+        f"• الصعود: "
+        f"+{r['rally_pct']:.1f}%\n"
+
+        f"• المدة: "
+        f"{r['sessions']} جلسات\n"
+
+        f"• بداية الحركة: "
+        f"{price(r['rally_low'])}\n"
+
+        f"• قمة الحركة: "
+        f"{price(r['rally_high'])}\n\n"
+
+        "🟢 منطقة الدخول على دفعات:\n"
+
+        f"• من "
+        f"{price(r['entry_low'])}"
+        f" إلى "
+        f"{price(r['entry_high'])}\n"
+
+        f"• الدعم: "
+        f"{price(r['support'])}\n"
+
+        f"• وقف الخسارة: "
+        f"{price(r['stop'])}\n\n"
+
+        f"{targets}\n\n"
+
+        "📊 تأكيدات 4 ساعات:\n"
+
+        f"• RSI: "
+        f"{r['rsi']:.1f}\n"
+
+        f"• RSI يتحسن: "
+        f"{'نعم' if r['rsi_up'] else 'لا'}\n"
+
+        f"• MACD إيجابي: "
+        f"{'نعم' if r['macd_positive'] else 'لا'}\n"
+
+        f"• MACD يتحسن/تقاطع: "
+        f"{'نعم' if (r['macd_up'] or r['macd_cross']) else 'لا'}\n"
+
+        f"• فوق MA20: "
+        f"{'نعم' if r['ma20'] else 'لا'}\n"
+
+        f"• فوق MA50: "
+        f"{'نعم' if r['ma50'] else 'لا'}\n"
+
+        f"• حجم 4H: "
+        f"{r['volume_ratio']:.2f}x\n"
+
+        f"• اختبارات الدعم: "
+        f"{r['tests']}\n"
+
+        f"• اختبارات ناجحة: "
+        f"{r['successful']}\n"
+
+        f"• تأكيد 15 دقيقة: "
+        f"{'نعم' if r['small_confirmed'] else 'لا'}\n\n"
+
+        "📌 عوامل إضافية:\n"
+
+        f"• الفلوت: "
+        f"{millions(r['float'])}\n"
+
+        f"• البيع على المكشوف: "
+        f"{number(r['short'])}\n"
+
+        f"• Short أقل من 50 ألف: "
+        f"{'نعم' if short_ok else 'لا'}\n\n"
+
+        "📰 المحفزات الإيجابية:\n"
+
+        f"{news}\n\n"
+
+        f"⭐ نقاط الإشارة: "
+        f"{r['score']}\n\n"
+
+        "📍 طريقة الدخول:\n"
+
+        "دخول تدريجي على دفعات بعد "
+        "ثبات الدعم وإعادة الاختبار، "
+        "وليس بكامل السيولة.\n\n"
+
+        "⚠️ تنبيه آلي فني وليس توصية مالية. "
+        "راجع الخبر والشارت وإدارة المخاطر قبل الدخول."
+    )
+
+    try:
+
+        response = requests.post(
+
+            (
+                "https://api.telegram.org/"
+                f"bot{TELEGRAM_TOKEN}/sendMessage"
+            ),
+
+            data={
+                "chat_id": TELEGRAM_CHAT_ID,
+                "text": msg,
+            },
+
+            timeout=20,
+        )
+
+        if response.ok:
 
             print(
-                f"خطأ تحميل قائمة الأسهم: {e}",
-                flush=True
+                f"✅ تم إرسال Telegram: "
+                f"{r['ticker']}",
+                flush=True,
             )
 
-    clean = []
+            return True
+
+        print(
+            "❌ Telegram:",
+            response.text,
+            flush=True,
+        )
+
+    except Exception as e:
+
+        print(
+            "❌ خطأ Telegram:",
+            e,
+            flush=True,
+        )
+
+    return False
+
+
+# =========================
+# تحليل السهم
+# =========================
+
+def analyze(
+    ticker,
+):
+
+    try:
+
+        raw = yf.download(
+
+            ticker,
+
+            period=DAILY_PERIOD,
+
+            interval="1d",
+
+            auto_adjust=False,
+
+            progress=False,
+
+            threads=False,
+        )
+
+        daily = clean_df(
+            raw
+        )
+
+        if len(daily) < 60:
+            return None
+
+        current = num(
+            daily["Close"].iloc[-1]
+        )
+
+        if (
+            current is None
+            or not (
+                MIN_PRICE
+                <= current
+                <= MAX_PRICE
+            )
+        ):
+            return None
+
+        rally = detect_rally(
+            daily
+        )
+
+        if rally is None:
+            return None
+
+        if (
+            current
+            > rally["high"] * 1.03
+        ):
+            return None
+
+        support = support_level(
+            daily,
+            rally,
+        )
+
+        if (
+            support is None
+            or not support_not_broken(
+                daily,
+                rally,
+                support,
+            )
+        ):
+            return None
+
+        tests = support_tests(
+            daily,
+            rally,
+            support,
+        )
+
+        near = (
+            support * SUPPORT_LOW
+            <= current
+            <= support * SUPPORT_HIGH
+        )
+
+        if (
+            not near
+            and not tests["second"]
+        ):
+            return None
+
+        # =====================
+        # 1H -> 4H
+        # =====================
+
+        one_h_raw = yf.download(
+
+            ticker,
+
+            period=ONE_HOUR_PERIOD,
+
+            interval="1h",
+
+            auto_adjust=False,
+
+            progress=False,
+
+            threads=False,
+        )
+
+        four_h = build_4h(
+            one_h_raw
+        )
+
+        tech = analyze_4h(
+            four_h
+        )
+
+        if not tech["ready"]:
+            return None
+
+        if (
+            tech["rsi"] is None
+            or tech["rsi"] > RSI_MAX
+        ):
+            return None
+
+        momentum = (
+            tech["rsi_up"]
+            or tech["macd_up"]
+            or tech["macd_cross"]
+        )
+
+        if not momentum:
+            return None
+
+        # =====================
+        # المقاومات والأهداف
+        # =====================
+
+        levels = resistances(
+
+            daily,
+
+            current,
+
+            rally["high"],
+        )
+
+        targets = make_targets(
+
+            current,
+
+            rally["low"],
+
+            rally["high"],
+
+            levels,
+        )
+
+        if not targets:
+            return None
+
+        # =====================
+        # منطقة الدخول
+        # =====================
+
+        entry_low = (
+            support * 0.98
+        )
+
+        entry_high = (
+            support * 1.12
+        )
+
+        stop = (
+            support
+            * SUPPORT_BREAK
+        )
+
+        # =====================
+        # Float / Short
+        # =====================
+
+        float_shares, short_shares = (
+            get_float_short(
+                ticker
+            )
+        )
+
+        if float_shares is not None:
+
+            if (
+                float_shares
+                < MIN_FLOAT
+            ):
+                return None
+
+            if (
+                float_shares
+                > MAX_FLOAT
+            ):
+                return None
+
+        # =====================
+        # فريم 15 دقيقة
+        # =====================
+
+        small = confirm_15m(
+            ticker
+        )
+
+        # =====================
+        # الأخبار
+        # =====================
+
+        news = positive_news(
+            ticker
+        )
+
+        # =====================
+        # نظام النقاط
+        # =====================
+
+        score = 0
+
+        reasons = []
+
+        if tests["second"]:
+
+            score += 2
+
+            reasons.append(
+                "اختباران للدعم"
+            )
+
+        if tests["stable"]:
+
+            score += 1
+
+            reasons.append(
+                "الدعم مستقر"
+            )
+
+        if tech["rsi_up"]:
+
+            score += 1
+
+            reasons.append(
+                "RSI يتحسن"
+            )
+
+        if tech["macd_positive"]:
+
+            score += 1
+
+            reasons.append(
+                "MACD إيجابي"
+            )
+
+        if (
+            tech["macd_up"]
+            or tech["macd_cross"]
+        ):
+
+            score += 1
+
+            reasons.append(
+                "MACD يتحسن/تقاطع"
+            )
+
+        if tech["ma20"]:
+
+            score += 1
+
+            reasons.append(
+                "فوق MA20"
+            )
+
+        if tech["ma50"]:
+
+            score += 1
+
+            reasons.append(
+                "فوق MA50"
+            )
+
+        if tech["volume_ok"]:
+
+            score += 1
+
+            reasons.append(
+                "حجم داعم"
+            )
+
+        if small["confirmed"]:
+
+            score += 2
+
+            reasons.append(
+                "تأكيد 15 دقيقة"
+            )
+
+        if (
+            short_shares is not None
+            and short_shares
+            < MAX_SHORT
+        ):
+
+            score += 1
+
+            reasons.append(
+                "Short منخفض"
+            )
+
+        if news:
+
+            score += 1
+
+            reasons.append(
+                "محفز إيجابي"
+            )
+
+        if score < MIN_SCORE:
+            return None
+
+        # يجب وجود تأكيد زخم واضح
+        if not (
+            small["confirmed"]
+            or tech["macd_cross"]
+            or (
+                tech["macd_positive"]
+                and tech["rsi_up"]
+            )
+        ):
+            return None
+
+        return {
+
+            "ticker": ticker,
+
+            "price": current,
+
+            "rally_low": rally["low"],
+
+            "rally_high": rally["high"],
+
+            "rally_pct": rally["percent"],
+
+            "sessions": rally["sessions"],
+
+            "support": support,
+
+            "tests": tests["tests"],
+
+            "successful": tests["successful"],
+
+            "entry_low": entry_low,
+
+            "entry_high": entry_high,
+
+            "stop": stop,
+
+            "targets": targets,
+
+            "rsi": tech["rsi"],
+
+            "rsi_up": tech["rsi_up"],
+
+            "macd_positive": tech["macd_positive"],
+
+            "macd_up": tech["macd_up"],
+
+            "macd_cross": tech["macd_cross"],
+
+            "ma20": tech["ma20"],
+
+            "ma50": tech["ma50"],
+
+            "volume_ratio": tech["volume_ratio"],
+
+            "float": float_shares,
+
+            "short": short_shares,
+
+            "small_confirmed": small["confirmed"],
+
+            "news": news,
+
+            "score": score,
+
+            "reasons": reasons,
+
+            "rally_date": str(
+                rally["high_date"]
+            ),
+        }
+
+    except Exception as e:
+
+        print(
+            f"[{ticker}] خطأ: {e}",
+            flush=True,
+        )
+
+        return None
+
+
+# =========================
+# فحص دفعة
+# =========================
+
+def scan_chunk(
+    tickers,
+    n,
+    total,
+):
+
+    print(
+        f"[دفعة {n}/{total}] "
+        f"{len(tickers)} سهم",
+        flush=True,
+    )
 
     for ticker in tickers:
 
-        ticker = ticker.strip().upper()
-
-        if not ticker:
-            continue
-
-        if not ticker.isalpha():
-            continue
-
-        if len(ticker) > 5:
-            continue
-
-        clean.append(ticker)
-
-    return sorted(
-        set(clean)
-    )
-
-
-# ============================================================
-# اكتشاف صعود 100%+
-# ============================================================
-
-def detect_recent_rally(df):
-
-    if df.empty:
-        return None
-
-    if len(df) < 35:
-        return None
-
-    data = df.copy()
-
-    data = data.dropna(
-        subset=[
-            "Open",
-            "High",
-            "Low",
-            "Close",
-            "Volume",
-        ]
-    )
-
-    if len(data) < 35:
-        return None
-
-    last_position = (
-        len(data) - 1
-    )
-
-    best = None
-
-    # نبحث عن قمم حديثة
-    search_start = max(
-        10,
-        last_position - MAX_RALLY_AGE_DAYS
-    )
-
-    for end_pos in range(
-        search_start,
-        last_position + 1
-    ):
-
-        high = safe_float(
-            data.iloc[end_pos]["High"]
+        result = analyze(
+            ticker
         )
 
-        if high is None:
+        if not result:
             continue
 
-        for sessions in range(
-            MIN_RALLY_SESSIONS,
-            MAX_RALLY_SESSIONS + 1
-        ):
+        print(
 
-            start_pos = (
-                end_pos - sessions
-            )
+            f"⭐ مرشح {ticker} | "
 
-            if start_pos < 0:
-                continue
+            f"نقاط {result['score']} | "
 
-            # قاع بداية الحركة
-            start_window = data.iloc[
-                max(0, start_pos - 2):
-                start_pos + 1
-            ]
+            f"السعر "
+            f"{price(result['price'])} | "
 
-            base = safe_float(
-                start_window["Low"].min()
-            )
+            f"الدعم "
+            f"{price(result['support'])}",
 
-            if base is None:
-                continue
+            flush=True,
+        )
 
-            if base <= 0:
-                continue
+        key = (
 
-            gain = (
-                (high / base) - 1
-            ) * 100
+            ticker,
 
-            if gain < MIN_RALLY_PERCENT:
-                continue
+            result[
+                "rally_date"
+            ],
 
-            high_date = (
-                pd.Timestamp(
-                    data.index[end_pos]
-                ).date()
-            )
-
-            age_days = (
-                pd.Timestamp.now().date()
-                - high_date
-            ).days
-
-            if age_days < 0:
-                continue
-
-            if age_days > MAX_RALLY_AGE_DAYS:
-                continue
-
-            candidate = {
-
-                "start_pos": start_pos,
-
-                "end_pos": end_pos,
-
-                "base": base,
-
-                "high": high,
-
-                "gain": gain,
-
-                "sessions": sessions,
-
-                "start_date":
-                    pd.Timestamp(
+            round(
+                result[
+                    "entry_low
