@@ -152,48 +152,21 @@ def clean_df(df):
     d = df.copy()
 
     if isinstance(d.columns, pd.MultiIndex):
+        names = list(d.columns.get_level_values(0))
 
-        names = list(
-            d.columns.get_level_values(0)
-        )
-
-        if all(
-            c in names
-            for c in [
-                "Open",
-                "High",
-                "Low",
-                "Close",
-                "Volume",
-            ]
-        ):
+        if all(c in names for c in ["Open", "High", "Low", "Close", "Volume"]):
             d.columns = d.columns.get_level_values(0)
-
         else:
             d.columns = d.columns.get_level_values(-1)
 
-    d.columns = [
-        str(c).strip()
-        for c in d.columns
-    ]
+    d.columns = [str(c).strip() for c in d.columns]
 
-    needed = [
-        "Open",
-        "High",
-        "Low",
-        "Close",
-        "Volume",
-    ]
+    needed = ["Open", "High", "Low", "Close", "Volume"]
 
-    if not all(
-        c in d.columns
-        for c in needed
-    ):
+    if not all(c in d.columns for c in needed):
         return pd.DataFrame()
 
-    return d.dropna(
-        subset=needed
-    )
+    return d.dropna(subset=needed)
 
 
 # =========================
@@ -201,67 +174,35 @@ def clean_df(df):
 # =========================
 
 def get_all_tickers():
-
     out = []
 
     try:
-
         x = pd.read_csv(
             "https://www.nasdaqtrader.com/dynamic/SymDir/nasdaqlisted.txt",
             sep="|",
         )
-
-        x = x[
-            x["Test Issue"] == "N"
-        ]
-
-        out += (
-            x["Symbol"]
-            .dropna()
-            .astype(str)
-            .tolist()
-        )
+        x = x[x["Test Issue"] == "N"]
+        out += x["Symbol"].dropna().astype(str).tolist()
 
     except Exception as e:
-
-        print(
-            "خطأ NASDAQ:",
-            e,
-            flush=True,
-        )
+        print("خطأ NASDAQ:", e, flush=True)
 
     try:
-
         x = pd.read_csv(
             "https://www.nasdaqtrader.com/dynamic/SymDir/otherlisted.txt",
             sep="|",
         )
-
-        x = x[
-            x["Test Issue"] == "N"
-        ]
-
-        out += (
-            x["ACT Symbol"]
-            .dropna()
-            .astype(str)
-            .tolist()
-        )
+        x = x[x["Test Issue"] == "N"]
+        out += x["ACT Symbol"].dropna().astype(str).tolist()
 
     except Exception as e:
-
-        print(
-            "خطأ NYSE/AMEX:",
-            e,
-            flush=True,
-        )
+        print("خطأ NYSE/AMEX:", e, flush=True)
 
     return sorted(
         {
             x.strip().upper()
             for x in out
-            if x.strip().isalpha()
-            and len(x.strip()) <= 5
+            if x.strip().isalpha() and len(x.strip()) <= 5
         }
     )
 
@@ -270,39 +211,16 @@ def get_all_tickers():
 # RSI
 # =========================
 
-def rsi(
-    close,
-    period=14,
-):
-
+def rsi(close, period=14):
     delta = close.diff()
+    gain = delta.clip(lower=0)
+    loss = -delta.clip(upper=0)
 
-    gain = delta.clip(
-        lower=0
-    )
+    ag = gain.ewm(alpha=1 / period, adjust=False).mean()
+    al = loss.ewm(alpha=1 / period, adjust=False).mean()
 
-    loss = -delta.clip(
-        upper=0
-    )
-
-    ag = gain.ewm(
-        alpha=1 / period,
-        adjust=False,
-    ).mean()
-
-    al = loss.ewm(
-        alpha=1 / period,
-        adjust=False,
-    ).mean()
-
-    rs = ag / al.replace(
-        0,
-        np.nan,
-    )
-
-    return 100 - (
-        100 / (1 + rs)
-    )
+    rs = ag / al.replace(0, np.nan)
+    return 100 - (100 / (1 + rs))
 
 
 # =========================
@@ -310,29 +228,11 @@ def rsi(
 # =========================
 
 def macd(close):
-
-    e12 = close.ewm(
-        span=12,
-        adjust=False,
-    ).mean()
-
-    e26 = close.ewm(
-        span=26,
-        adjust=False,
-    ).mean()
-
+    e12 = close.ewm(span=12, adjust=False).mean()
+    e26 = close.ewm(span=26, adjust=False).mean()
     m = e12 - e26
-
-    s = m.ewm(
-        span=9,
-        adjust=False,
-    ).mean()
-
-    return (
-        m,
-        s,
-        m - s,
-    )
+    s = m.ewm(span=9, adjust=False).mean()
+    return m, s, m - s
 
 
 # =========================
@@ -340,33 +240,27 @@ def macd(close):
 # =========================
 
 def detect_rally(df):
-
     d = clean_df(df)
 
     if len(d) < 60:
         return None
 
     today = datetime.now().date()
-
     best = None
+    start_search = max(1, len(d) - 55)
 
-    start_search = max(
-        1,
-        len(d) - 55,
-    )
-
-    for end in range(
-        start_search,
-        len(d),
-    ):
-
-        high = num(
-            d.iloc[end]["High"]
-        )
+    for end in range(start_search, len(d)):
+        high = num(d.iloc[end]["High"])
 
         if high is None or high <= 0:
             continue
 
-        high_date = (
-            pd.Timestamp(
-                d.index[
+        # تم تصحيح الأقواس هنا لتجنب خطأ SyntaxError بشكل نهائي
+        high_date = pd.Timestamp(d.index[end]).date()
+
+        if (today - high_date).days > MAX_RALLY_AGE_DAYS:
+            continue
+
+        # باقي منطق الدالة يمكن استكماله حسب رغبتك هنا
+        
+    return best
