@@ -3,6 +3,7 @@ name: Stock Scanner
 on:
   schedule:
     - cron: "*/15 8-20 * * 1-5"
+
   workflow_dispatch:
 
 concurrency:
@@ -10,15 +11,19 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+
   scan:
+
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+
+    timeout-minutes: 45
 
     steps:
-      - name: تحميل الملفات
+
+      - name: تحميل الكود
         uses: actions/checkout@v4
 
-      - name: تجهيز Python
+      - name: تشغيل Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -28,34 +33,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install yfinance requests pandas numpy
 
-      - name: التأكد من الكود
+      - name: تشغيل الماسح
         run: |
           echo "========================================"
-          echo "        معلومات التشغيل"
+          echo "       تشغيل PULLBACK RECOVERY RADAR"
           echo "========================================"
-
-          echo "Commit الحالي:"
-          git log -1 --oneline
-
-          echo ""
-          echo "حجم bot_final.py:"
-          wc -c bot_final.py
-
-          echo ""
-          echo "بداية الكود:"
-          head -15 bot_final.py
-
-          echo ""
-          echo "البحث عن رسالة الفحص:"
-          grep -n "فحص اصطياد القاع الأصلي" bot_final.py || true
-
-      - name: تشغيل البوت الجديد
-        run: |
-          echo "========================================"
-          echo "        تشغيل PULLBACK RECOVERY RADAR"
-          echo "========================================"
-
-          python -u bot_final.py
+          python -u bot.py
 
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
