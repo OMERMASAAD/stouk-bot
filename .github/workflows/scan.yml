@@ -28,36 +28,35 @@ jobs:
           python -m pip install --upgrade pip
           pip install yfinance requests pandas numpy
 
-      - name: التأكد من نسخة bot.py
+      - name: التأكد من الكود
         run: |
           echo "========================================"
           echo "        معلومات التشغيل"
           echo "========================================"
+
           echo "Commit الحالي:"
           git log -1 --oneline
-          
-          echo ""
-          echo "الملفات الموجودة:"
-          ls -la
-          
-          echo ""
-          echo "========================================"
-          echo "        بداية bot.py"
-          echo "========================================"
-          head -30 bot.py
-          
-          echo ""
-          echo "========================================"
-          echo "        البحث عن رسالة الفحص"
-          echo "========================================"
-          grep -n "فحص اصطياد القاع الأصلي" bot.py || echo "⚠️ رسالة الكود الجديد غير موجودة"
 
-      - name: تشغيل الفحص
+          echo ""
+          echo "حجم bot_final.py:"
+          wc -c bot_final.py
+
+          echo ""
+          echo "بداية الكود:"
+          head -15 bot_final.py
+
+          echo ""
+          echo "البحث عن رسالة الفحص:"
+          grep -n "فحص اصطياد القاع الأصلي" bot_final.py || true
+
+      - name: تشغيل البوت الجديد
         run: |
           echo "========================================"
-          echo "        تشغيل البوت"
+          echo "        تشغيل PULLBACK RECOVERY RADAR"
           echo "========================================"
-          python -u bot.py
+
+          python -u bot_final.py
+
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
