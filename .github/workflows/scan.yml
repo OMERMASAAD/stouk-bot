@@ -1,4 +1,5 @@
 name: Stock Scanner
+
 on:
   schedule:
     - cron: "*/15 8-20 * * 1-5"
@@ -12,13 +13,51 @@ jobs:
   scan:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: تحميل الملفات
+        uses: actions/checkout@v4
+
+      - name: تجهيز Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - run: pip install yfinance requests pandas
-      - run: python bot.py
+
+      - name: تثبيت المكتبات
+        run: |
+          python -m pip install --upgrade pip
+          pip install yfinance requests pandas numpy
+
+      - name: التأكد من نسخة bot.py
+        run: |
+          echo "========================================"
+          echo "        معلومات التشغيل"
+          echo "========================================"
+          echo "Commit الحالي:"
+          git log -1 --oneline
+          
+          echo ""
+          echo "الملفات الموجودة:"
+          ls -la
+          
+          echo ""
+          echo "========================================"
+          echo "        بداية bot.py"
+          echo "========================================"
+          head -30 bot.py
+          
+          echo ""
+          echo "========================================"
+          echo "        البحث عن رسالة الفحص"
+          echo "========================================"
+          grep -n "فحص اصطياد القاع الأصلي" bot.py || echo "⚠️ رسالة الكود الجديد غير موجودة"
+
+      - name: تشغيل الفحص
+        run: |
+          echo "========================================"
+          echo "        تشغيل البوت"
+          echo "========================================"
+          python -u bot.py
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
