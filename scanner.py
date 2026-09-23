@@ -5,7 +5,7 @@ import pandas as pd
 import yfinance as yf
 from strategy import analyze, chart_data, find_surge_event, evaluate_event, technicals
 
-WATCHLIST_FILE = "watchlist.json"
+WATCHLIST_FILE = "watchlist.json"  # القائمة المستمرة تُحفظ مع كل تشغيل للرادار
 
 
 def universe():
