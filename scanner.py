@@ -111,8 +111,8 @@ with ThreadPoolExecutor(max_workers=8) as pool:
         completed += 1
         result = future.result()
         if result:
-            ticker, d, h4, discovered, event = result
-            market_data[ticker] = (d, h4)
+            ticker, d, discovered, event = result
+            market_data[ticker] = (d, None)
 
             if event:
                 key = (ticker, event["event_date"])
