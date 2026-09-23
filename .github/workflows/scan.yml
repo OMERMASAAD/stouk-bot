@@ -1,8 +1,6 @@
 name: Stock Radar
 on:
   workflow_dispatch:
-  push:
-    branches: ["main"]
   schedule:
     - cron: "30 22 * * 1-5"
 jobs:
