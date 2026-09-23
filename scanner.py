@@ -53,14 +53,14 @@ def fetch(ticker, interval="1d"):
 
 def scan_one(ticker):
     try:
-        # Daily candles discover the prior rally/base event; 4-hour candles refine the current recovery.
+        # نفحص اليومي أولاً. فريم 4 ساعات يُجلب فقط للأسهم المرشحة،
+        # حتى لا نستهلك طلبات Yahoo على أكثر من 12 ألف رمز بلا فائدة.
         d = fetch(ticker, "1d")
-        h4 = fetch(ticker, "4h")
         if d.empty:
             return None
         result = analyze(d)
         event = find_surge_event(d)
-        return ticker, d, h4, result, event
+        return ticker, d, result, event
     except Exception as e:
         print("scan error", ticker, e)
         return None
@@ -98,8 +98,8 @@ symbols = universe()
 old_watch = load_watchlist()
 old_keys = {(x.get("ticker"), x.get("event_date")) for x in old_watch}
 
-# One download per ticker per daily run. The same data is reused for discovery
-# and for persistent-watchlist evaluation.
+# نستخدم تنزيلًا يوميًا واحدًا لكل رمز. فريم 4 ساعات يُجلب لاحقًا
+# فقط للمرشحين والرموز الموجودة في قائمة المتابعة.
 market_data = {}
 new_watch = []
 
@@ -111,8 +111,8 @@ with ThreadPoolExecutor(max_workers=8) as pool:
         completed += 1
         result = future.result()
         if result:
-            ticker, d, h4, discovered, event = result
-            market_data[ticker] = (d, h4)
+            ticker, d, discovered, event = result
+            market_data[ticker] = (d, None)
 
             if discovered and event:
                 key = (ticker, event["event_date"])
@@ -129,6 +129,25 @@ with ThreadPoolExecutor(max_workers=8) as pool:
 
         if completed % 100 == 0:
             print("scanned", completed, "of", len(symbols))
+
+# نجلب فريم 4 ساعات فقط للرموز التي لديها حدث جديد أو متابعة محفوظة.
+watch_tickers = {x.get("ticker") for x in old_watch if x.get("ticker")}
+candidate_tickers = set(watch_tickers)
+candidate_tickers.update(x[0] for x in new_watch if x.get("ticker") is not None)
+
+with ThreadPoolExecutor(max_workers=8) as pool:
+    h4_futures = {
+        pool.submit(fetch, ticker, "4h"): ticker
+        for ticker in candidate_tickers
+        if ticker in market_data
+    }
+    for future in as_completed(h4_futures):
+        ticker = h4_futures[future]
+        try:
+            market_data[ticker] = (market_data[ticker][0], future.result())
+        except Exception as e:
+            print("4h error", ticker, e)
+            market_data[ticker] = (market_data[ticker][0], None)
 
 # Merge by exact (ticker, Day-0 date). Existing events are never replaced by
 # a newer rally in the same ticker; each event gets its own 20-day lifetime.
