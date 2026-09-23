@@ -21,7 +21,6 @@
 <div class="brand"><div class="logo">📡</div><div><div class="title">رادار استراتيجية القاع</div><div class="sub">اكتشاف الصعود → متابعة 20 جلسة → العودة للدعم → تأكيد التعافي → خطة الدخول</div></div></div>
 <div class="actions"><span class="time" id="time">آخر تحديث: —</span><button class="btn primary" onclick="loadData()">↻ تحديث</button></div>
 </header>
-
 <div id="listPage" class="page active">
 <div class="cards">
 <div class="stat"><div class="label">جاهز للدخول</div><div class="num green" id="ready">0</div></div>
@@ -37,17 +36,14 @@
 <button class="filter" data-filter="جاهز للدخول" onclick="setFilter(this)">جاهز</button>
 <button class="filter" data-filter="شبه جاهز" onclick="setFilter(this)">شبه جاهز</button>
 <button class="filter" data-filter="قيد المراقبة" onclick="setFilter(this)">مراقبة</button>
-</div>
-</div>
+</div></div>
 <div id="grid" class="grid"></div>
 </div>
-
 <div id="detailPage" class="page">
 <div class="detail-head"><div><div class="detail-title" id="dt"></div><div class="detail-sub" id="dsub"></div></div><button class="btn back" onclick="goHome()">← العودة للرادار</button></div>
 <div id="detailBody"></div>
 </div>
 </div>
-
 <script>
 let D={signals:[]},currentFilter='الكل';
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -55,40 +51,64 @@ const money=v=>'$'+Number(v||0).toFixed(2);
 const yn=v=>v?'نعم':'لا';
 function statusClass(s){return s==='جاهز للدخول'?'ready':s==='شبه جاهز'?'semi':'watch'}
 function badge(s){return s==='جاهز للدخول'?'b-ready':s==='شبه جاهز'?'b-semi':'b-watch'}
+
+async function fetchJson(url){
+ const r=await fetch(url,{cache:'no-store',headers:{'Accept':'application/json'}});
+ if(!r.ok) throw new Error('HTTP '+r.status);
+ const j=await r.json();
+ if(!j || !Array.isArray(j.signals)) throw new Error('صيغة البيانات غير صحيحة');
+ return j;
+}
+async function fetchGithubApi(){
+ const r=await fetch('https://api.github.com/repos/OMERMASAAD/stouk-bot/contents/data.json?ref=main&t='+Date.now(),{cache:'no-store',headers:{'Accept':'application/vnd.github+json'}});
+ if(!r.ok) throw new Error('GitHub API HTTP '+r.status);
+ const j=await r.json();
+ if(!j.content) throw new Error('لم يصل محتوى data.json');
+ const raw=atob(j.content.replace(/\s/g,''));
+ const bytes=Uint8Array.from(raw,c=>c.charCodeAt(0));
+ const text=new TextDecoder('utf-8').decode(bytes);
+ const data=JSON.parse(text);
+ if(!data || !Array.isArray(data.signals)) throw new Error('بيانات API غير صحيحة');
+ return data;
+}
 async function loadData(){
  const stamp=Date.now();
- const urls=['data.json?x='+stamp,'https://raw.githubusercontent.com/OMERMASAAD/stouk-bot/main/data.json?x='+stamp];
+ const loaders=[
+  ()=>fetchJson('data.json?x='+stamp),
+  ()=>fetchJson('https://raw.githubusercontent.com/OMERMASAAD/stouk-bot/main/data.json?x='+stamp),
+  ()=>fetchGithubApi()
+ ];
  let lastErr=null;
- for(const url of urls){
+ for(const load of loaders){
   try{
-   const r=await fetch(url,{cache:'no-store'});
-   if(!r.ok) throw new Error('HTTP '+r.status);
-   const json=await r.json();
-   if(!json || !Array.isArray(json.signals)) throw new Error('صيغة بيانات غير صحيحة');
-   D=json;
+   D=await load();
    document.getElementById('time').textContent='آخر تحديث: '+(D.updated_at?new Date(D.updated_at).toLocaleString('ar-SA'):'—');
    render();route();return;
-  }catch(e){lastErr=e;}
+  }catch(e){lastErr=e;console.warn(e);}
  }
- console.error('تعذر تحميل data.json',lastErr);
- document.getElementById('time').textContent='تعذر تحميل البيانات — حاول الضغط على تحديث';
- document.getElementById('grid').innerHTML='<div style="grid-column:1/-1;padding:30px;text-align:center;color:#ff8a3d">تعذر تحميل بيانات الأسهم حالياً. اضغط ↻ تحديث لإعادة المحاولة.</div>';
+ document.getElementById('time').textContent='تعذر تحميل البيانات';
+ document.getElementById('grid').innerHTML='<div style="grid-column:1/-1;padding:30px;text-align:center;color:#ff8a3d">تعذر تحميل بيانات الأسهم. اضغط ↻ تحديث أو افتح الصفحة مرة أخرى.</div>';
+ console.error(lastErr);
 }
 function setFilter(el){document.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));el.classList.add('active');currentFilter=el.dataset.filter;render()}
-function filtered(){const q=document.getElementById('search').value.trim().toUpperCase();return (D.signals||[]).filter(x=>(currentFilter==='الكل'||x.status===currentFilter)&&x.ticker.toUpperCase().includes(q))}
+function filtered(){const q=document.getElementById('search').value.trim().toUpperCase();return (D.signals||[]).filter(x=>(currentFilter==='الكل'||x.status===currentFilter)&&String(x.ticker||'').toUpperCase().includes(q))}
 function render(){
- const s=D.signals||[];document.getElementById('ready').textContent=D.stats?.ready??s.filter(x=>x.status==='جاهز للدخول').length;document.getElementById('semi').textContent=D.stats?.semi_ready??s.filter(x=>x.status==='شبه جاهز').length;document.getElementById('watch').textContent=D.stats?.watching??s.filter(x=>x.status==='قيد المراقبة').length;document.getElementById('all').textContent=s.length;
+ const s=D.signals||[];
+ document.getElementById('ready').textContent=D.stats?.ready??s.filter(x=>x.status==='جاهز للدخول').length;
+ document.getElementById('semi').textContent=D.stats?.semi_ready??s.filter(x=>x.status==='شبه جاهز').length;
+ document.getElementById('watch').textContent=D.stats?.watching??s.filter(x=>x.status==='قيد المراقبة').length;
+ document.getElementById('all').textContent=s.length;
  const a=filtered();
  document.getElementById('grid').innerHTML=a.length?a.map(x=>{
-  const t=x.technical||{}, conf=Math.min(100,Math.round((Number(t.positive_confirmations||0)/5)*100));
+  const t=x.technical||{},conf=Math.min(100,Math.round((Number(t.positive_confirmations||0)/5)*100));
   return '<article class="stock '+statusClass(x.status)+'" onclick="openStock(\''+esc(x.ticker)+'\',\''+esc(x.event_date)+'\')">'+
   '<div class="stock-head"><div><div class="ticker">'+esc(x.ticker)+'</div><span class="badge '+badge(x.status)+'">'+esc(x.status)+'</span></div><div class="price">'+money(x.price)+'</div></div>'+
   '<div class="metrics"><div class="metric"><span>RSI</span><b>'+esc(t.rsi)+'</b></div><div class="metric"><span>الدعم</span><b>'+money(x.prior_base)+'</b></div><div class="metric"><span>جلسة المتابعة</span><b>'+esc(x.watch_age)+' / 20</b></div></div>'+
   '<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted)"><span>تأكيدات التعافي</span><b>'+esc(t.positive_confirmations||0)+'/5</b></div><div class="progress"><i style="width:'+conf+'%"></i></div>'+
   '<div class="stock-foot"><span>الصعود السابق +'+esc(x.prior_rally_pct)+'%</span><span>فتح التحليل ←</span></div></article>'
- }).join(''):'<div class="empty" style="grid-column:1/-1">لا توجد أسهم مطابقة للفلتر الحالي.</div>';
+ }).join(''):'<div class="empty" style="grid-column:1/-1;padding:30px;text-align:center;color:var(--muted)">لا توجد أسهم مطابقة للفلتر الحالي.</div>';
 }
-function findStock(ticker,date){return (D.signals||[]).find(x=>x.ticker===ticker&&x.event_date===date)|| (D.signals||[]).find(x=>x.ticker===ticker)}
+function findStock(ticker,date){return (D.signals||[]).find(x=>x.ticker===ticker&&x.event_date===date)||(D.signals||[]).find(x=>x.ticker===ticker)}
 function openStock(ticker,date){location.hash='stock='+encodeURIComponent(ticker)+'&date='+encodeURIComponent(date);showStock(ticker,date)}
 function route(){const h=location.hash;if(h.startsWith('#stock=')){const p=new URLSearchParams(h.slice(1));showStock(p.get('stock'),p.get('date'))}else goHome(false)}
 window.addEventListener('hashchange',route);
@@ -96,19 +116,11 @@ function goHome(change=true){if(change)history.pushState({},'',location.pathname
 function showStock(ticker,date){
  const x=findStock(ticker,date);if(!x){goHome(false);return} const t=x.technical||{},p=x.plan||{},s=x.support||{};
  document.getElementById('listPage').classList.remove('active');document.getElementById('detailPage').classList.add('active');window.scrollTo(0,0);
- document.getElementById('dt').textContent=esc(x.ticker)+' — صفحة التحليل الكامل';
- document.getElementById('dsub').textContent='حدث الصعود: '+esc(x.event_date)+' · يوم المتابعة '+esc(x.watch_age)+' من 20 · الحالة: '+esc(x.status);
- const checks=[
- ['RSI دخل التشبع البيعي تحت 30 مؤخراً',t.rsi_oversold_recent],
- ['RSI تعافى فوق 30 ويتحسن',t.rsi_recovery],
- ['MACD Histogram يتحسن',t.macd_improving],
- ['استعادة EMA20 مع اتجاه صاعد',t.ema20_reclaim&&t.ema20_rising],
- ['السعر فوق EMA50',t.ema50_reclaim],
- ['الحجم يؤكد الحركة ≥ 1.2x',t.volume_confirm]
- ];
+ document.getElementById('dt').textContent=String(x.ticker||'')+' — صفحة التحليل الكامل';
+ document.getElementById('dsub').textContent='حدث الصعود: '+String(x.event_date||'')+' · يوم المتابعة '+String(x.watch_age??'')+' من 20 · الحالة: '+String(x.status||'');
+ const checks=[['RSI دخل التشبع البيعي تحت 30 مؤخراً',t.rsi_oversold_recent],['RSI تعافى فوق 30 ويتحسن',t.rsi_recovery],['MACD Histogram يتحسن',t.macd_improving],['استعادة EMA20 مع اتجاه صاعد',t.ema20_reclaim&&t.ema20_rising],['السعر فوق EMA50',t.ema50_reclaim],['الحجم يؤكد الحركة ≥ 1.2x',t.volume_confirm]];
  document.getElementById('detailBody').innerHTML=
- '<div class="hero"><div class="hero-card"><div class="hero-main"><div><span class="badge '+badge(x.status)+'">'+esc(x.status)+'</span><div class="bigprice">'+money(x.price)+'</div><div class="tagline">صعود سابق +'+esc(x.prior_rally_pct)+'% ثم متابعة العودة إلى منطقة الدعم</div></div><div style="text-align:left"><div class="muted">القمة السابقة</div><b style="font-size:24px">'+money(x.prior_high)+'</b></div></div>'+
- '<div class="plan"><div class="planbox"><span>منطقة الدخول</span><b class="entry">'+money(p.entry_low)+' – '+money(p.entry_high)+'</b></div><div class="planbox"><span>وقف الخسارة</span><b class="stop">'+money(p.stop)+'</b></div><div class="planbox"><span>هدف 100%</span><b class="target">'+money(p.final_100_target)+'</b></div></div></div>'+
+ '<div class="hero"><div class="hero-card"><div class="hero-main"><div><span class="badge '+badge(x.status)+'">'+esc(x.status)+'</span><div class="bigprice">'+money(x.price)+'</div><div class="tagline">صعود سابق +'+esc(x.prior_rally_pct)+'% ثم متابعة العودة إلى منطقة الدعم</div></div><div style="text-align:left"><div class="muted">القمة السابقة</div><b style="font-size:24px">'+money(x.prior_high)+'</b></div></div><div class="plan"><div class="planbox"><span>منطقة الدخول</span><b class="entry">'+money(p.entry_low)+' – '+money(p.entry_high)+'</b></div><div class="planbox"><span>وقف الخسارة</span><b class="stop">'+money(p.stop)+'</b></div><div class="planbox"><span>هدف 100%</span><b class="target">'+money(p.final_100_target)+'</b></div></div></div>'+
  '<div class="hero-card"><h3 style="margin-top:0">ملخص الإشارة</h3><div class="info-grid"><div class="info"><span>الدعم الأصلي</span><b>'+money(x.prior_base)+'</b></div><div class="info"><span>اختبارات الدعم</span><b>'+esc(s.tests)+'</b></div><div class="info"><span>ثبات الدعم</span><b>'+esc(s.stable_sessions)+' جلسات</b></div><div class="info"><span>قريب من الدعم</span><b>'+yn(s.near_support)+'</b></div></div></div></div>'+
  '<div class="section"><h3>📊 المؤشرات الفنية الحالية</h3><div class="info-grid"><div class="info"><span>RSI</span><b>'+esc(t.rsi)+'</b></div><div class="info"><span>RSI السابق</span><b>'+esc(t.rsi_prev)+'</b></div><div class="info"><span>EMA 20</span><b>'+money(t.ema20)+'</b></div><div class="info"><span>EMA 50</span><b>'+money(t.ema50)+'</b></div><div class="info"><span>MACD Histogram</span><b>'+esc(t.macd_hist)+'</b></div><div class="info"><span>نسبة الحجم/20</span><b>'+esc(t.volume_ratio)+'x</b></div><div class="info"><span>تأكيدات إيجابية</span><b>'+esc(t.positive_confirmations)+'/5</b></div><div class="info"><span>أعلى صعود سابق</span><b>+'+esc(x.surge_pct)+'%</b></div></div></div>'+
  '<div class="section"><h3>✅ فحص شروط التعافي</h3><div class="checks">'+checks.map(c=>'<div class="check '+(c[1]?'ok':'no')+'"><span class="mark">'+(c[1]?'✓':'○')+'</span>'+c[0]+'</div>').join('')+'</div></div>'+
@@ -117,9 +129,10 @@ function showStock(ticker,date){
  drawChart(x);
 }
 function drawChart(x){
- const data=x.chart||[];const el=document.getElementById('chart');if(!data.length){el.innerHTML='<div class="muted">لا توجد بيانات للرسم.</div>';return}
- const W=1200,H=380,L=62,R=22,T=25,B=45;const hi=data.map(d=>d.high),lo=data.map(d=>d.low);const min=Math.min(...lo,x.plan?.stop||0)*.98,max=Math.max(...hi,x.prior_high||0)*1.02;const sx=i=>L+i*(W-L-R)/Math.max(1,data.length-1),sy=v=>T+(max-v)*(H-T-B)/(max-min);
- let svg='<svg viewBox="0 0 '+W+' '+H" preserveAspectRatio="none"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4b8df8" stop-opacity=".22"/><stop offset="1" stop-color="#4b8df8" stop-opacity="0"/></linearGradient></defs>';
+ const data=x.chart||[],el=document.getElementById('chart');if(!data.length){el.innerHTML='<div class="muted">لا توجد بيانات للرسم.</div>';return}
+ const W=1200,H=380,L=62,R=22,T=25,B=45,hi=data.map(d=>d.high),lo=data.map(d=>d.low),min=Math.min(...lo,x.plan?.stop||0)*.98,max=Math.max(...hi,x.prior_high||0)*1.02;
+ const sx=i=>L+i*(W-L-R)/Math.max(1,data.length-1),sy=v=>T+(max-v)*(H-T-B)/(max-min);
+ let svg='<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4b8df8" stop-opacity=".22"/><stop offset="1" stop-color="#4b8df8" stop-opacity="0"/></linearGradient></defs>';
  for(let k=0;k<5;k++){let y=T+k*(H-T-B)/4,v=max-k*(max-min)/4;svg+='<line x1="'+L+'" y1="'+y+'" x2="'+(W-R)+'" y2="'+y+'" stroke="#18304a"/><text x="'+(L-9)+'" y="'+(y+4)+'" text-anchor="end" fill="#7890aa" font-size="11">'+v.toFixed(2)+'</text>'}
  const line=data.map((d,i)=>sx(i)+','+sy(d.close)).join(' ');svg+='<polyline points="'+line+'" fill="none" stroke="#58a6ff" stroke-width="3"/>';
  const base=sy(x.prior_base),stop=sy(x.plan.stop),target=sy(x.prior_high);
