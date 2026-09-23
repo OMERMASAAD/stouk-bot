@@ -53,14 +53,14 @@ def fetch(ticker, interval="1d"):
 
 def scan_one(ticker):
     try:
-        # Daily candles discover the prior rally/base event; 4-hour candles refine the current recovery.
+        # الفحص اليومي يكتشف أحداث الصعود فقط. فريم 4 ساعات لا يُجلب هنا
+        # حتى لا نستهلك طلبات Yahoo على كامل السوق.
         d = fetch(ticker, "1d")
-        h4 = fetch(ticker, "4h")
         if d.empty:
             return None
         result = analyze(d)
         event = find_surge_event(d)
-        return ticker, d, h4, result, event
+        return ticker, d, result, event
     except Exception as e:
         print("scan error", ticker, e)
         return None
@@ -129,6 +129,24 @@ with ThreadPoolExecutor(max_workers=8) as pool:
 
         if completed % 100 == 0:
             print("scanned", completed, "of", len(symbols))
+
+# فريم 4 ساعات فقط للأحداث الجديدة وقائمة المتابعة الحالية.
+candidate_tickers = {x.get("ticker") for x in old_watch if x.get("ticker")}
+candidate_tickers.update(x.get("ticker") for x in new_watch if x.get("ticker"))
+
+with ThreadPoolExecutor(max_workers=8) as pool:
+    h4_futures = {
+        pool.submit(fetch, ticker, "4h"): ticker
+        for ticker in candidate_tickers
+        if ticker in market_data
+    }
+    for future in as_completed(h4_futures):
+        ticker = h4_futures[future]
+        try:
+            market_data[ticker] = (market_data[ticker][0], future.result())
+        except Exception as e:
+            print("4h error", ticker, e)
+            market_data[ticker] = (market_data[ticker][0], None)
 
 # Merge by exact (ticker, Day-0 date). Existing events are never replaced by
 # a newer rally in the same ticker; each event gets its own 20-day lifetime.
