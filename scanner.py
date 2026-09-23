@@ -1,8 +1,10 @@
-import json, time
+import json
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 import pandas as pd
 import yfinance as yf
 from strategy import analyze, chart_data
+
 
 def universe():
     out = set()
@@ -18,29 +20,47 @@ def universe():
             print("universe error:", e)
     return sorted(x for x in out if x.isalpha() and len(x) <= 5)
 
-def fetch(t):
+
+def fetch_and_analyze(t):
     try:
-        d = yf.download(t, period="180d", interval="1d", auto_adjust=False, progress=False, threads=False)
+        d = yf.download(
+            t, period="120d", interval="1d", auto_adjust=False,
+            progress=False, threads=False
+        )
         if isinstance(d.columns, pd.MultiIndex):
             d.columns = d.columns.get_level_values(0)
-        return d.dropna(subset=["Open", "High", "Low", "Close", "Volume"])
-    except Exception:
-        return pd.DataFrame()
+        d = d.dropna(subset=["Open", "High", "Low", "Close", "Volume"])
+        r = analyze(d)
+        if r:
+            r["ticker"] = t
+            r["chart"] = chart_data(d, 45)
+            return r
+    except Exception as e:
+        print("scan error", t, e)
+    return None
 
+
+symbols = universe()
 rows = []
-for i, t in enumerate(universe(), 1):
-    d = fetch(t)
-    r = analyze(d)
-    if r:
-        r["ticker"] = t
-        r["chart"] = chart_data(d, 45)
-        rows.append(r)
-    if i % 100 == 0:
-        print("scanned", i)
-    time.sleep(.03)
+completed = 0
+max_workers = 8
+
+with ThreadPoolExecutor(max_workers=max_workers) as pool:
+    futures = {pool.submit(fetch_and_analyze, t): t for t in symbols}
+    for future in as_completed(futures):
+        completed += 1
+        result = future.result()
+        if result:
+            rows.append(result)
+        if completed % 100 == 0:
+            print("scanned", completed, "of", len(symbols))
 
 order = {"جاهز للدخول": 3, "شبه جاهز": 2, "قيد المراقبة": 1}
-rows.sort(key=lambda x: (-order.get(x["status"], 0), -x["technical"]["positive_confirmations"], -x["surge_pct"]))
+rows.sort(key=lambda x: (
+    -order.get(x["status"], 0),
+    -x["technical"]["positive_confirmations"],
+    -x["surge_pct"]
+))
 
 payload = {
     "updated_at": datetime.now(timezone.utc).isoformat(),
