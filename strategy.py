@@ -5,7 +5,7 @@ import numpy as np
 MIN_PRICE, MAX_PRICE = 1.0, 5.0
 MAX_WATCH_DAYS = 20
 MIN_PRIOR_RALLY_PCT = 100.0
-MIN_DRAWDOWN_PCT = 50.0   # حد أدنى تقريبي للهبوط؛ والشرط الفعلي هو العودة لمنطقة الدعم قبل الصعود
+MIN_DRAWDOWN_PCT = 45.0   # حد أدنى احتياطي فقط؛ البوابة الأساسية هي العودة لمنطقة الدعم الأصلي
 SUPPORT_TOL = 0.08
 BREAK_TOL = 0.03
 MIN_SUPPORT_SESSIONS = 3
@@ -37,9 +37,8 @@ def find_surge_event(d):
     first_peak = max(19, end - MAX_WATCH_DAYS)
     candidates = []
     for peak_idx in range(first_peak, end + 1):
+        # نطاق $1–$5 يُطبق على السعر الحالي عند التقييم، لا على سعر القمة التاريخية.
         close_at_peak = float(d["Close"].iloc[peak_idx])
-        if not MIN_PRICE <= close_at_peak <= MAX_PRICE:
-            continue
         start = peak_idx - 19
         window = d.iloc[start:peak_idx + 1]
         base_label = window["Low"].astype(float).idxmin()
@@ -152,7 +151,8 @@ def readiness_score(drawdown_pct, near_support, stable, tech, ready):
 
 def evaluate_event(d, event):
     age = len(d) - 1 - event["event_idx"]
-    if age > MAX_WATCH_DAYS:
+    # اليوم 0 حدث الصعود، اليوم 1 مراقبة فقط، ومن اليوم 2 يبدأ الرصد الفعلي حتى اليوم 20.
+    if age < 2 or age > MAX_WATCH_DAYS:
         return None
 
     price = float(d["Close"].iloc[-1])
@@ -170,6 +170,7 @@ def evaluate_event(d, event):
     if drawdown_pct < MIN_DRAWDOWN_PCT:
         return None
 
+    # الرجوع لمنطقة الدعم الأصلي هو الحاجز الحقيقي ضد الارتدادات السطحية 20–30%.
     if float(d["Low"].tail(ANALYSIS_DAYS).min()) < base * (1-BREAK_TOL):
         return None
 
