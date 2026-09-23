@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>رادار استراتيجية القاع</title>
+<style>
+body{margin:0;background:#0b1220;color:#edf3fb;font-family:Tahoma,Arial}.wrap{max-width:1200px;margin:auto;padding:18px}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.title{font-size:25px;font-weight:bold}
+button,input{background:#121d31;color:#fff;border:1px solid #30415f;border-radius:9px;padding:10px}input{width:230px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}.card{background:#121d31;border:1px solid #263754;border-radius:14px;padding:15px}.n{font-size:25px;font-weight:bold;margin-top:7px}
+.panel{background:#121d31;border:1px solid #263754;border-radius:14px;padding:14px;margin-top:12px}table{width:100%;border-collapse:collapse}th,td{padding:11px;border-bottom:1px solid #263754;text-align:right}tr{cursor:pointer}.ready{color:#49d59b;font-weight:bold}.semi{color:#f0c45d;font-weight:bold}.muted{color:#91a0b8}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.close{float:left;cursor:pointer}
+@media(max-width:800px){.cards{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}th,td{font-size:12px;padding:8px}.hide{display:none}}
+</style></head><body><div class="wrap">
+<header><div><div class="title">📡 رادار استراتيجية القاع</div><div class="muted">مراقبة السهم من اليوم 2 إلى اليوم 20 بعد الصعود</div></div>
+<div><span id="time">آخر تحديث: —</span> <button onclick="loadData()">↻ تحديث</button></div></header>
+<div class="cards"><div class="card">جاهز للدخول<div class="n" id="ready">0</div></div><div class="card">شبه جاهز<div class="n" id="semi">0</div></div><div class="card">كل الفرص<div class="n" id="all">0</div></div><div class="card">سعر الفحص<div class="n">$1–$5</div></div></div>
+<div class="panel"><input id="search" placeholder="ابحث عن السهم" oninput="render()"><div style="overflow:auto"><table><thead><tr><th>السهم</th><th>السعر</th><th>صعود اليوم</th><th>عمر المراقبة</th><th>الدعم</th><th>RSI</th><th>اختبارات</th><th>الحالة</th></tr></thead><tbody id="rows"></tbody></table></div></div>
+<div class="panel" id="detail" style="display:none"><span class="close" onclick="document.getElementById('detail').style.display='none'">✕</span><h2 id="dt"></h2><div id="body"></div></div>
+</div>
+<script>
+let D={signals:[]};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+async function loadData(){try{let r=await fetch('data.json?x='+Date.now());D=await r.json();document.getElementById('time').textContent='آخر تحديث: '+(D.updated_at?new Date(D.updated_at).toLocaleString('ar-SA'):'—');render()}catch(e){document.getElementById('time').textContent='تعذر تحميل البيانات'}}
+function render(){let q=document.getElementById('search').value.toUpperCase();let a=D.signals.filter(x=>x.ticker.includes(q));document.getElementById('ready').textContent=D.signals.filter(x=>x.ready).length;document.getElementById('semi').textContent=D.signals.filter(x=>!x.ready).length;document.getElementById('all').textContent=D.signals.length;document.getElementById('rows').innerHTML=a.map((x,i)=>'<tr onclick="show('+i+')"><td><b>'+esc(x.ticker)+'</b></td><td>$'+x.price.toFixed(2)+'</td><td>+'+x.surge_pct+'%</td><td>'+x.watch_age+' يوم</td><td>$'+x.prior_base.toFixed(2)+'</td><td>'+x.rsi+'</td><td>'+x.support.tests+'</td><td class="'+(x.ready?'ready':'semi')+'">'+(x.ready?'جاهز للدخول':'شبه جاهز')+'</td></tr>').join('');window.list=a}
+function show(i){let x=window.list[i],p=x.plan;document.getElementById('detail').style.display='block';document.getElementById('dt').textContent=x.ticker+' — تفاصيل الحركة';document.getElementById('body').innerHTML='<div class="grid"><div class="card">السعر الحالي: $'+x.price+'<br>صعود اليوم: +'+x.surge_pct+'%<br>عمر المراقبة: '+x.watch_age+' يوم<br>الصعود السابق: +'+x.prior_rally_pct+'%</div><div class="card">الدعم الأصلي: $'+x.prior_base+'<br>قمة الصعود السابقة: $'+x.prior_high+'<br>اختبارات الدعم: '+x.support.tests+'<br>ثبات الدعم: '+x.support.stable_sessions+' جلسات</div><div class="card">RSI: '+x.rsi+'<br>دخل تحت 30: '+(x.rsi_oversold?'نعم':'لا')+'<br>RSI يتحسن: '+(x.rsi_improving?'نعم':'لا')+'</div><div class="card">🟢 الدخول: $'+p.entry_low+' — $'+p.entry_high+'<br>🛑 الوقف: $'+p.stop+'<br>'+p.targets.map((v,n)=>'🎯 الهدف '+(n+1)+': $'+v+(n===p.targets.length-1?' — 100%':'')).join('<br>')+'</div></div>'}
+loadData();
+</script></body></html>
