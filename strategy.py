@@ -35,8 +35,9 @@ def find_base_before(d, end_idx):
     if len(window) < 20:
         return None
     lows = window["Low"].astype(float)
-    base_idx = int(lows.idxmin())
-    base = float(d.loc[base_idx, "Low"])
+    base_label = lows.idxmin()
+    base_idx = d.index.get_loc(base_label)
+    base = float(d.loc[base_label, "Low"])
     high_slice = d.iloc[base_idx:end_idx+1]
     high = float(high_slice["High"].max())
     if base <= 0:
