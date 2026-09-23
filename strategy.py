@@ -1,14 +1,10 @@
-# نسخة محفوظة من strategy.py قبل تجربة نماذج الرأس والكتفين والقاع المزدوج.
-
 # -*- coding: utf-8 -*-
-# الرادار: العودة للدعم أولاً ثم مراقبة الثبات والتعافي الفني.
 import pandas as pd
 import numpy as np
 
 MIN_PRICE, MAX_PRICE = 1.0, 5.0
 MAX_WATCH_DAYS = 20
 MIN_PRIOR_RALLY_PCT = 100.0
-MIN_DRAWDOWN_PCT = 45.0   # حد أدنى احتياطي فقط؛ البوابة الأساسية هي العودة لمنطقة الدعم الأصلي
 SUPPORT_TOL = 0.08
 BREAK_TOL = 0.03
 MIN_SUPPORT_SESSIONS = 3
@@ -40,8 +36,9 @@ def find_surge_event(d):
     first_peak = max(19, end - MAX_WATCH_DAYS)
     candidates = []
     for peak_idx in range(first_peak, end + 1):
-        # نطاق $1–$5 يُطبق على السعر الحالي عند التقييم، لا على سعر القمة التاريخية.
         close_at_peak = float(d["Close"].iloc[peak_idx])
+        if not MIN_PRICE <= close_at_peak <= MAX_PRICE:
+            continue
         start = peak_idx - 19
         window = d.iloc[start:peak_idx + 1]
         base_label = window["Low"].astype(float).idxmin()
@@ -88,11 +85,9 @@ def technicals(d):
     mh_now, mh_prev = float(mh.iloc[-1]), float(mh.iloc[-2])
     rsi_recovery = bool(r > 30 and r > r_prev)
     macd_improving = bool(mh_now > mh_prev)
-    positive = sum([
-        rsi_recovery, macd_improving,
-        bool(close.iloc[-1] > e20.iloc[-1] and e20.iloc[-1] > e20.iloc[-4]),
-        bool(vol_ratio >= 1.2), bool(close.iloc[-1] > e50.iloc[-1])
-    ])
+    positive = sum([rsi_recovery, macd_improving,
+                    bool(close.iloc[-1] > e20.iloc[-1] and e20.iloc[-1] > e20.iloc[-4]),
+                    bool(vol_ratio >= 1.2), bool(close.iloc[-1] > e50.iloc[-1])])
     return {
         "rsi": round(r,2), "rsi_prev": round(r_prev,2),
         "rsi_oversold_recent": bool(rrsi.min() < 30), "rsi_recovery": rsi_recovery,
@@ -117,140 +112,38 @@ def make_plan(d, base, prior_high):
     targets = sorted(resist)[:3]
     if prior_high > price * 1.05 and all(abs(prior_high-r)/r > .04 for r in targets):
         targets.append(float(prior_high))
-    return {
-        "entry_low": round(base*.98,4),
-        "entry_high": round(base*1.05,4),
-        "stop": round(base*(1-BREAK_TOL),4),
-        "targets": [round(x,4) for x in targets[:4]],
-        "final_100_target": round(float(prior_high),4)
-    }
-
-def readiness_score(drawdown_pct, near_support, stable, tech, ready):
-    # العرض فقط؛ لا يغيّر شروط الجاهزية.
-    if ready:
-        return 100
-    score = 0
-    if drawdown_pct >= 40:
-        score += 20
-    elif drawdown_pct >= 30:
-        score += 15
-    if near_support:
-        score += 20
-    if stable >= MIN_SUPPORT_SESSIONS:
-        score += 20
-    elif stable >= 2:
-        score += 13
-    elif stable >= 1:
-        score += 7
-    if tech["rsi_oversold_recent"]:
-        score += 10
-    if tech["rsi_recovery"]:
-        score += 15
-    if tech["macd_improving"]:
-        score += 10
-    if tech["positive_confirmations"] >= 3:
-        score += 5
-    return min(100, score)
+    return {"entry_low": round(base*.98,4), "entry_high": round(base*1.05,4),
+            "stop": round(base*(1-BREAK_TOL),4),
+            "targets": [round(x,4) for x in targets[:4]],
+            "final_100_target": round(float(prior_high),4)}
 
 def evaluate_event(d, event):
     age = len(d) - 1 - event["event_idx"]
-    # اليوم 0 حدث الصعود، اليوم 1 مراقبة فقط، ومن اليوم 2 يبدأ الرصد حتى اليوم 20.
-    if age < 2 or age > MAX_WATCH_DAYS:
+    if age > MAX_WATCH_DAYS:
         return None
-
     price = float(d["Close"].iloc[-1])
     if not MIN_PRICE <= price <= MAX_PRICE:
         return None
-
     base = float(event["base"])
-    prior_high = float(event["high"])
-
-    drawdown_pct = ((prior_high - price) / prior_high * 100) if prior_high > 0 else 0
-
-    # كسر الدعم الأصلي بأكثر من هامش السماح يلغي الحدث.
     if float(d["Low"].tail(ANALYSIS_DAYS).min()) < base * (1-BREAK_TOL):
         return None
-
     tests, stable = support_stats(d, base)
     near_support = base*(1-SUPPORT_TOL) <= price <= base*(1+SUPPORT_TOL)
-
     tech = technicals(d)
-
-    recovery_core = (
-        tech["rsi_oversold_recent"]
-        and tech["rsi_recovery"]
-        and tech["macd_improving"]
-    )
-    positive_stage = tech["positive_confirmations"] >= 3
-
-    # لا نُسقط المرشح إذا كان ينقصه شرط من شروط الهبوط/الدعم/التعافي.
-    # يظهر في "قيد المراقبة" حتى نستطيع متابعته بدل أن يختفي من الرادار.
-    ready = (
-        drawdown_pct >= MIN_DRAWDOWN_PCT
-        and near_support
-        and tests >= 1
-        and stable >= MIN_SUPPORT_SESSIONS
-        and recovery_core
-        and positive_stage
-    )
-    semi = (
-        drawdown_pct >= MIN_DRAWDOWN_PCT
-        and near_support
-        and tests >= 1
-        and stable >= MIN_SUPPORT_SESSIONS
-        and not ready
-    )
-
-    if ready:
-        status = "جاهز للدخول"
-    elif semi:
-        status = "شبه جاهز"
-    else:
-        status = "قيد المراقبة"
-
-    missing = []
-    if drawdown_pct < MIN_DRAWDOWN_PCT:
-        missing.append("الهبوط من القمة لم يصل إلى 45%")
-    if not near_support:
-        missing.append("لم يعد السعر إلى منطقة الدعم")
-    if tests < 1:
-        missing.append("لم يتم اختبار الدعم بعد")
-    if stable < MIN_SUPPORT_SESSIONS:
-        missing.append("ثبات الدعم أقل من 3 جلسات")
-    if not tech["rsi_oversold_recent"]:
-        missing.append("RSI لم يدخل التشبع البيعي تحت 30")
-    if not tech["rsi_recovery"]:
-        missing.append("RSI لم يبدأ التعافي")
-    if not tech["macd_improving"]:
-        missing.append("MACD Histogram لا يتحسن")
-    if positive_stage is False:
-        missing.append("التأكيدات الفنية أقل من 3/5")
-
-    score = readiness_score(drawdown_pct, near_support, stable, tech, ready)
-
-    return {
-        "event_date": event["event_date"],
-        "event_price": round(event["event_price"],4),
-        "surge_pct": round(event["rally_pct"],2),
-        "watch_age": age,
-        "price": round(price,4),
-        "drawdown_pct": round(drawdown_pct,2),
-        "prior_base": round(base,4),
-        "prior_high": round(prior_high,4),
-        "prior_rally_pct": round(event["rally_pct"],2),
-        "support": {
-            "tests": tests,
-            "stable_sessions": stable,
-            "near_support": near_support
-        },
-        "technical": tech,
-        "readiness_score": score,
-        "ready": ready,
-        "semi_ready": semi,
-        "status": status,
-        "missing_conditions": missing,
-        "plan": make_plan(d, base, prior_high)
-    }
+    observation_only = age < 2
+    support_ready = not observation_only and near_support and stable >= MIN_SUPPORT_SESSIONS
+    recovery_core = not observation_only and tech["rsi_oversold_recent"] and tech["rsi_recovery"] and tech["macd_improving"]
+    positive_stage = not observation_only and tech["positive_confirmations"] >= 3
+    ready = support_ready and recovery_core and positive_stage
+    semi = not observation_only and (support_ready or (near_support and tech["rsi_oversold_recent"] and tech["rsi_recovery"]))
+    status = "جاهز للدخول" if ready else ("شبه جاهز" if semi else "قيد المراقبة")
+    return {"event_date": event["event_date"], "event_price": round(event["event_price"],4),
+            "surge_pct": round(event["rally_pct"],2), "watch_age": age, "price": round(price,4),
+            "prior_base": round(base,4), "prior_high": round(event["high"],4),
+            "prior_rally_pct": round(event["rally_pct"],2),
+            "support": {"tests": tests, "stable_sessions": stable, "near_support": near_support},
+            "technical": tech, "ready": ready, "semi_ready": semi, "status": status,
+            "plan": make_plan(d, base, event["high"])}
 
 def analyze(d):
     event = find_surge_event(d)
@@ -259,12 +152,8 @@ def analyze(d):
 def chart_data(d, n=30):
     x = d.tail(n).copy()
     rrsi = rsi(x["Close"].astype(float))
-    return [{
-        "date": str(idx.date()),
-        "open": round(float(row.Open),4),
-        "high": round(float(row.High),4),
-        "low": round(float(row.Low),4),
-        "close": round(float(row.Close),4),
-        "volume": int(row.Volume) if pd.notna(row.Volume) else 0,
-        "rsi": round(float(rrsi.loc[idx]),2) if pd.notna(rrsi.loc[idx]) else None
-    } for idx,row in x.iterrows()]
+    return [{"date": str(idx.date()), "open": round(float(row.Open),4),
+             "high": round(float(row.High),4), "low": round(float(row.Low),4),
+             "close": round(float(row.Close),4), "volume": int(row.Volume) if pd.notna(row.Volume) else 0,
+             "rsi": round(float(rrsi.loc[idx]),2) if pd.notna(rrsi.loc[idx]) else None}
+            for idx,row in x.iterrows()]
