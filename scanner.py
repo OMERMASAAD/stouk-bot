@@ -1,11 +1,9 @@
-# نسخة محفوظة من scanner.py قبل تجربة نماذج الرأس والكتفين والقاع المزدوج.
-
 import json
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 import pandas as pd
 import yfinance as yf
-from strategy import analyze, chart_data, find_surge_event, evaluate_event, technicals
+from strategy import analyze, chart_data, find_surge_event, evaluate_event
 
 WATCHLIST_FILE = "watchlist.json"
 
@@ -41,10 +39,9 @@ def save_watchlist(items):
         }, f, ensure_ascii=False, indent=2)
 
 
-def fetch(ticker, interval="1d"):
-    period = "30d" if interval == "1d" else "60d"
+def fetch(ticker):
     d = yf.download(
-        ticker, period=period, interval=interval,
+        ticker, period="30d", interval="1d",
         auto_adjust=False, progress=False, threads=False
     )
     if isinstance(d.columns, pd.MultiIndex):
@@ -55,9 +52,7 @@ def fetch(ticker, interval="1d"):
 
 def scan_one(ticker):
     try:
-        # نفحص اليومي أولاً. فريم 4 ساعات يُجلب فقط للأسهم المرشحة،
-        # حتى لا نستهلك طلبات Yahoo على أكثر من 12 ألف رمز بلا فائدة.
-        d = fetch(ticker, "1d")
+        d = fetch(ticker)
         if d.empty:
             return None
         result = analyze(d)
@@ -100,8 +95,8 @@ symbols = universe()
 old_watch = load_watchlist()
 old_keys = {(x.get("ticker"), x.get("event_date")) for x in old_watch}
 
-# نستخدم تنزيلًا يوميًا واحدًا لكل رمز. فريم 4 ساعات يُجلب لاحقًا
-# فقط للمرشحين والرموز الموجودة في قائمة المتابعة.
+# One download per ticker per daily run. The same data is reused for discovery
+# and for persistent-watchlist evaluation.
 market_data = {}
 new_watch = []
 
@@ -114,7 +109,7 @@ with ThreadPoolExecutor(max_workers=8) as pool:
         result = future.result()
         if result:
             ticker, d, discovered, event = result
-            market_data[ticker] = (d, None)
+            market_data[ticker] = d
 
             if discovered and event:
                 key = (ticker, event["event_date"])
@@ -132,25 +127,6 @@ with ThreadPoolExecutor(max_workers=8) as pool:
         if completed % 100 == 0:
             print("scanned", completed, "of", len(symbols))
 
-# نجلب فريم 4 ساعات فقط للرموز التي لديها حدث جديد أو متابعة محفوظة.
-watch_tickers = {x.get("ticker") for x in old_watch if x.get("ticker")}
-candidate_tickers = set(watch_tickers)
-candidate_tickers.update(x[0] for x in new_watch if x.get("ticker") is not None)
-
-with ThreadPoolExecutor(max_workers=8) as pool:
-    h4_futures = {
-        pool.submit(fetch, ticker, "4h"): ticker
-        for ticker in candidate_tickers
-        if ticker in market_data
-    }
-    for future in as_completed(h4_futures):
-        ticker = h4_futures[future]
-        try:
-            market_data[ticker] = (market_data[ticker][0], future.result())
-        except Exception as e:
-            print("4h error", ticker, e)
-            market_data[ticker] = (market_data[ticker][0], None)
-
 # Merge by exact (ticker, Day-0 date). Existing events are never replaced by
 # a newer rally in the same ticker; each event gets its own 20-day lifetime.
 combined = {}
@@ -162,13 +138,10 @@ for item in old_watch + new_watch:
 active_watch = []
 for key, item in combined.items():
     ticker = item.get("ticker")
-    md = market_data.get(ticker)
+    d = market_data.get(ticker)
 
     try:
-        if md is None:
-            continue
-        d, h4 = md
-        if d.empty:
+        if d is None or d.empty:
             continue
 
         event = stored_event(item, d)
@@ -179,9 +152,6 @@ for key, item in combined.items():
         if evaluated is None:
             continue
 
-        # 4-hour technical snapshot is informational and does not override the daily entry gate.
-        if h4 is not None and not h4.empty:
-            evaluated["technical_4h"] = technicals(h4.tail(30))
         evaluated["ticker"] = ticker
         evaluated["discovered_at"] = item.get("discovered_at")
         evaluated["chart"] = chart_data(d, 30)
