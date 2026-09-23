@@ -56,8 +56,23 @@ const yn=v=>v?'نعم':'لا';
 function statusClass(s){return s==='جاهز للدخول'?'ready':s==='شبه جاهز'?'semi':'watch'}
 function badge(s){return s==='جاهز للدخول'?'b-ready':s==='شبه جاهز'?'b-semi':'b-watch'}
 async function loadData(){
- try{const r=await fetch('data.json?x='+Date.now());D=await r.json();document.getElementById('time').textContent='آخر تحديث: '+(D.updated_at?new Date(D.updated_at).toLocaleString('ar-SA'):'—');render();route();}
- catch(e){document.getElementById('time').textContent='تعذر تحميل البيانات';}
+ const stamp=Date.now();
+ const urls=['data.json?x='+stamp,'https://raw.githubusercontent.com/OMERMASAAD/stouk-bot/main/data.json?x='+stamp];
+ let lastErr=null;
+ for(const url of urls){
+  try{
+   const r=await fetch(url,{cache:'no-store'});
+   if(!r.ok) throw new Error('HTTP '+r.status);
+   const json=await r.json();
+   if(!json || !Array.isArray(json.signals)) throw new Error('صيغة بيانات غير صحيحة');
+   D=json;
+   document.getElementById('time').textContent='آخر تحديث: '+(D.updated_at?new Date(D.updated_at).toLocaleString('ar-SA'):'—');
+   render();route();return;
+  }catch(e){lastErr=e;}
+ }
+ console.error('تعذر تحميل data.json',lastErr);
+ document.getElementById('time').textContent='تعذر تحميل البيانات — حاول الضغط على تحديث';
+ document.getElementById('grid').innerHTML='<div style="grid-column:1/-1;padding:30px;text-align:center;color:#ff8a3d">تعذر تحميل بيانات الأسهم حالياً. اضغط ↻ تحديث لإعادة المحاولة.</div>';
 }
 function setFilter(el){document.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));el.classList.add('active');currentFilter=el.dataset.filter;render()}
 function filtered(){const q=document.getElementById('search').value.trim().toUpperCase();return (D.signals||[]).filter(x=>(currentFilter==='الكل'||x.status===currentFilter)&&x.ticker.toUpperCase().includes(q))}
