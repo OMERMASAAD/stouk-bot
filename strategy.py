@@ -5,10 +5,8 @@ import numpy as np
 MIN_PRICE, MAX_PRICE = 1.0, 5.0
 MAX_WATCH_DAYS = 20
 MIN_PRIOR_RALLY_PCT = 100.0
-MIN_DRAWDOWN_PCT = 50.0   # شرط الجاهزية الكاملة
-SEMI_DRAWDOWN_PCT = 40.0   # بداية مرحلة شبه جاهز
-SEMI_SUPPORT_DISTANCE = 0.30  # حتى 30% من الدعم الأصلي، للمتابعة المبكرة
-
+MIN_DRAWDOWN_PCT = 40.0   # هبوط قوي يكفي لبدء المراقبة
+WATCH_SUPPORT_DISTANCE = 0.15  # اقتراب فعلي من منطقة الدعم لمرحلة المراقبة
 SUPPORT_TOL = 0.08
 BREAK_TOL = 0.03
 MIN_SUPPORT_SESSIONS = 3
@@ -87,16 +85,17 @@ def technicals(d):
     vol_ratio = volume.iloc[-1] / avg_vol20.iloc[-1] if avg_vol20.iloc[-1] else 0
     r, r_prev = float(rrsi.iloc[-1]), float(rrsi.iloc[-2])
     mh_now, mh_prev = float(mh.iloc[-1]), float(mh.iloc[-2])
+    rsi_stable = bool(r >= r_prev)
     rsi_recovery = bool(r > 30 and r > r_prev)
     macd_improving = bool(mh_now > mh_prev)
     positive = sum([
-        rsi_recovery, macd_improving,
+        rsi_recovery, rsi_stable, macd_improving,
         bool(close.iloc[-1] > e20.iloc[-1] and e20.iloc[-1] > e20.iloc[-4]),
         bool(vol_ratio >= 1.2), bool(close.iloc[-1] > e50.iloc[-1])
     ])
     return {
         "rsi": round(r,2), "rsi_prev": round(r_prev,2),
-        "rsi_oversold_recent": bool(rrsi.min() < 30), "rsi_recovery": rsi_recovery,
+        "rsi_oversold_recent": bool(rrsi.min() < 30), "rsi_stable": rsi_stable, "rsi_recovery": rsi_recovery,
         "ema20": round(float(e20.iloc[-1]),4), "ema50": round(float(e50.iloc[-1]),4),
         "ema20_reclaim": bool(close.iloc[-1] > e20.iloc[-1]),
         "ema20_rising": bool(e20.iloc[-1] > e20.iloc[-4]),
@@ -127,27 +126,31 @@ def make_plan(d, base, prior_high):
     }
 
 def readiness_score(drawdown_pct, near_support, stable, tech, ready):
-    # العرض فقط؛ لا يغيّر شروط الجاهزية.
+    # الدرجة تعكس مراحل التقدم فقط، ولا تستبدل بوابة الجاهزية.
     if ready:
         return 100
+
     score = 0
-    if drawdown_pct >= 40:
-        score += 20
-    elif drawdown_pct >= 30:
+    if drawdown_pct >= MIN_DRAWDOWN_PCT:
         score += 15
     if near_support:
         score += 20
+    if stable >= 1:
+        score += 10
     if stable >= MIN_SUPPORT_SESSIONS:
-        score += 20
+        score += 10
     if tech["rsi_oversold_recent"]:
         score += 10
-    if tech["rsi_recovery"]:
-        score += 15
-    if tech["macd_improving"]:
+    if tech["rsi_stable"]:
         score += 10
-    if tech["positive_confirmations"] >= 3:
-        score += 5
+    if tech["rsi_recovery"]:
+        score += 10
+    if tech["macd_improving"]:
+        score += 8
+    if tech["ema20_reclaim"]:
+        score += 7
     return min(100, score)
+
 
 def evaluate_event(d, event):
     age = len(d) - 1 - event["event_idx"]
@@ -162,7 +165,7 @@ def evaluate_event(d, event):
     prior_high = float(event["high"])
     drawdown_pct = ((prior_high - price) / prior_high * 100) if prior_high > 0 else 0
 
-    # كسر الدعم بأكثر من 3% يلغي الحدث.
+    # أي كسر واضح للدعم يلغي الحدث من الرادار.
     if float(d["Low"].tail(ANALYSIS_DAYS).min()) < base * (1-BREAK_TOL):
         return None
 
@@ -171,36 +174,34 @@ def evaluate_event(d, event):
     near_support = support_distance_pct <= SUPPORT_TOL
 
     tech = technicals(d)
-    recovery_core = (
-        tech["rsi_oversold_recent"]
+
+    # المرحلة 1: قيد المراقبة
+    # هبوط قوي + اقتراب فعلي من الدعم + دخول RSI للتشبع البيعي.
+    watch_stage = (
+        drawdown_pct >= MIN_DRAWDOWN_PCT
+        and support_distance_pct <= WATCH_SUPPORT_DISTANCE
+        and tech["rsi_oversold_recent"]
+    )
+
+    # المرحلة 2: شبه جاهز
+    # لا نطلب MACD ولا المتوسطات هنا.
+    # المطلوب: ثلاث جلسات ثبات عند الدعم، وRSI توقف عن الهبوط
+    # أو بدأ التعافي، مع بقاء الدعم غير مكسور.
+    semi = (
+        watch_stage
+        and near_support
+        and stable >= MIN_SUPPORT_SESSIONS
+        and tech["rsi_stable"]
+    )
+
+    # المرحلة 3: جاهز
+    # بعد الثبات: RSI يتعافى فوق 30 + MACD يتحسن + استعادة EMA20.
+    ready = (
+        semi
         and tech["rsi_recovery"]
         and tech["macd_improving"]
+        and tech["ema20_reclaim"]
     )
-    positive_stage = tech["positive_confirmations"] >= 3
-
-    support_ready = near_support and stable >= MIN_SUPPORT_SESSIONS
-
-    # الجاهز يبقى بوابة صارمة حتى لا نعطي إشارات دخول مبكرة.
-    ready = (
-        drawdown_pct >= MIN_DRAWDOWN_PCT
-        and support_ready
-        and recovery_core
-        and positive_stage
-    )
-
-    # شبه جاهز = مرشح اقترب فعلياً من منطقة الدعم وبدأ تظهر عليه
-    # علامات تكوين القاع/الاستقرار، لكنه لم يحقق بوابة الجاهزية الكاملة.
-    semi_signal = (
-        drawdown_pct >= SEMI_DRAWDOWN_PCT
-        and support_distance_pct <= SEMI_SUPPORT_DISTANCE
-        and (
-            stable >= 2
-            or tech["rsi_oversold_recent"]
-            or tech["macd_improving"]
-            or tech["positive_confirmations"] >= 2
-        )
-    )
-    semi = semi_signal and not ready
 
     if ready:
         status = "جاهز للدخول"
@@ -211,19 +212,21 @@ def evaluate_event(d, event):
 
     missing = []
     if drawdown_pct < MIN_DRAWDOWN_PCT:
-        missing.append("الهبوط المطلوب للجاهزية الكاملة لم يصل إلى 50%")
-    if not near_support:
-        missing.append("السعر ليس داخل منطقة الدعم ±8%")
-    if stable < MIN_SUPPORT_SESSIONS:
-        missing.append("ثبات الدعم أقل من 3 جلسات")
+        missing.append("لم يصل الهبوط إلى مستوى المراقبة المطلوب 40%")
+    if support_distance_pct > WATCH_SUPPORT_DISTANCE:
+        missing.append("لم يقترب السعر فعلياً من منطقة الدعم")
     if not tech["rsi_oversold_recent"]:
         missing.append("RSI لم يدخل التشبع البيعي تحت 30")
+    if stable < MIN_SUPPORT_SESSIONS:
+        missing.append("ثبات الدعم لم يصل إلى 3 جلسات")
+    if not tech["rsi_stable"]:
+        missing.append("RSI ما زال يهبط ولم يظهر ثباتاً")
     if not tech["rsi_recovery"]:
-        missing.append("RSI لم يبدأ التعافي")
+        missing.append("RSI لم يبدأ التعافي فوق 30")
     if not tech["macd_improving"]:
-        missing.append("MACD Histogram لا يتحسن")
-    if not positive_stage:
-        missing.append("التأكيدات الفنية أقل من 3/5")
+        missing.append("MACD Histogram لم يبدأ التحسن")
+    if not tech["ema20_reclaim"]:
+        missing.append("السعر لم يستعد EMA20 بعد")
 
     score = readiness_score(drawdown_pct, near_support, stable, tech, ready)
 
@@ -244,6 +247,11 @@ def evaluate_event(d, event):
             "distance_pct": round(support_distance_pct * 100, 2)
         },
         "technical": tech,
+        "stage_flags": {
+            "watch_stage": watch_stage,
+            "semi_ready": semi,
+            "ready": ready
+        },
         "readiness_score": score,
         "ready": ready,
         "semi_ready": semi,
@@ -251,6 +259,7 @@ def evaluate_event(d, event):
         "missing_conditions": missing,
         "plan": make_plan(d, base, prior_high)
     }
+
 
 def analyze(d):
     event = find_surge_event(d)
