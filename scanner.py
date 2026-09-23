@@ -5,7 +5,6 @@ import pandas as pd
 import yfinance as yf
 from strategy import analyze, chart_data
 
-
 def universe():
     out = set()
     for url, col in [
@@ -20,25 +19,23 @@ def universe():
             print("universe error:", e)
     return sorted(x for x in out if x.isalpha() and len(x) <= 5)
 
-
 def fetch_and_analyze(t):
     try:
-        d = yf.download(
-            t, period="120d", interval="1d", auto_adjust=False,
-            progress=False, threads=False
-        )
+        # Only 30 daily candles are downloaded. The radar no longer performs
+        # a 120-day historical scan for every symbol.
+        d = yf.download(t, period="30d", interval="1d", auto_adjust=False,
+                        progress=False, threads=False)
         if isinstance(d.columns, pd.MultiIndex):
             d.columns = d.columns.get_level_values(0)
         d = d.dropna(subset=["Open", "High", "Low", "Close", "Volume"])
         r = analyze(d)
         if r:
             r["ticker"] = t
-            r["chart"] = chart_data(d, 45)
+            r["chart"] = chart_data(d, 30)
             return r
     except Exception as e:
         print("scan error", t, e)
     return None
-
 
 symbols = universe()
 rows = []
@@ -56,11 +53,9 @@ with ThreadPoolExecutor(max_workers=max_workers) as pool:
             print("scanned", completed, "of", len(symbols))
 
 order = {"جاهز للدخول": 3, "شبه جاهز": 2, "قيد المراقبة": 1}
-rows.sort(key=lambda x: (
-    -order.get(x["status"], 0),
-    -x["technical"]["positive_confirmations"],
-    -x["surge_pct"]
-))
+rows.sort(key=lambda x: (-order.get(x["status"], 0),
+                         -x["technical"]["positive_confirmations"],
+                         -x["surge_pct"]))
 
 payload = {
     "updated_at": datetime.now(timezone.utc).isoformat(),
