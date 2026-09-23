@@ -101,14 +101,17 @@ function render(){
  const a=filtered();
  document.getElementById('grid').innerHTML=a.length?a.map(x=>{
   const t=x.technical||{},score=Math.min(100,Number(x.readiness_score||0)),age=Number(x.watch_age||0),dayPct=Math.min(100,Math.round(age/20*100));
-  return '<article class="stock '+statusClass(x.status)+'" onclick="openStock(\\''+esc(x.ticker)+'\\',\\''+esc(x.event_date)+'\\')">'+
+  return '<article class="stock '+statusClass(x.status)+'" data-ticker="'+esc(x.ticker)+'" data-date="'+esc(x.event_date)+'">'+
   '<div class="stock-head"><div><div class="ticker">'+esc(x.ticker)+'</div><span class="badge '+badge(x.status)+'">'+esc(x.status)+'</span></div><div class="price">'+money(x.price)+'</div></div>'+
   '<div class="metrics"><div class="metric"><span>RSI</span><b>'+esc(t.rsi)+'</b></div><div class="metric"><span>الدعم</span><b>'+money(x.prior_base)+'</b></div><div class="metric"><span>الهبوط من القمة</span><b>-'+esc(x.drawdown_pct||0)+'%</b></div></div>'+
   '<div class="visuals"><div class="day-ring" style="--p:'+dayPct+'">'+(age>=2?'<div class="ring-content"><b>'+age+'</b><span>من 20 يوم</span></div>':'<div class="ring-content"><b>⏳</b><span>رصد أولي</span></div>')+'</div>'+
   '<div class="readiness"><div class="readiness-head"><span>🎯 درجة الجاهزية</span><b>'+score+'/100</b></div><div class="progress"><i style="width:'+score+'%"></i></div><div style="font-size:10px;color:var(--muted);margin-top:5px">تزداد مع اكتمال الدعم والتعافي الفني</div></div></div>'+
   '<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted)"><span>ثبات الدعم: '+esc((x.support||{}).stable_sessions||0)+' جلسات</span><b>تأكيدات التعافي '+esc(t.positive_confirmations||0)+'/5</b></div>'+
-  '<div class="stock-foot"><span>الصعود السابق +'+esc(x.prior_rally_pct)+'%</span><span>منذ الصعود السابق: '+age+' يوم · فتح التحليل ←</span></div></article>'
+  '<div class="stock-foot"><span>الصعود السابق +'+esc(x.prior_rally_pct)+'%</span><span>منذ الصعود السابق: '+age+' يوم · فتح التحليل ←</span></div></article>';
  }).join(''):'<div class="empty" style="grid-column:1/-1;padding:30px;text-align:center;color:var(--muted)">لا توجد أسهم مطابقة للفلتر الحالي.</div>';
+ document.querySelectorAll('#grid .stock').forEach(card=>{
+  card.addEventListener('click',()=>openStock(card.dataset.ticker,card.dataset.date));
+ });
 }
 function findStock(ticker,date){return (D.signals||[]).find(x=>x.ticker===ticker&&x.event_date===date)||(D.signals||[]).find(x=>x.ticker===ticker)}
 function openStock(ticker,date){location.hash='stock='+encodeURIComponent(ticker)+'&date='+encodeURIComponent(date);showStock(ticker,date)}
