@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# الرادار: العودة للدعم أولاً ثم مراقبة الثبات والتعافي الفني.
 import pandas as pd
 import numpy as np
 
