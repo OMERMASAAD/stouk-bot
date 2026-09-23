@@ -1,152 +1,122 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>رادار استراتيجية القاع</title>
 <style>
-:root{--bg:#07110d;--panel:#0d1b14;--panel2:#10271c;--line:#214634;--text:#f1fff6;--muted:#8fa99a;--green:#20d47b;--red:#ff5264;--yellow:#ffc857;--blue:#42a5ff;--orange:#ff8a3d}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 20% 0%,#123522,#07110d 45%,#040907);color:var(--text);font-family:Tahoma,"Segoe UI",Arial,sans-serif}
-.app{max-width:1450px;margin:auto;padding:22px}.top{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-bottom:20px}.brand{display:flex;align-items:center;gap:14px}.logo{width:54px;height:54px;border-radius:16px;background:linear-gradient(135deg,#16a85f,#08783f);display:grid;place-items:center;font-size:27px}.title{font-size:27px;font-weight:900}.sub,.muted{color:var(--muted)}.sub{margin-top:5px;font-size:13px}.actions{display:flex;gap:8px;align-items:center}.btn{border:1px solid var(--line);background:#10281c;color:#fff;padding:10px 14px;border-radius:11px;cursor:pointer}.btn.primary{background:#16a85f;border-color:#20d47b}.time{color:var(--muted);font-size:12px}
-.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}.stat{background:linear-gradient(145deg,#0e2418,#0a1710);border:1px solid var(--line);border-radius:16px;padding:16px}.stat.ready{border-top:3px solid var(--green)}.stat.semi{border-top:3px solid var(--yellow)}.stat.watch{border-top:3px solid var(--blue)}.stat.all{border-top:3px solid var(--orange)}.stat .label{color:var(--muted);font-size:13px}.stat .num{font-size:29px;font-weight:900;margin-top:7px}.green{color:var(--green)}.yellow{color:var(--yellow)}.blue{color:var(--blue)}
-.toolbar{display:flex;gap:10px;align-items:center;margin-bottom:15px;flex-wrap:wrap}.search{flex:1;min-width:220px;background:#08140e;border:1px solid var(--line);color:#fff;border-radius:12px;padding:12px 14px;outline:none}.filters{display:flex;gap:7px;flex-wrap:wrap}.filter{background:#0d1f16;color:#9db1a5;border:1px solid var(--line);padding:10px 13px;border-radius:10px;cursor:pointer}.filter.active{background:#185a3a;color:#fff;border-color:#20d47b}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.stock{background:linear-gradient(160deg,#0e2117,#08140e);border:1px solid var(--line);border-radius:17px;padding:16px;cursor:pointer;transition:.2s;position:relative;overflow:hidden}.stock:hover{transform:translateY(-3px)}.stock.ready{border-color:#20d47b}.stock.semi{border-color:#ffc857}.stock.watch{border-color:#42a5ff}.stock-head{display:flex;justify-content:space-between;align-items:center}.ticker{font-size:22px;font-weight:900}.price{font-size:21px;font-weight:800}.badge{font-size:11px;padding:5px 9px;border-radius:99px}.b-ready{background:#0d4d30;color:#6dffb3}.b-semi{background:#554314;color:#ffd978}.b-watch{background:#123d62;color:#72c2ff}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.metric{background:#091810;border-radius:10px;padding:9px}.metric span{display:block;color:var(--muted);font-size:11px}.metric b{display:block;margin-top:4px}.progress{height:7px;background:#183326;border-radius:10px;overflow:hidden;margin-top:8px}.progress i{display:block;height:100%;background:linear-gradient(90deg,#ff5264,#ffc857,#20d47b);border-radius:10px}.visuals{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0}.day-ring{--p:0;width:74px;height:74px;border-radius:50%;background:conic-gradient(#42a5ff calc(var(--p)*1%),#173326 0);display:grid;place-items:center;position:relative;flex:0 0 74px}.day-ring:after{content:"";position:absolute;inset:7px;border-radius:50%;background:#0a1710}.day-ring .ring-content{position:relative;z-index:1;text-align:center;line-height:1.05}.day-ring b{display:block;font-size:17px}.day-ring span{font-size:9px;color:var(--muted)}.readiness{flex:1;background:#091810;border:1px solid var(--line);border-radius:11px;padding:9px 11px}.readiness-head{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted)}.readiness-head b{font-size:18px;color:#fff}.readiness .progress{margin-top:7px;height:8px}.stock-foot{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:12px}
-.page{display:none}.page.active{display:block}.detail-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.detail-title{font-size:28px;font-weight:900}.detail-sub{color:var(--muted);font-size:13px;margin-top:5px}.hero{display:grid;grid-template-columns:1.5fr 1fr;gap:14px}.hero-card,.section{background:linear-gradient(145deg,#0e2117,#08140e);border:1px solid var(--line);border-radius:17px;padding:18px}.hero-main{display:flex;justify-content:space-between;align-items:center}.bigprice{font-size:40px;font-weight:900}.tagline{margin-top:8px;color:var(--muted)}.plan{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:15px}.planbox{padding:12px;background:#091810;border:1px solid var(--line);border-radius:12px}.planbox span{color:var(--muted);font-size:11px}.planbox b{display:block;font-size:18px;margin-top:5px}.entry{color:var(--green)}.stop{color:var(--red)}.target{color:#6ee7ff}.section{margin-top:14px}.section h3{margin:0 0 13px;font-size:16px}.info-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.info{background:#091810;border-radius:11px;padding:11px}.info span{display:block;color:var(--muted);font-size:11px}.info b{display:block;margin-top:5px;font-size:15px}.checks{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.check{padding:11px;border-radius:10px;background:#091810;border:1px solid var(--line)}.check.ok{border-color:#20d47b}.check.no{border-color:#ff5264}.check .mark{font-size:17px;margin-left:5px}.resist{display:flex;gap:8px;flex-wrap:wrap}.res{background:#10271c;border:1px solid var(--line);border-radius:9px;padding:9px 12px}.chart{margin-top:14px;background:#06110b;border:1px solid var(--line);border-radius:15px;padding:10px;overflow:hidden}.chart svg{width:100%;height:360px;display:block}.note{color:var(--muted);font-size:12px;margin-top:12px;line-height:1.8}
-@media(max-width:1050px){.cards{grid-template-columns:repeat(3,1fr)}.grid{grid-template-columns:repeat(2,1fr)}.info-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:700px){.app{padding:12px}.top{align-items:flex-start}.title{font-size:21px}.cards{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.hero{grid-template-columns:1fr}.plan{grid-template-columns:1fr 1fr}.info-grid{grid-template-columns:1fr 1fr}.checks{grid-template-columns:1fr}.bigprice{font-size:32px}.chart svg{height:280px}}
+*{box-sizing:border-box}body{margin:0;background:#09111f;color:#edf3fb;font-family:Tahoma,Arial,sans-serif}
+.wrap{max-width:1280px;margin:auto;padding:16px}.head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.title{font-size:25px;font-weight:800}.sub,.muted{color:#91a0b8}.tools{display:flex;align-items:center;gap:8px}
+button,input{background:#111d30;color:#fff;border:1px solid #30415f;border-radius:10px;padding:10px 12px}button{cursor:pointer}input{width:230px}
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:16px 0}.card,.panel{background:#111d30;border:1px solid #263754;border-radius:14px}.card{padding:14px}.n{font-size:25px;font-weight:800;margin-top:5px}.green{color:#4cdaa0}.yellow{color:#f2c85b}.blue{color:#79b8ff}
+.panel{padding:14px;margin-top:12px}.scroll{overflow:auto}table{width:100%;border-collapse:collapse;min-width:780px}th,td{padding:10px;border-bottom:1px solid #263754;text-align:right}tr{cursor:pointer}tr:hover{background:#17253a}.status-ready{color:#4cdaa0;font-weight:800}.status-semi{color:#f2c85b;font-weight:800}.status-watch{color:#79b8ff;font-weight:700}
+.detail{display:none}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.box{background:#0d1829;border:1px solid #263754;border-radius:12px;padding:12px}.box b{font-size:18px}.plan{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.pill{padding:8px;border-radius:9px;background:#16253b}.ok{color:#4cdaa0}.no{color:#f28b82}
+.chart{margin-top:12px;background:#0a1424;border:1px solid #263754;border-radius:12px;padding:8px;overflow:hidden}.chart svg{width:100%;height:330px;display:block}
+.checks{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.check{background:#0d1829;border-radius:9px;padding:9px;border:1px solid #263754}
+.small{font-size:12px}.footnote{margin-top:8px;color:#91a0b8;font-size:12px}
+@media(max-width:900px){.cards{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.plan{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.wrap{padding:10px}.title{font-size:20px}.cards{grid-template-columns:repeat(2,1fr)}.cards .card:last-child{grid-column:1/-1}.checks{grid-template-columns:1fr}input{width:160px}.chart svg{height:270px}}
 </style>
 </head>
 <body>
-<div class="app">
-<header class="top">
-<div class="brand"><div class="logo">📡</div><div><div class="title">رادار استراتيجية القاع</div><div class="sub">اكتشاف الصعود → متابعة 20 جلسة → العودة للدعم → تأكيد التعافي → خطة الدخول</div></div></div>
-<div class="actions"><span class="time" id="time">آخر تحديث: —</span><button class="btn primary" onclick="loadData()">↻ تحديث</button></div>
+<div class="wrap">
+<header class="head">
+<div><div class="title">📡 رادار استراتيجية القاع</div><div class="sub">الصعود → المراقبة من اليوم 2 إلى 20 → العودة للدعم → تأكيد التعافي → مرحلة الإيجابية</div></div>
+<div class="tools"><span id="time">آخر تحديث: —</span><button onclick="loadData()">↻ تحديث</button></div>
 </header>
-<div id="listPage" class="page active">
-<div class="cards">
-<div class="stat"><div class="label">جاهز للدخول</div><div class="num green" id="ready">0</div></div>
-<div class="stat"><div class="label">شبه جاهز</div><div class="num yellow" id="semi">0</div></div>
-<div class="stat"><div class="label">قيد المراقبة</div><div class="num blue" id="watch">0</div></div>
-<div class="stat"><div class="label">إجمالي الفرص</div><div class="num" id="all">0</div></div>
-<div class="stat"><div class="label">نطاق السعر</div><div class="num">$1–$5</div></div>
-</div>
-<div class="toolbar"><div style="font-weight:800;color:#b9d8c5">لوحة تفاعلية — اضغط على أي سهم لفتح التحليل الكامل</div>
-<input class="search" id="search" placeholder="🔎 ابحث باسم السهم..." oninput="render()">
-<div class="filters">
-<button class="filter active" data-filter="الكل" onclick="setFilter(this)">الكل</button>
-<button class="filter" data-filter="جاهز للدخول" onclick="setFilter(this)">جاهز</button>
-<button class="filter" data-filter="شبه جاهز" onclick="setFilter(this)">شبه جاهز</button>
-<button class="filter" data-filter="قيد المراقبة" onclick="setFilter(this)">مراقبة</button>
-</div></div>
-<div id="grid" class="grid"></div>
-</div>
-<div id="detailPage" class="page">
-<div class="detail-head"><div><div class="detail-title" id="dt"></div><div class="detail-sub" id="dsub"></div></div><button class="btn back" onclick="goHome()">← العودة للرادار</button></div>
-<div id="detailBody"></div>
-</div>
-</div>
-<script>
-let D={signals:[]},currentFilter='الكل';
-const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const money=v=>'$'+Number(v||0).toFixed(2);
-const yn=v=>v?'نعم':'لا';
-function statusClass(s){return s==='جاهز للدخول'?'ready':s==='شبه جاهز'?'semi':'watch'}
-function badge(s){return s==='جاهز للدخول'?'b-ready':s==='شبه جاهز'?'b-semi':'b-watch'}
 
-async function fetchJson(url){
- const r=await fetch(url,{cache:'no-store',headers:{'Accept':'application/json'}});
- if(!r.ok) throw new Error('HTTP '+r.status);
- const j=await r.json();
- if(!j || !Array.isArray(j.signals)) throw new Error('صيغة البيانات غير صحيحة');
- return j;
-}
-async function fetchGithubApi(){
- const r=await fetch('https://api.github.com/repos/OMERMASAAD/stouk-bot/contents/data.json?ref=main&t='+Date.now(),{cache:'no-store',headers:{'Accept':'application/vnd.github+json'}});
- if(!r.ok) throw new Error('GitHub API HTTP '+r.status);
- const j=await r.json();
- if(!j.content) throw new Error('لم يصل محتوى data.json');
- const raw=atob(j.content.replace(/\s/g,''));
- const bytes=Uint8Array.from(raw,c=>c.charCodeAt(0));
- const text=new TextDecoder('utf-8').decode(bytes);
- const data=JSON.parse(text);
- if(!data || !Array.isArray(data.signals)) throw new Error('بيانات API غير صحيحة');
- return data;
-}
+<div class="cards">
+<div class="card">جاهز للدخول<div class="n green" id="ready">0</div></div>
+<div class="card">شبه جاهز<div class="n yellow" id="semi">0</div></div>
+<div class="card">قيد المراقبة<div class="n blue" id="watch">0</div></div>
+<div class="card">كل الفرص<div class="n" id="all">0</div></div>
+<div class="card">نطاق السعر<div class="n">$1–$5</div></div>
+</div>
+
+<div class="panel">
+<input id="search" placeholder="ابحث عن السهم" oninput="render()">
+<div class="scroll"><table><thead><tr>
+<th>السهم</th><th>السعر</th><th>يوم الصعود</th><th>العمر</th><th>الدعم الأصلي</th><th>RSI</th><th>MACD</th><th>تأكيدات</th><th>الحالة</th>
+</tr></thead><tbody id="rows"></tbody></table></div>
+</div>
+
+<div class="panel detail" id="detail">
+<button onclick="closeDetail()">✕ إغلاق</button>
+<h2 id="dt"></h2><div id="body"></div>
+<div class="chart" id="chart"></div>
+<div class="footnote">المؤشرات الفنية أدوات تأكيد وليست ضماناً لاستمرار الصعود. الخطة المعروضة مبنية على قواعد الرادار.</div>
+</div>
+</div>
+
+<script>
+let D={signals:[]},list=[];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const yes=x=>x?'✓':'—';
 async function loadData(){
- const stamp=Date.now();
- const loaders=[
-  ()=>fetchJson('data.json?x='+stamp),
-  ()=>fetchJson('https://raw.githubusercontent.com/OMERMASAAD/stouk-bot/main/data.json?x='+stamp),
-  ()=>fetchGithubApi()
- ];
- let lastErr=null;
- for(const load of loaders){
-  try{
-   D=await load();
-   document.getElementById('time').textContent='آخر تحديث: '+(D.updated_at?new Date(D.updated_at).toLocaleString('ar-SA'):'—');
-   render();route();return;
-  }catch(e){lastErr=e;console.warn(e);}
- }
- document.getElementById('time').textContent='تعذر تحميل البيانات';
- document.getElementById('grid').innerHTML='<div style="grid-column:1/-1;padding:30px;text-align:center;color:#ff8a3d">تعذر تحميل بيانات الأسهم. اضغط ↻ تحديث أو افتح الصفحة مرة أخرى.</div>';
- console.error(lastErr);
+ try{
+  const r=await fetch('data.json?x='+Date.now()); D=await r.json();
+  const t=D.updated_at?new Date(D.updated_at).toLocaleString('ar-SA'):'—';
+  document.getElementById('time').textContent='آخر تحديث: '+t; render();
+ }catch(e){document.getElementById('time').textContent='تعذر تحميل البيانات';}
 }
-function setFilter(el){document.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));el.classList.add('active');currentFilter=el.dataset.filter;render()}
-function filtered(){const q=document.getElementById('search').value.trim().toUpperCase();return (D.signals||[]).filter(x=>(currentFilter==='الكل'||x.status===currentFilter)&&String(x.ticker||'').toUpperCase().includes(q))}
 function render(){
- const s=D.signals||[];
- document.getElementById('ready').textContent=D.stats?.ready??s.filter(x=>x.status==='جاهز للدخول').length;
- document.getElementById('semi').textContent=D.stats?.semi_ready??s.filter(x=>x.status==='شبه جاهز').length;
- document.getElementById('watch').textContent=D.stats?.watching??s.filter(x=>x.status==='قيد المراقبة').length;
- document.getElementById('all').textContent=s.length;
- const a=filtered();
- document.getElementById('grid').innerHTML=a.length?a.map(x=>{
-  const t=x.technical||{},score=Math.min(100,Number(x.readiness_score||0)),age=Number(x.watch_age||0),dayPct=Math.min(100,Math.round(age/20*100));
-  return '<article class="stock '+statusClass(x.status)+'" data-ticker="'+esc(x.ticker)+'" data-date="'+esc(x.event_date)+'">'+
-  '<div class="stock-head"><div><div class="ticker">'+esc(x.ticker)+'</div><span class="badge '+badge(x.status)+'">'+esc(x.status)+'</span></div><div class="price">'+money(x.price)+'</div></div>'+
-  '<div class="metrics"><div class="metric"><span>RSI</span><b>'+esc(t.rsi)+'</b></div><div class="metric"><span>الدعم</span><b>'+money(x.prior_base)+'</b></div><div class="metric"><span>الهبوط من القمة</span><b>-'+esc(x.drawdown_pct||0)+'%</b></div></div>'+
-  '<div class="visuals"><div class="day-ring" style="--p:'+dayPct+'">'+(age>=2?'<div class="ring-content"><b>'+age+'</b><span>من 20 يوم</span></div>':'<div class="ring-content"><b>⏳</b><span>رصد أولي</span></div>')+'</div>'+
-  '<div class="readiness"><div class="readiness-head"><span>🎯 درجة الجاهزية</span><b>'+score+'/100</b></div><div class="progress"><i style="width:'+score+'%"></i></div><div style="font-size:10px;color:var(--muted);margin-top:5px">تزداد مع اكتمال الدعم والتعافي الفني</div></div></div>'+
-  '<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted)"><span>ثبات الدعم: '+esc((x.support||{}).stable_sessions||0)+' جلسات</span><b>تأكيدات التعافي '+esc(t.positive_confirmations||0)+'/5</b></div>'+
-  '<div style="margin-top:9px;font-size:10px;color:#8fa99a;line-height:1.5">الناقص: '+esc((x.missing_conditions||[]).slice(0,2).join(' · ')||'اكتملت الشروط الحالية')+'</div>'+
-  '<div class="stock-foot"><span>الصعود السابق +'+esc(x.prior_rally_pct)+'%</span><span>منذ الصعود السابق: '+age+' يوم · فتح التحليل ←</span></div></article>'
- }).join(''):'<div class="empty" style="grid-column:1/-1;padding:30px;text-align:center;color:var(--muted)">لا توجد أسهم مطابقة للفلتر الحالي.</div>';
- document.querySelectorAll('#grid .stock').forEach(card=>card.addEventListener('click',()=>openStock(card.dataset.ticker,card.dataset.date)));
+ const q=document.getElementById('search').value.trim().toUpperCase();
+ list=D.signals.filter(x=>x.ticker.includes(q));
+ document.getElementById('ready').textContent=D.stats?.ready ?? D.signals.filter(x=>x.status==='جاهز للدخول').length;
+ document.getElementById('semi').textContent=D.stats?.semi_ready ?? D.signals.filter(x=>x.status==='شبه جاهز').length;
+ document.getElementById('watch').textContent=D.stats?.watching ?? D.signals.filter(x=>x.status==='قيد المراقبة').length;
+ document.getElementById('all').textContent=D.signals.length;
+ document.getElementById('rows').innerHTML=list.map((x,i)=>{
+   const t=x.technical;
+   const cls=x.status==='جاهز للدخول'?'status-ready':x.status==='شبه جاهز'?'status-semi':'status-watch';
+   return '<tr onclick="show('+i+')"><td><b>'+esc(x.ticker)+'</b></td><td>$'+x.price.toFixed(2)+'</td><td>+'+x.surge_pct+'%</td><td>'+x.watch_age+' يوم</td><td>$'+x.prior_base.toFixed(2)+'</td><td>'+t.rsi+'</td><td>'+t.macd_hist+'</td><td>'+t.positive_confirmations+'/5</td><td class="'+cls+'">'+x.status+'</td></tr>';
+ }).join('');
 }
-function findStock(ticker,date){return (D.signals||[]).find(x=>x.ticker===ticker&&x.event_date===date)||(D.signals||[]).find(x=>x.ticker===ticker)}
-function openStock(ticker,date){location.hash='stock='+encodeURIComponent(ticker)+'&date='+encodeURIComponent(date);showStock(ticker,date)}
-function route(){const h=location.hash;if(h.startsWith('#stock=')){const p=new URLSearchParams(h.slice(1));showStock(p.get('stock'),p.get('date'))}else goHome(false)}
-window.addEventListener('hashchange',route);
-function goHome(change=true){if(change)history.pushState({},'',location.pathname+location.search);document.getElementById('listPage').classList.add('active');document.getElementById('detailPage').classList.remove('active');window.scrollTo(0,0)}
-function showStock(ticker,date){
- const x=findStock(ticker,date);if(!x){goHome(false);return} const t=x.technical||{},h4=x.technical_4h||{},p=x.plan||{},s=x.support||{};
- document.getElementById('listPage').classList.remove('active');document.getElementById('detailPage').classList.add('active');window.scrollTo(0,0);
- document.getElementById('dt').textContent=String(x.ticker||'')+' — صفحة التحليل الكامل';
- document.getElementById('dsub').textContent='حدث الصعود: '+String(x.event_date||'')+' · منذ الصعود السابق: '+String(x.watch_age??'')+' يوم من 20 · هبوط من القمة: '+String(x.drawdown_pct??0)+'% · الحالة: '+String(x.status||'');
- const checks=[['RSI دخل التشبع البيعي تحت 30 مؤخراً',t.rsi_oversold_recent],['RSI تعافى فوق 30 ويتحسن',t.rsi_recovery],['MACD Histogram يتحسن',t.macd_improving],['استعادة EMA20 مع اتجاه صاعد',t.ema20_reclaim&&t.ema20_rising],['السعر فوق EMA50',t.ema50_reclaim],['الحجم يؤكد الحركة ≥ 1.2x',t.volume_confirm]];
- document.getElementById('detailBody').innerHTML=
- '<div class="hero"><div class="hero-card"><div class="hero-main"><div><span class="badge '+badge(x.status)+'">'+esc(x.status)+'</span><div class="bigprice">'+money(x.price)+'</div><div class="tagline">صعود سابق +'+esc(x.prior_rally_pct)+'% ثم متابعة العودة إلى منطقة الدعم</div></div><div style="text-align:left"><div class="muted">القمة السابقة</div><b style="font-size:24px">'+money(x.prior_high)+'</b></div></div><div class="plan"><div class="planbox"><span>منطقة الدخول</span><b class="entry">'+money(p.entry_low)+' – '+money(p.entry_high)+'</b></div><div class="planbox"><span>وقف الخسارة</span><b class="stop">'+money(p.stop)+'</b></div><div class="planbox"><span>هدف 100%</span><b class="target">'+money(p.final_100_target)+'</b></div></div></div>'+
- '<div class="hero-card"><h3 style="margin-top:0">ملخص الإشارة</h3><div class="info-grid"><div class="info"><span>الدعم الأصلي</span><b>'+money(x.prior_base)+'</b></div><div class="info"><span>اختبارات الدعم</span><b>'+esc(s.tests)+'</b></div><div class="info"><span>ثبات الدعم</span><b>'+esc(s.stable_sessions)+' جلسات</b></div><div class="info"><span>قريب من الدعم</span><b>'+yn(s.near_support)+'</b></div></div></div></div>'+
- '<div class="section"><h3>📊 المؤشرات الفنية الحالية</h3><div class="info-grid"><div class="info"><span>RSI</span><b>'+esc(t.rsi)+'</b></div><div class="info"><span>RSI السابق</span><b>'+esc(t.rsi_prev)+'</b></div><div class="info"><span>EMA 20</span><b>'+money(t.ema20)+'</b></div><div class="info"><span>EMA 50</span><b>'+money(t.ema50)+'</b></div><div class="info"><span>MACD Histogram</span><b>'+esc(t.macd_hist)+'</b></div><div class="info"><span>نسبة الحجم/20</span><b>'+esc(t.volume_ratio)+'x</b></div><div class="info"><span>تأكيدات إيجابية</span><b>'+esc(t.positive_confirmations)+'/5</b></div><div class="info"><span>أعلى صعود سابق</span><b>+'+esc(x.surge_pct)+'%</b></div></div></div>'+
- '<div class="section"><h3>🕓 تأكيد فريم 4 ساعات</h3><div class="info-grid"><div class="info"><span>RSI 4H</span><b>'+esc(h4.rsi??'—')+'</b></div><div class="info"><span>EMA20 4H</span><b>'+money(h4.ema20??0)+'</b></div><div class="info"><span>EMA50 4H</span><b>'+money(h4.ema50??0)+'</b></div><div class="info"><span>MACD Histogram 4H</span><b>'+esc(h4.macd_hist??'—')+'</b></div><div class="info"><span>RSI تشبع بيعي سابق</span><b>'+yn(h4.rsi_oversold_recent)+'</b></div><div class="info"><span>تحسن RSI 4H</span><b>'+yn(h4.rsi_recovery)+'</b></div><div class="info"><span>تحسن MACD 4H</span><b>'+yn(h4.macd_improving)+'</b></div><div class="info"><span>تأكيدات 4H</span><b>'+esc(h4.positive_confirmations??'—')+'/5</b></div></div><div class="note">فريم 4 ساعات للتأكيد فقط، ولا يغيّر بوابة الدخول اليومية.</div></div>'+ '<div class="section"><h3>✅ فحص شروط التعافي</h3><div class="checks">'+checks.map(c=>'<div class="check '+(c[1]?'ok':'no')+'"><span class="mark">'+(c[1]?'✓':'○')+'</span>'+c[0]+'</div>').join('')+'</div></div>'+
- '<div class="section"><h3>📌 الشروط الناقصة قبل الانتقال للمرحلة التالية</h3>'+
- ((x.missing_conditions||[]).length ? '<div class="checks">'+(x.missing_conditions||[]).map(m=>'<div class="check no"><span class="mark">○</span>'+esc(m)+'</div>').join('')+'</div>' : '<div class="check ok"><span class="mark">✓</span>لا توجد شروط ناقصة حالياً.</div>')+
+function flag(label,v){return '<div class="check">'+(v?'<span class="ok">✓</span> ':'<span class="no">•</span> ')+label+'</div>'}
+function show(i){
+ const x=list[i],t=x.technical,p=x.plan;
+ document.getElementById('detail').style.display='block';
+ document.getElementById('dt').textContent=x.ticker+' — التحليل الفني وخطة الحركة';
+ document.getElementById('body').innerHTML=
+ '<div class="grid">'+
+ '<div class="box"><b>الحركة</b><br>السعر الحالي: $'+x.price+'<br>صعود البداية: +'+x.surge_pct+'%<br>تاريخ الصعود: '+x.event_date+'<br>اليوم: '+x.watch_age+' من 20<br>الصعود السابق: +'+x.prior_rally_pct+'%</div>'+
+ '<div class="box"><b>الدعم والقمة</b><br>الدعم الأصلي: $'+x.prior_base+'<br>القمة السابقة: $'+x.prior_high+'<br>اختبارات الدعم: '+x.support.tests+'<br>ثبات الدعم: '+x.support.stable_sessions+' جلسات<br>قريب من الدعم: '+yes(x.support.near_support)+'</div>'+
+ '<div class="box"><b>المؤشرات الآن</b><br>RSI: '+t.rsi+' (السابق '+t.rsi_prev+')<br>EMA20: $'+t.ema20+'<br>EMA50: $'+t.ema50+'<br>MACD Histogram: '+t.macd_hist+'<br>حجم/متوسط 20: '+t.volume_ratio+'x</div>'+
  '</div>'+
- '<div class="section"><h3>🎯 الأهداف والمقاومات المرحلية</h3><div class="resist">'+((p.targets||[]).length?(p.targets||[]).map((v,i)=>'<div class="res">هدف '+(i+1)+' · '+money(v)+'</div>').join(''):'<div class="muted">لا توجد مقاومات مرحلية كافية حالياً</div>')+'<div class="res" style="border-color:#2b8d70">الهدف النهائي 100% · '+money(p.final_100_target)+'</div></div></div>'+
- '<div class="chart" id="chart"></div><div class="note">هذه الصفحة تعرض تحليل السهم بناءً على قواعد الرادار: صعود سابق ≥100%، متابعة من اليوم 2 حتى 20، العودة للدعم، ثم تأكيدات RSI وMACD والمتوسطات والحجم. الخطة الفنية ليست ضماناً للنتيجة.</div>';
+ '<div class="panel" style="margin-top:10px"><b>تأكيد التعافي ودخول المرحلة الإيجابية — '+t.positive_confirmations+'/5</b><div class="checks" style="margin-top:8px">'+
+ flag('RSI دخل التشبع البيعي تحت 30 مؤخراً',t.rsi_oversold_recent)+
+ flag('RSI تعافى وأصبح فوق 30 ويتحسن',t.rsi_recovery)+
+ flag('MACD Histogram يتحسن',t.macd_improving)+
+ flag('استعادة EMA20 مع اتجاه صاعد',t.ema20_reclaim&&t.ema20_rising)+
+ flag('السعر فوق EMA50',t.ema50_reclaim)+
+ flag('الحجم يؤكد الحركة (≥ 1.2x)',t.volume_confirm)+
+ '</div></div>'+
+ '<div class="panel" style="margin-top:10px"><b>خطة السهم</b><div class="plan" style="margin-top:8px">'+
+ '<div class="pill">🟢 الدخول<br><b>$'+p.entry_low+' – $'+p.entry_high+'</b></div>'+
+ '<div class="pill">🛑 الوقف<br><b>$'+p.stop+'</b></div>'+
+ '<div class="pill">🎯 الهدف 100%<br><b>$'+p.final_100_target+'</b></div>'+
+ '<div class="pill">الحالة<br><b>'+x.status+'</b></div></div>'+
+ (p.targets?.length?'<div style="margin-top:8px">المقاومات المرحلية: '+p.targets.map((v,n)=>'هدف '+(n+1)+' $'+v).join(' · ')+'</div>':'')+
+ '</div>';
  drawChart(x);
+ window.scrollTo({top:document.getElementById('detail').offsetTop-8,behavior:'smooth'});
 }
+function closeDetail(){document.getElementById('detail').style.display='none'}
 function drawChart(x){
- const data=x.chart||[],el=document.getElementById('chart');if(!data.length){el.innerHTML='<div class="muted">لا توجد بيانات للرسم.</div>';return}
- const W=1200,H=380,L=62,R=22,T=25,B=45,hi=data.map(d=>d.high),lo=data.map(d=>d.low),min=Math.min(...lo,x.plan?.stop||0)*.98,max=Math.max(...hi,x.prior_high||0)*1.02;
- const sx=i=>L+i*(W-L-R)/Math.max(1,data.length-1),sy=v=>T+(max-v)*(H-T-B)/(max-min);
- let svg='<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4b8df8" stop-opacity=".22"/><stop offset="1" stop-color="#4b8df8" stop-opacity="0"/></linearGradient></defs>';
- for(let k=0;k<5;k++){let y=T+k*(H-T-B)/4,v=max-k*(max-min)/4;svg+='<line x1="'+L+'" y1="'+y+'" x2="'+(W-R)+'" y2="'+y+'" stroke="#18304a"/><text x="'+(L-9)+'" y="'+(y+4)+'" text-anchor="end" fill="#7890aa" font-size="11">'+v.toFixed(2)+'</text>'}
- const line=data.map((d,i)=>sx(i)+','+sy(d.close)).join(' ');svg+='<polyline points="'+line+'" fill="none" stroke="#58a6ff" stroke-width="3"/>';
- const base=sy(x.prior_base),stop=sy(x.plan.stop),target=sy(x.prior_high);
- [['#f5c451',base,'الدعم'],['#ff6b7a',stop,'الوقف'],['#36d399',target,'هدف 100%']].forEach(a=>{svg+='<line x1="'+L+'" y1="'+a[1]+'" x2="'+(W-R)+'" y2="'+a[1]+'" stroke="'+a[0]+'" stroke-width="1.5" stroke-dasharray="8 6"/><text x="'+(W-R-4)+'" y="'+(a[1]-6)+'" text-anchor="end" fill="'+a[0]+'" font-size="12">'+a[2]+'</text>'});
- data.forEach((d,i)=>{const xx=sx(i),yo=sy(d.open),yc=sy(d.close),yh=sy(d.high),yl=sy(d.low),c=d.close>=d.open?'#36d399':'#ff6b7a';svg+='<line x1="'+xx+'" y1="'+yh+'" x2="'+xx+'" y2="'+yl+'" stroke="#7890aa"/><line x1="'+xx+'" y1="'+yo+'" x2="'+xx+'" y2="'+yc+'" stroke="'+c+'" stroke-width="5" stroke-linecap="round"/>'});
- svg+='<text x="'+L+'" y="'+(H-12)+'" fill="#7890aa" font-size="11">'+data[0].date+'</text><text x="'+(W-R)+'" y="'+(H-12)+'" text-anchor="end" fill="#7890aa" font-size="11">'+data[data.length-1].date+'</text></svg>';
- el.innerHTML='<div style="padding:5px 4px 10px;font-weight:800">📈 حركة السهم — آخر 30 جلسة</div>'+svg;
+ const data=x.chart||[]; if(!data.length){document.getElementById('chart').innerHTML='لا توجد بيانات رسم';return}
+ const W=1100,H=330,L=55,R=15,T=18,B=42,pad=20;
+ const vals=data.map(d=>d.high), lows=data.map(d=>d.low);
+ const min=Math.min(...lows,x.plan.stop)*0.98,max=Math.max(...vals,x.prior_high)*1.02;
+ const sx=i=>L+i*(W-L-R)/(data.length-1), sy=v=>T+(max-v)*(H-T-B)/(max-min);
+ let svg='<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">';
+ for(let k=0;k<5;k++){let y=T+k*(H-T-B)/4,v=max-k*(max-min)/4;svg+='<line x1="'+L+'" y1="'+y+'" x2="'+(W-R)+'" y2="'+y+'" stroke="#23334d"/><text x="'+(L-8)+'" y="'+(y+4)+'" text-anchor="end" fill="#91a0b8" font-size="11">'+v.toFixed(2)+'</text>'}
+ const baseY=sy(x.prior_base),stopY=sy(x.plan.stop),highY=sy(x.prior_high);
+ svg+='<line x1="'+L+'" y1="'+baseY+'" x2="'+(W-R)+'" y2="'+baseY+'" stroke="#f2c85b" stroke-dasharray="7 5"/><text x="'+(W-R-4)+'" y="'+(baseY-5)+'" text-anchor="end" fill="#f2c85b" font-size="12">الدعم</text>';
+ svg+='<line x1="'+L+'" y1="'+stopY+'" x2="'+(W-R)+'" y2="'+stopY+'" stroke="#f28b82" stroke-dasharray="5 5"/><text x="'+(W-R-4)+'" y="'+(stopY-5)+'" text-anchor="end" fill="#f28b82" font-size="12">الوقف</text>';
+ svg+='<line x1="'+L+'" y1="'+highY+'" x2="'+(W-R)+'" y2="'+highY+'" stroke="#4cdaa0" stroke-dasharray="8 4"/><text x="'+(W-R-4)+'" y="'+(highY-5)+'" text-anchor="end" fill="#4cdaa0" font-size="12">هدف 100%</text>';
+ for(let i=0;i<data.length;i++){const d=data[i],x0=sx(i),yo=sy(d.open),yc=sy(d.close),yh=sy(d.high),yl=sy(d.low);svg+='<line x1="'+x0+'" y1="'+yh+'" x2="'+x0+'" y2="'+yl+'" stroke="#9bb0c9"/><line x1="'+x0+'" y1="'+yo+'" x2="'+x0+'" y2="'+yc+'" stroke="'+(d.close>=d.open?'#4cdaa0':'#f28b82')+'" stroke-width="5"/>'}
+ svg+='<text x="'+L+'" y="'+(H-10)+'" fill="#91a0b8" font-size="11">'+data[0].date+'</text><text x="'+(W-R)+'" y="'+(H-10)+'" text-anchor="end" fill="#91a0b8" font-size="11">'+data[data.length-1].date+'</text></svg>';
+ document.getElementById('chart').innerHTML='<div class="muted" style="padding:5px">حركة آخر 30 جلسة — الدعم / الوقف / القمة المستهدفة</div>'+svg;
 }
 loadData();
 </script>
