@@ -157,31 +157,57 @@ def evaluate_event(d, event):
 
     base = float(event["base"])
     prior_high = float(event["high"])
-
-    # بوابة دخول الرادار:
-    # 1) هبوط فعلي لا يقل عن 30% من القمة السابقة.
-    # 2) عودة إلى منطقة الدعم.
-    # 3) ثبات عند الدعم 3 جلسات متتالية على الأقل.
     drawdown_pct = ((prior_high - price) / prior_high * 100) if prior_high > 0 else 0
-    if drawdown_pct < MIN_DRAWDOWN_PCT:
-        return None
 
+    # كسر الدعم بأكثر من 3% يلغي الحدث.
     if float(d["Low"].tail(ANALYSIS_DAYS).min()) < base * (1-BREAK_TOL):
         return None
 
     tests, stable = support_stats(d, base)
     near_support = base*(1-SUPPORT_TOL) <= price <= base*(1+SUPPORT_TOL)
-    support_ready = near_support and stable >= MIN_SUPPORT_SESSIONS
-    if not support_ready:
-        return None
 
     tech = technicals(d)
     recovery_core = tech["rsi_oversold_recent"] and tech["rsi_recovery"] and tech["macd_improving"]
     positive_stage = tech["positive_confirmations"] >= 3
-    ready = recovery_core and positive_stage
-    semi = not ready
 
-    status = "جاهز للدخول" if ready else "شبه جاهز"
+    support_ready = near_support and stable >= MIN_SUPPORT_SESSIONS
+    ready = (
+        drawdown_pct >= MIN_DRAWDOWN_PCT
+        and support_ready
+        and recovery_core
+        and positive_stage
+    )
+    semi = (
+        drawdown_pct >= MIN_DRAWDOWN_PCT
+        and (support_ready or near_support or tests >= 1)
+        and not ready
+    )
+
+    if ready:
+        status = "جاهز للدخول"
+    elif semi:
+        status = "شبه جاهز"
+    else:
+        status = "قيد المراقبة"
+
+    missing = []
+    if drawdown_pct < MIN_DRAWDOWN_PCT:
+        missing.append("الهبوط من القمة أقل من 50%")
+    if not near_support:
+        missing.append("لم يعد السعر إلى منطقة الدعم")
+    if tests < 1:
+        missing.append("لم يختبر الدعم بعد")
+    if stable < MIN_SUPPORT_SESSIONS:
+        missing.append("ثبات الدعم أقل من 3 جلسات")
+    if not tech["rsi_oversold_recent"]:
+        missing.append("RSI لم يدخل التشبع البيعي تحت 30")
+    if not tech["rsi_recovery"]:
+        missing.append("RSI لم يبدأ التعافي")
+    if not tech["macd_improving"]:
+        missing.append("MACD Histogram لا يتحسن")
+    if not positive_stage:
+        missing.append("التأكيدات الفنية أقل من 3/5")
+
     score = readiness_score(drawdown_pct, near_support, stable, tech, ready)
 
     return {
@@ -194,12 +220,17 @@ def evaluate_event(d, event):
         "prior_base": round(base,4),
         "prior_high": round(prior_high,4),
         "prior_rally_pct": round(event["rally_pct"],2),
-        "support": {"tests": tests, "stable_sessions": stable, "near_support": near_support},
+        "support": {
+            "tests": tests,
+            "stable_sessions": stable,
+            "near_support": near_support
+        },
         "technical": tech,
         "readiness_score": score,
         "ready": ready,
         "semi_ready": semi,
         "status": status,
+        "missing_conditions": missing,
         "plan": make_plan(d, base, prior_high)
     }
 
