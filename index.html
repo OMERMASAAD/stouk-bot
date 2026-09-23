@@ -116,7 +116,7 @@ function drawChart(x){
  svg+='<line x1="'+L+'" y1="'+highY+'" x2="'+(W-R)+'" y2="'+highY+'" stroke="#4cdaa0" stroke-dasharray="8 4"/><text x="'+(W-R-4)+'" y="'+(highY-5)+'" text-anchor="end" fill="#4cdaa0" font-size="12">هدف 100%</text>';
  for(let i=0;i<data.length;i++){const d=data[i],x0=sx(i),yo=sy(d.open),yc=sy(d.close),yh=sy(d.high),yl=sy(d.low);svg+='<line x1="'+x0+'" y1="'+yh+'" x2="'+x0+'" y2="'+yl+'" stroke="#9bb0c9"/><line x1="'+x0+'" y1="'+yo+'" x2="'+x0+'" y2="'+yc+'" stroke="'+(d.close>=d.open?'#4cdaa0':'#f28b82')+'" stroke-width="5"/>'}
  svg+='<text x="'+L+'" y="'+(H-10)+'" fill="#91a0b8" font-size="11">'+data[0].date+'</text><text x="'+(W-R)+'" y="'+(H-10)+'" text-anchor="end" fill="#91a0b8" font-size="11">'+data[data.length-1].date+'</text></svg>';
- document.getElementById('chart').innerHTML='<div class="muted" style="padding:5px">حركة آخر 45 جلسة — الدعم / الوقف / القمة المستهدفة</div>'+svg;
+ document.getElementById('chart').innerHTML='<div class="muted" style="padding:5px">حركة آخر 30 جلسة — الدعم / الوقف / القمة المستهدفة</div>'+svg;
 }
 loadData();
 </script>
