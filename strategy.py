@@ -5,7 +5,7 @@ import numpy as np
 MIN_PRICE, MAX_PRICE = 1.0, 5.0
 MAX_WATCH_DAYS = 20
 MIN_PRIOR_RALLY_PCT = 100.0
-MIN_DRAWDOWN_PCT = 30.0   # لا يدخل الرادار قبل هبوط 30% على الأقل من القمة السابقة
+MIN_DRAWDOWN_PCT = 50.0   # حد أدنى تقريبي للهبوط؛ والشرط الفعلي هو العودة لمنطقة الدعم قبل الصعود
 SUPPORT_TOL = 0.08
 BREAK_TOL = 0.03
 MIN_SUPPORT_SESSIONS = 3
