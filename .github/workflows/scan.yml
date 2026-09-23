@@ -1,8 +1,16 @@
 name: Stock Radar
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - "strategy.py"
+      - "scanner.py"
   schedule:
-    - cron: "30 22 * * 1-5"
+    # فحص 4 مرات في أيام التداول + حفظ قائمة المتابعة.
+    - cron: "0 12 * * 1-5"
+    - cron: "0 16 * * 1-5"
+    - cron: "0 20 * * 1-5"
+    - cron: "0 0 * * 2-6"
 jobs:
   scan:
     runs-on: ubuntu-latest
@@ -19,6 +27,6 @@ jobs:
         run: |
           git config user.name "stock-radar"
           git config user.email "actions@github.com"
-          git add data.json
+          git add data.json watchlist.json
           git diff --cached --quiet || git commit -m "تحديث بيانات الرادار"
           git push
