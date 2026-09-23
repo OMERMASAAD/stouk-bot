@@ -136,6 +136,10 @@ def readiness_score(drawdown_pct, near_support, stable, tech, ready):
         score += 20
     if stable >= MIN_SUPPORT_SESSIONS:
         score += 20
+    elif stable >= 2:
+        score += 13
+    elif stable >= 1:
+        score += 7
     if tech["rsi_oversold_recent"]:
         score += 10
     if tech["rsi_recovery"]:
@@ -159,9 +163,9 @@ def evaluate_event(d, event):
     prior_high = float(event["high"])
 
     # بوابة دخول الرادار:
-    # 1) هبوط فعلي لا يقل عن 30% من القمة السابقة.
+    # 1) هبوط فعلي لا يقل عن 50% من القمة السابقة.
     # 2) عودة إلى منطقة الدعم.
-    # 3) ثبات عند الدعم 3 جلسات متتالية على الأقل.
+    # 3) بعد الوصول للدعم تبدأ المتابعة، و3 جلسات ثبات ترفع المرحلة.
     drawdown_pct = ((prior_high - price) / prior_high * 100) if prior_high > 0 else 0
     if drawdown_pct < MIN_DRAWDOWN_PCT:
         return None
@@ -171,17 +175,24 @@ def evaluate_event(d, event):
 
     tests, stable = support_stats(d, base)
     near_support = base*(1-SUPPORT_TOL) <= price <= base*(1+SUPPORT_TOL)
-    support_ready = near_support and stable >= MIN_SUPPORT_SESSIONS
-    if not support_ready:
+
+    # لا يدخل الرادار إلا بعد العودة الفعلية إلى منطقة الدعم.
+    # بعد أول اختبار للدعم يبدأ "قيد المراقبة"، وبعد 3 جلسات ثبات ينتقل إلى "شبه جاهز".
+    if not near_support or tests < 1:
         return None
 
     tech = technicals(d)
     recovery_core = tech["rsi_oversold_recent"] and tech["rsi_recovery"] and tech["macd_improving"]
     positive_stage = tech["positive_confirmations"] >= 3
-    ready = recovery_core and positive_stage
-    semi = not ready
+    ready = stable >= MIN_SUPPORT_SESSIONS and recovery_core and positive_stage
+    semi = stable >= MIN_SUPPORT_SESSIONS and not ready
 
-    status = "جاهز للدخول" if ready else "شبه جاهز"
+    if ready:
+        status = "جاهز للدخول"
+    elif semi:
+        status = "شبه جاهز"
+    else:
+        status = "قيد المراقبة"
     score = readiness_score(drawdown_pct, near_support, stable, tech, ready)
 
     return {
