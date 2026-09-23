@@ -45,7 +45,7 @@ def find_base_before(d, end_idx):
     rally = (high - base) / base * 100
     if rally < MIN_PRIOR_RALLY_PCT:
         return None
-    return {"base": base, "base_idx": d.index.get_loc(base_idx), "high": high,
+    return {"base": base, "base_idx": base_idx, "high": high,
             "high_idx": end_idx, "rally_pct": rally}
 
 def find_surge_events(d):
@@ -55,7 +55,7 @@ def find_surge_events(d):
     closes = d["Close"].astype(float)
     changes = closes.pct_change() * 100
     start = max(1, len(d) - (MAX_WATCH_DAYS + 1))
-    for i in range(start, len(d) - 1):
+    for i in range(start, len(d)):
         price = float(closes.iloc[i])
         if not MIN_PRICE <= price <= MAX_PRICE or float(changes.iloc[i]) < SURGE_PCT:
             continue
