@@ -89,7 +89,7 @@ def technicals(d):
     rsi_recovery = bool(r > 30 and r > r_prev)
     macd_improving = bool(mh_now > mh_prev)
     positive = sum([
-        rsi_recovery, rsi_stable, macd_improving,
+        rsi_recovery, macd_improving,
         bool(close.iloc[-1] > e20.iloc[-1] and e20.iloc[-1] > e20.iloc[-4]),
         bool(vol_ratio >= 1.2), bool(close.iloc[-1] > e50.iloc[-1])
     ])
@@ -180,6 +180,7 @@ def evaluate_event(d, event):
     watch_stage = (
         drawdown_pct >= MIN_DRAWDOWN_PCT
         and support_distance_pct <= WATCH_SUPPORT_DISTANCE
+        and stable >= 1
         and tech["rsi_oversold_recent"]
     )
 
