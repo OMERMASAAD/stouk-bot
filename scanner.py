@@ -114,10 +114,10 @@ with ThreadPoolExecutor(max_workers=8) as pool:
             ticker, d, h4, discovered, event = result
             market_data[ticker] = (d, h4)
 
-            if discovered and event:
+            if event:
                 key = (ticker, event["event_date"])
                 if key not in old_keys:
-                    item = dict(discovered)
+                    item = dict(discovered) if discovered else {}
                     item["ticker"] = ticker
                     item["event_date"] = event["event_date"]
                     item["event_price"] = round(event["event_price"], 4)
