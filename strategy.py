@@ -5,7 +5,10 @@ import numpy as np
 MIN_PRICE, MAX_PRICE = 1.0, 5.0
 MAX_WATCH_DAYS = 20
 MIN_PRIOR_RALLY_PCT = 100.0
-MIN_DRAWDOWN_PCT = 50.0   # حد أدنى تقريبي للهبوط؛ والشرط الفعلي هو العودة لمنطقة الدعم قبل الصعود
+MIN_DRAWDOWN_PCT = 50.0   # شرط الجاهزية الكاملة
+SEMI_DRAWDOWN_PCT = 40.0   # بداية مرحلة شبه جاهز
+SEMI_SUPPORT_DISTANCE = 0.30  # حتى 30% من الدعم الأصلي، للمتابعة المبكرة
+
 SUPPORT_TOL = 0.08
 BREAK_TOL = 0.03
 MIN_SUPPORT_SESSIONS = 3
@@ -164,24 +167,40 @@ def evaluate_event(d, event):
         return None
 
     tests, stable = support_stats(d, base)
-    near_support = base*(1-SUPPORT_TOL) <= price <= base*(1+SUPPORT_TOL)
+    support_distance_pct = abs(price - base) / base if base > 0 else 99
+    near_support = support_distance_pct <= SUPPORT_TOL
 
     tech = technicals(d)
-    recovery_core = tech["rsi_oversold_recent"] and tech["rsi_recovery"] and tech["macd_improving"]
+    recovery_core = (
+        tech["rsi_oversold_recent"]
+        and tech["rsi_recovery"]
+        and tech["macd_improving"]
+    )
     positive_stage = tech["positive_confirmations"] >= 3
 
     support_ready = near_support and stable >= MIN_SUPPORT_SESSIONS
+
+    # الجاهز يبقى بوابة صارمة حتى لا نعطي إشارات دخول مبكرة.
     ready = (
         drawdown_pct >= MIN_DRAWDOWN_PCT
         and support_ready
         and recovery_core
         and positive_stage
     )
-    semi = (
-        drawdown_pct >= MIN_DRAWDOWN_PCT
-        and (support_ready or near_support or tests >= 1)
-        and not ready
+
+    # شبه جاهز = مرشح اقترب فعلياً من منطقة الدعم وبدأ تظهر عليه
+    # علامات تكوين القاع/الاستقرار، لكنه لم يحقق بوابة الجاهزية الكاملة.
+    semi_signal = (
+        drawdown_pct >= SEMI_DRAWDOWN_PCT
+        and support_distance_pct <= SEMI_SUPPORT_DISTANCE
+        and (
+            stable >= 2
+            or tech["rsi_oversold_recent"]
+            or tech["macd_improving"]
+            or tech["positive_confirmations"] >= 2
+        )
     )
+    semi = semi_signal and not ready
 
     if ready:
         status = "جاهز للدخول"
@@ -192,11 +211,9 @@ def evaluate_event(d, event):
 
     missing = []
     if drawdown_pct < MIN_DRAWDOWN_PCT:
-        missing.append("الهبوط من القمة أقل من 50%")
+        missing.append("الهبوط المطلوب للجاهزية الكاملة لم يصل إلى 50%")
     if not near_support:
-        missing.append("لم يعد السعر إلى منطقة الدعم")
-    if tests < 1:
-        missing.append("لم يختبر الدعم بعد")
+        missing.append("السعر ليس داخل منطقة الدعم ±8%")
     if stable < MIN_SUPPORT_SESSIONS:
         missing.append("ثبات الدعم أقل من 3 جلسات")
     if not tech["rsi_oversold_recent"]:
@@ -223,7 +240,8 @@ def evaluate_event(d, event):
         "support": {
             "tests": tests,
             "stable_sessions": stable,
-            "near_support": near_support
+            "near_support": near_support,
+            "distance_pct": round(support_distance_pct * 100, 2)
         },
         "technical": tech,
         "readiness_score": score,
