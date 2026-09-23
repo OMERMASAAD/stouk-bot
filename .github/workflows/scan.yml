@@ -11,6 +11,10 @@ on:
     - cron: "0 16 * * 1-5"
     - cron: "0 20 * * 1-5"
     - cron: "0 0 * * 2-6"
+concurrency:
+  group: stock-radar-scan
+  cancel-in-progress: true
+
 jobs:
   scan:
     runs-on: ubuntu-latest
