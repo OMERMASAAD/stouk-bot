@@ -1,16 +1,8 @@
 name: Stock Radar
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "strategy.py"
-      - "scanner.py"
   schedule:
-    # 4 مرات يوميًا بتوقيت UTC
-    - cron: "0 12 * * 1-5"
-    - cron: "0 16 * * 1-5"
-    - cron: "0 20 * * 1-5"
-    - cron: "0 0 * * 2-6"
+    - cron: "30 22 * * 1-5"
 jobs:
   scan:
     runs-on: ubuntu-latest
