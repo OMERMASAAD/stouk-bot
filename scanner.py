@@ -7,6 +7,7 @@ from strategy import analyze, chart_data, find_surge_event, evaluate_event
 
 WATCHLIST_FILE = "watchlist.json"
 
+
 def universe():
     out = set()
     for url, col in [
@@ -21,12 +22,14 @@ def universe():
             print("universe error:", e)
     return sorted(x for x in out if x.isalpha() and len(x) <= 5)
 
+
 def load_watchlist():
     try:
         with open(WATCHLIST_FILE, "r", encoding="utf-8") as f:
             return json.load(f).get("items", [])
     except Exception:
         return []
+
 
 def save_watchlist(items):
     with open(WATCHLIST_FILE, "w", encoding="utf-8") as f:
@@ -35,47 +38,97 @@ def save_watchlist(items):
             "items": items
         }, f, ensure_ascii=False, indent=2)
 
-def fetch(t):
-    d = yf.download(t, period="30d", interval="1d", auto_adjust=False,
-                    progress=False, threads=False)
+
+def fetch(ticker):
+    d = yf.download(
+        ticker, period="30d", interval="1d",
+        auto_adjust=False, progress=False, threads=False
+    )
     if isinstance(d.columns, pd.MultiIndex):
         d.columns = d.columns.get_level_values(0)
-    return d.dropna(subset=["Open", "High", "Low", "Close", "Volume"])
+    needed = ["Open", "High", "Low", "Close", "Volume"]
+    return d.dropna(subset=needed)
 
-def fetch_and_analyze(t):
+
+def scan_one(ticker):
     try:
-        d = fetch(t)
-        r = analyze(d)
-        if r:
-            r["ticker"] = t
-            r["chart"] = chart_data(d, 30)
-            return r
+        d = fetch(ticker)
+        if d.empty:
+            return None
+        result = analyze(d)
+        event = find_surge_event(d)
+        return ticker, d, result, event
     except Exception as e:
-        print("scan error", t, e)
-    return None
+        print("scan error", ticker, e)
+        return None
+
+
+def stored_event(item, d):
+    """Rebuild the exact stored Day-0 event from its persistent date/base/high."""
+    event_date = str(item.get("event_date", ""))
+    matches = [i for i, idx in enumerate(d.index) if str(idx.date()) == event_date]
+    if not matches:
+        return None
+
+    idx = matches[-1]
+    base = float(item.get("prior_base", item.get("base", 0)))
+    high = float(item.get("prior_high", item.get("high", 0)))
+    event_price = float(item.get("event_price", d["Close"].iloc[idx]))
+    rally = float(item.get("prior_rally_pct", item.get("surge_pct", 0)))
+
+    if base <= 0 or high <= 0:
+        return None
+
+    return {
+        "event_idx": idx,
+        "event_date": event_date,
+        "event_price": event_price,
+        "base": base,
+        "base_idx": max(0, idx - 19),
+        "high": high,
+        "high_idx": idx,
+        "rally_pct": rally,
+    }
+
 
 symbols = universe()
 old_watch = load_watchlist()
-watch_keys = {(x.get("ticker"), x.get("event_date")) for x in old_watch}
+old_keys = {(x.get("ticker"), x.get("event_date")) for x in old_watch}
+
+# One download per ticker per daily run. The same data is reused for discovery
+# and for persistent-watchlist evaluation.
+market_data = {}
 new_watch = []
 
-rows = []
-completed = 0
 with ThreadPoolExecutor(max_workers=8) as pool:
-    futures = {pool.submit(fetch_and_analyze, t): t for t in symbols}
+    futures = {pool.submit(scan_one, t): t for t in symbols}
+    completed = 0
+
     for future in as_completed(futures):
         completed += 1
         result = future.result()
         if result:
-            rows.append(result)
-            key = (result["ticker"], result["event_date"])
-            if key not in watch_keys:
-                new_watch.append(result)
+            ticker, d, discovered, event = result
+            market_data[ticker] = d
+
+            if discovered and event:
+                key = (ticker, event["event_date"])
+                if key not in old_keys:
+                    item = dict(discovered)
+                    item["ticker"] = ticker
+                    item["event_date"] = event["event_date"]
+                    item["event_price"] = round(event["event_price"], 4)
+                    item["prior_base"] = round(event["base"], 4)
+                    item["prior_high"] = round(event["high"], 4)
+                    item["prior_rally_pct"] = round(event["rally_pct"], 2)
+                    item["discovered_at"] = datetime.now(timezone.utc).isoformat()
+                    new_watch.append(item)
+
         if completed % 100 == 0:
             print("scanned", completed, "of", len(symbols))
 
-# Preserve candidates discovered on previous days and add newly discovered Day-0 events.
-# Each candidate expires automatically after Day 20.
+# Merge by exact (ticker, Day-0 date). Existing events are never replaced by
+# a newer rally in the same ticker; each event gets its own 20-day lifetime.
 combined = {}
 for item in old_watch + new_watch:
     key = (item.get("ticker"), item.get("event_date"))
@@ -83,40 +136,58 @@ for item in old_watch + new_watch:
         combined[key] = item
 
 active_watch = []
-for item in combined.values():
+for key, item in combined.items():
+    ticker = item.get("ticker")
+    d = market_data.get(ticker)
+
     try:
-        d = fetch(item["ticker"])
-        event = find_surge_event(d)
-        if not event or str(event["event_date"]) != str(item["event_date"]):
+        if d is None or d.empty:
             continue
+
+        event = stored_event(item, d)
+        if not event:
+            continue
+
         evaluated = evaluate_event(d, event)
         if evaluated is None:
             continue
-        evaluated["ticker"] = item["ticker"]
+
+        evaluated["ticker"] = ticker
+        evaluated["discovered_at"] = item.get("discovered_at")
         evaluated["chart"] = chart_data(d, 30)
+
+        # Preserve the first time this exact event became ready.
+        if item.get("ready_since"):
+            evaluated["ready_since"] = item["ready_since"]
+        elif evaluated["status"] == "جاهز للدخول":
+            evaluated["ready_since"] = datetime.now(timezone.utc).isoformat()
+
         active_watch.append(evaluated)
+
     except Exception as e:
-        print("watch error", item.get("ticker"), e)
+        print("watch error", ticker, e)
 
 save_watchlist(active_watch)
 
-# Dashboard shows only active 20-day candidates.
-rows = active_watch
 order = {"جاهز للدخول": 3, "شبه جاهز": 2, "قيد المراقبة": 1}
-rows.sort(key=lambda x: (-order.get(x["status"], 0),
-                         -x["technical"]["positive_confirmations"],
-                         -x["surge_pct"]))
+active_watch.sort(key=lambda x: (
+    -order.get(x["status"], 0),
+    -x["technical"]["positive_confirmations"],
+    -x["surge_pct"]
+))
 
 payload = {
     "updated_at": datetime.now(timezone.utc).isoformat(),
-    "count": len(rows),
+    "count": len(active_watch),
     "stats": {
-        "ready": sum(x["status"] == "جاهز للدخول" for x in rows),
-        "semi_ready": sum(x["status"] == "شبه جاهز" for x in rows),
-        "watching": sum(x["status"] == "قيد المراقبة" for x in rows)
+        "ready": sum(x["status"] == "جاهز للدخول" for x in active_watch),
+        "semi_ready": sum(x["status"] == "شبه جاهز" for x in active_watch),
+        "watching": sum(x["status"] == "قيد المراقبة" for x in active_watch)
     },
-    "signals": rows
+    "signals": active_watch
 }
+
 with open("data.json", "w", encoding="utf-8") as f:
     json.dump(payload, f, ensure_ascii=False, indent=2)
-print("active watchlist", len(rows), "new events", len(new_watch))
+
+print("active watchlist", len(active_watch), "new events", len(new_watch))
