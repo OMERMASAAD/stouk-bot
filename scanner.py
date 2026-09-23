@@ -3,7 +3,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 import pandas as pd
 import yfinance as yf
-from strategy import analyze, chart_data, find_surge_event, evaluate_event
+from strategy import analyze, chart_data, find_surge_event, evaluate_event, technicals
 
 WATCHLIST_FILE = "watchlist.json"
 
@@ -39,9 +39,10 @@ def save_watchlist(items):
         }, f, ensure_ascii=False, indent=2)
 
 
-def fetch(ticker):
+def fetch(ticker, interval="1d"):
+    period = "30d" if interval == "1d" else "60d"
     d = yf.download(
-        ticker, period="30d", interval="1d",
+        ticker, period=period, interval=interval,
         auto_adjust=False, progress=False, threads=False
     )
     if isinstance(d.columns, pd.MultiIndex):
@@ -52,12 +53,14 @@ def fetch(ticker):
 
 def scan_one(ticker):
     try:
-        d = fetch(ticker)
+        # Daily candles discover the prior rally/base event; 4-hour candles refine the current recovery.
+        d = fetch(ticker, "1d")
+        h4 = fetch(ticker, "4h")
         if d.empty:
             return None
         result = analyze(d)
         event = find_surge_event(d)
-        return ticker, d, result, event
+        return ticker, d, h4, result, event
     except Exception as e:
         print("scan error", ticker, e)
         return None
@@ -108,8 +111,8 @@ with ThreadPoolExecutor(max_workers=8) as pool:
         completed += 1
         result = future.result()
         if result:
-            ticker, d, discovered, event = result
-            market_data[ticker] = d
+            ticker, d, h4, discovered, event = result
+            market_data[ticker] = (d, h4)
 
             if discovered and event:
                 key = (ticker, event["event_date"])
@@ -138,10 +141,13 @@ for item in old_watch + new_watch:
 active_watch = []
 for key, item in combined.items():
     ticker = item.get("ticker")
-    d = market_data.get(ticker)
+    md = market_data.get(ticker)
 
     try:
-        if d is None or d.empty:
+        if md is None:
+            continue
+        d, h4 = md
+        if d.empty:
             continue
 
         event = stored_event(item, d)
@@ -152,6 +158,9 @@ for key, item in combined.items():
         if evaluated is None:
             continue
 
+        # 4-hour technical snapshot is informational and does not override the daily entry gate.
+        if h4 is not None and not h4.empty:
+            evaluated["technical_4h"] = technicals(h4.tail(30))
         evaluated["ticker"] = ticker
         evaluated["discovered_at"] = item.get("discovered_at")
         evaluated["chart"] = chart_data(d, 30)
