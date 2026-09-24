@@ -6,7 +6,8 @@
 المنطق:
   قيد المتابعة : سعر $1-$4 + Float<=10M + صعود سابق + هبوط + عودة للقاع + RSI<30
   شبه جاهز     : ظهور علامات تحسن (نقاط >= 45) دون اشتراط كلها
-  جاهز فنيًا   : تأكيد التعافي (نقاط >= 75 + استعادة EMA20)
+  جاهز فنيًا   : تأكيد التعافي (نقاط >= 75)
+الدخول عند القاع بعد التعافي: إن ارتفع السعر أكثر من +20% فوق القاع يخرج السهم (فات الدخول).
 """
 import numpy as np
 import pandas as pd
@@ -20,6 +21,7 @@ MIN_DRAWDOWN_PCT = 30.0                # هبوط واضح من القمة
 ZONE_TOL = 0.10                        # منطقة القاع = القاع ± 10%
 NEAR_BASE = 0.15                       # "عاد إلى القاع" = لمس منطقة حتى +15% فوق القاع
 BREAK_HARD = 0.15                      # كسر قوي للدعم
+MAX_ENTRY_EXT = 0.20                   # الدخول عند القاع: إن ارتفع السعر أكثر من +20% فوق القاع فقد فات الدخول
 STOP_BUFFER = 0.03                     # الوقف أسفل القاع بـ 3%
 ANALYSIS_DAYS = 30
 
@@ -183,11 +185,11 @@ def make_plan(d, base, prior_high, bottom_low=None):
     resist = []
     for i in _pivot_highs(highs, lo, n - 2):
         h = float(highs[i])
-        if h > price * 1.03 and all(abs(h - r) / r > 0.04 for r in resist):
+        if h > price * 1.05 and all(abs(h - r) / r > 0.04 for r in resist):
             resist.append(h)
     resist.sort()
 
-    final = float(prior_high) if prior_high > price * 1.03 else None
+    final = float(prior_high) if prior_high > price * 1.05 else None
     if final is not None:
         near = [r for r in resist if abs(r - final) / final > 0.04 and r < final][:2]
         targets = near + [final]
@@ -202,8 +204,9 @@ def make_plan(d, base, prior_high, bottom_low=None):
     detail = [{"price": round(t, 4), "gain_pct": round((t - price) / price * 100, 1)} for t in targets]
     return {
         "entry": round(price, 4),
-        "entry_low": round(base * 0.98, 4),
-        "entry_high": round(base * 1.05, 4),
+        # منطقة الدخول: من القاع الفعلي الذي تكوّن حتى السعر الحالي (قرب القاع بعد التعافي)
+        "entry_low": round(float(bottom_low) if bottom_low is not None else base, 4),
+        "entry_high": round(price, 4),
         "stop": round(stop, 4),
         "stop_pct": round((stop - price) / price * 100, 1),
         "targets": [t["price"] for t in detail],
@@ -219,8 +222,8 @@ def readiness_points(sig):
     return sum(pts.values()), pts
 
 
-def stage_and_score(raw, ema20_reclaim):
-    if raw >= 75 and ema20_reclaim:
+def stage_and_score(raw):
+    if raw >= 75:
         stage = STAGE_READY
     elif raw >= 45:
         stage = STAGE_SEMI
@@ -246,6 +249,10 @@ def evaluate_event(d, event, float_shares=None):
 
     base = float(event["base"])
     prior_high = float(event["high"])
+    # الفكرة: الدخول عند القاع بعد التعافي من الهبوط، لا بعد أن يصعد السهم.
+    # إذا ابتعد السعر أكثر من MAX_ENTRY_EXT فوق القاع فقد فات وقت الدخول ويخرج من الرادار.
+    if price > base * (1 + MAX_ENTRY_EXT):
+        return None
     drawdown_pct = (prior_high - price) / prior_high * 100 if prior_high > 0 else 0.0
 
     ev = int(event["event_idx"])
@@ -320,7 +327,7 @@ def evaluate_event(d, event, float_shares=None):
         "lh_break": lh_break,
     }
     raw, pts = readiness_points(sig)
-    status, score = stage_and_score(raw, ema20_reclaim)
+    status, score = stage_and_score(raw)
     ready = status == STAGE_READY
     semi = status == STAGE_SEMI
 

@@ -60,13 +60,13 @@ def case2():
 
 
 def case3():
-    """استعادة EMA20 + VWAP + فوليوم جيد + كسر Lower High => جاهز فنيًا"""
+    """استعادة EMA20 + VWAP + فوليوم جيد + كسر Lower High قرب القاع => جاهز فنيًا"""
     rng = np.random.default_rng(3)
     flat = list(2.0 * (1 + rng.normal(0, 0.004, 24)))
-    c = (flat + seg(2.0, 4.2, 2) + seg(4.2, 3.9, 14)
-         + seg(3.9, 2.6, 2) + seg(2.6, 2.9, 1)      # Lower High عند ~2.9
-         + seg(2.9, 1.9, 3)                          # القاع (RSI<30)
-         + seg(1.9, 2.3, 2) + seg(2.3, 3.85, 4))     # تعافٍ بفوليوم قوي
+    c = (flat + seg(2.0, 4.2, 2) + seg(4.2, 2.4, 12) + seg(2.4, 2.2, 12)
+         + seg(2.2, 2.25, 1)                         # Lower High عند ~2.25
+         + seg(2.25, 1.95, 3)                        # القاع (RSI<30)
+         + seg(1.95, 2.05, 1) + seg(2.05, 2.34, 3))  # تعافٍ بفوليوم قوي، ما زال قرب القاع
     vols = [1_000_000] * (len(c) - 4) + [900_000, 2_500_000, 2_800_000, 3_000_000]
     d = build(c, vols)
     r = st.analyze(d)
@@ -75,7 +75,9 @@ def case3():
     lo, hi = st.STAGE_BANDS[st.STAGE_READY]
     assert lo <= r["readiness_score"] <= hi
     p = r["plan"]
-    assert p["stop"] < p["entry"] and all(t["gain_pct"] > 0 for t in p["targets_detail"])
+    assert p["stop"] < p["entry_low"] <= p["entry_high"], p      # الوقف أسفل القاع، الدخول عند القاع
+    assert r["support"]["distance_pct"] <= 20, r["support"]
+    assert p["targets_detail"] and all(t["gain_pct"] > 0 for t in p["targets_detail"])
     return r
 
 
@@ -131,6 +133,12 @@ def case9_float():
     assert st.analyze(d, float_shares=None) is not None
 
 
+def case11_missed_entry():
+    """السهم صعد بعد التعافي (+46% فوق القاع) => فات الدخول، خارج الرادار (مثل PFAI)"""
+    c = base_series(decline_to=2.0) + seg(2.0, 2.1, 2) + seg(2.1, 3.0, 6)
+    assert st.analyze(build(c)) is None
+
+
 def case10_real_breakdown():
     """كسر قوي واستمرار القيعان => إلغاء setup"""
     c = base_series(decline_to=2.05) + seg(2.05, 1.6, 4)
@@ -138,7 +146,7 @@ def case10_real_breakdown():
 
 
 if __name__ == "__main__":
-    tests = [case1, case2, case3, case4, case5, case6, case7, case8, case9_float, case10_real_breakdown]
+    tests = [case1, case2, case3, case4, case5, case6, case7, case8, case9_float, case10_real_breakdown, case11_missed_entry]
     failed = 0
     for t in tests:
         try:

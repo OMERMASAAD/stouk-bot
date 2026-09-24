@@ -308,7 +308,7 @@ function planHtml(x){
   const det=p.targets_detail||[];
   const labels=['الهدف الأول','الهدف الثاني','الهدف النهائي'];
   const tg=det.map((t,i)=>'<div class="planbox"><span>'+(det.length===1?'الهدف':(i===det.length-1&&det.length>1?'الهدف النهائي':labels[i]))+'</span><b class="target">'+money(t.price)+'</b><small class="ok">'+pctFmt(t.gain_pct)+' من الدخول</small></div>').join('');
-  return '<div class="plan"><div class="planbox"><span>الدخول المقترح</span><b class="entry">'+money(p.entry)+'</b><small class="muted">السعر الحالي</small></div>'+
+  return '<div class="plan"><div class="planbox"><span>منطقة الدخول (عند القاع)</span><b class="entry">'+money(p.entry_low)+' – '+money(p.entry_high)+'</b><small class="muted">الربح محسوب من '+money(p.entry)+' (السعر الحالي)</small></div>'+
   '<div class="planbox"><span>وقف الخسارة (أسفل القاع)</span><b class="stop">'+money(p.stop)+'</b><small class="no">'+pctFmt(p.stop_pct)+' من الدخول</small></div>'+
   (tg||'<div class="planbox"><span>الأهداف</span><b class="muted">لا مقاومات كافية</b></div>')+'</div>';
 }
@@ -328,7 +328,7 @@ function showStock(ticker,date){
   '<div class="section"><h3>📰 الأحداث والأخبار (Yahoo)</h3>'+newsHtml(x)+'</div>'+
   '<div class="section"><h3>🎯 درجة الجاهزية — '+esc(x.readiness_score)+'/100</h3><div class="checks">'+checks+'</div>'+(missing?'<div class="note"><b>ما ينقص:</b><ul style="margin:6px 0 0;padding-right:18px">'+missing+'</ul></div>':'')+'</div>'+
   '<div class="section"><h3>📊 المؤشرات الفنية</h3><div class="info-grid"><div class="info"><span>RSI</span><b>'+num(t.rsi)+'</b></div><div class="info"><span>RSI السابق</span><b>'+num(t.rsi_prev)+'</b></div><div class="info"><span>EMA 20</span><b>'+money(t.ema20)+'</b></div><div class="info"><span>EMA 50</span><b>'+money(t.ema50)+'</b></div><div class="info"><span>VWAP (مرتكز من القاع)</span><b>'+money(t.vwap)+'</b></div><div class="info"><span>آخر Lower High</span><b>'+money(t.lower_high_level)+'</b></div><div class="info"><span>MACD Histogram</span><b>'+esc(t.macd_hist)+'</b></div><div class="info"><span>نسبة الحجم/20</span><b>'+num(t.rvol??t.volume_ratio,2)+'x</b></div></div></div>'+
-  '<div class="chart" id="chart"></div><div class="note">الرادار يكتشف الفرصة مبكرًا: المتابعة عند الوصول للقاع مع تشبع بيعي، ثم شبه جاهز عند ظهور علامات التحسن، ثم جاهز فنيًا عند تأكيد التعافي. الأخبار من Yahoo فقط (عناوين + موعد النتائج). الخطة الفنية ليست ضماناً للنتيجة.</div>';
+  '<div class="chart" id="chart"></div><div class="note">الرادار يكتشف الفرصة مبكرًا والدخول عند القاع بعد التعافي من الهبوط (إن ارتفع السعر أكثر من +20% فوق القاع يخرج السهم لأن الدخول فات): المتابعة عند الوصول للقاع مع تشبع بيعي، ثم شبه جاهز عند ظهور علامات التحسن، ثم جاهز فنيًا عند تأكيد التعافي. الأخبار من Yahoo فقط (عناوين + موعد النتائج). الخطة الفنية ليست ضماناً للنتيجة.</div>';
   drawChart(x);
 }
 function drawChart(x){
