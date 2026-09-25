@@ -110,9 +110,9 @@ rsiOk   = rsiVal > rsiMin and rsiVal < rsiTrap
 macdBull = macdLine > signalLine and histLine > histLine[1]
 
 // الانضغاط: عرض بولنجر كنسبة مئوية من تاريخه
-basis  = ta.sma(close, squeezeLen)
-dev    = squeezeLen * ta.stdev(close, squeezeLen)
-bbw    = (4 * dev) / basis * 100
+basis = ta.sma(close, squeezeLen)
+dev   = ta.stdev(close, squeezeLen)              // الانحراف المعياري
+bbw   = basis != 0 ? (4 * dev) / basis * 100 : 0.0   // عرض بولنجر % (نطاقان = 4 انحرافات)
 bbwRank = ta.percentrank(bbw, squeezeLen)          // يُحسب على كل شمعة (أأمن في Pine)
 bbwPct  = bar_index > squeezeLen ? bbwRank : 100.0
 isSqueeze = bbwPct <= squeezePct
@@ -258,8 +258,8 @@ if showDash and barstate.islast
     if not dashAlive
         dash := table.new(position.top_right, 2, 9, bgcolor = C_BG, border_width = 1, border_color = C_BORDER, frame_color = color.new(C_DEEP, 55), frame_width = 1)
         dashAlive := true
+        table.merge_cells(dash, 0, 0, 1, 0)
     table.set_position(dash, dashPosFinal)
-    table.merge_cells(dash, 0, 0, 1, 0)
 
     table.cell(dash, 0, 0, "الانضغاط عند المحاور   " + timeframe.period + "   " + syminfo.ticker, bgcolor = C_PANEL, text_color = C_TEXT  , text_size = size.small)
     table.cell(dash, 1, 0, ""            , bgcolor = C_PANEL)
