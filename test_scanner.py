@@ -16,7 +16,7 @@ import pandas as pd
 
 import scanner
 import strategy as st
-from test_strategy import NOW, READY_RATES, WATCH_RATES, decline_setup
+from test_strategy import READY_RATES, WATCH_RATES, decline_setup
 
 
 def _news(now=None):
@@ -24,7 +24,10 @@ def _news(now=None):
 
 
 def build_fake(tickers, floats, data=None):
-    """يجهّز دوالًا وهمية بدل Yahoo (نداءات الشبكة)."""
+    """يجهّز دوالًا وهمية بدل Yahoo (نداءات الشبكة).
+
+    floats: {ticker: value}  → Float دقيق، أو dict {"value","exact","source",...} للتحكم الكامل.
+    """
     frames = data or {}
 
     def fake_fetch(ticker, interval="1d"):
@@ -36,8 +39,16 @@ def build_fake(tickers, floats, data=None):
     def fake_universe():
         return list(tickers)
 
-    def fake_float(ticker):
-        return floats.get(ticker)
+    def fake_float(ticker, mode=None):
+        v = floats.get(ticker)
+        if isinstance(v, dict):
+            return v
+        if v is None:
+            # حد أعلى من الأسهم المُصدَرة فقط (كما تفعل SEC) — يُرفض في الوضع الصارم
+            return {"value": None, "exact": False, "source": None,
+                    "float_shares": None, "shares_outstanding": None}
+        return {"value": int(v), "exact": True, "source": "yahoo_float",
+                "float_shares": int(v), "shares_outstanding": int(v)}
 
     def fake_news(ticker, now=None):
         return _news(now)
@@ -45,21 +56,23 @@ def build_fake(tickers, floats, data=None):
     return fake_fetch, fake_universe, fake_float, fake_news
 
 
-def run_scanner(tmp, tickers, floats, data=None, patch_news=None):
+def run_scanner(tmp, tickers, floats, data=None, patch_news=None, float_mode="auto"):
     """يشغّل main() على رموز محددة ويكتب في مجلد مؤقت."""
     scanner.DATA_FILE = os.path.join(tmp, "data.json")
     scanner.WATCHLIST_FILE = os.path.join(tmp, "watchlist.json")
     fetch, universe, getf, getn = build_fake(tickers, floats, data)
     scanner.fetch = fetch
     scanner.universe = universe
-    scanner.get_float = getf
+    scanner.get_float_info = getf
     scanner.fetch_news = patch_news or getn
-    argv = sys.argv
+    old_mode, argv = scanner.FLOAT_MODE, sys.argv
+    scanner.FLOAT_MODE = float_mode
     sys.argv = ["scanner.py", "--tickers", ",".join(tickers)]
     try:
         scanner.main()
     finally:
         sys.argv = argv
+        scanner.FLOAT_MODE = old_mode
     with open(scanner.DATA_FILE, encoding="utf-8") as f:
         return json.load(f)
 
@@ -147,9 +160,41 @@ def case04_watch_and_ready_sorted():
         shutil.rmtree(tmp, ignore_errors=True)
 
 
+def case05_float_upper_bound_mode():
+    """عند غياب Float الدقيق: يُقبل الحد الأعلى (أسهم مُصدَرة ≤ 10M) في الوضع auto ويُرفض في strict."""
+    tmp = tempfile.mkdtemp()
+    try:
+        d, h1 = decline_setup(READY_RATES, rec_bars=6, rec_rate=0.022)
+        proxy = {"value": 6_000_000, "exact": False, "source": "sec_edgar",
+                 "float_shares": None, "shares_outstanding": 6_000_000}
+        payload = run_scanner(tmp, ["SECY"], {"SECY": proxy}, {"SECY": (d, h1)}, float_mode="auto")
+        assert payload["count"] == 1, payload["count"]
+        sig = payload["signals"][0]
+        assert sig["float"] == "≤ 6.0M" and sig["float_exact"] is False, sig["float"]
+        assert sig["float_source"] == "sec_edgar"
+        assert payload["diagnostics"]["float_sources"] == {"sec_edgar": 1}
+        assert payload["diagnostics"]["float_exact"] == 0
+
+        big = {"value": 40_000_000, "exact": False, "source": "sec_edgar",
+               "float_shares": None, "shares_outstanding": 40_000_000}
+        payload2 = run_scanner(tmp, ["BIGC"], {"BIGC": big}, {"BIGC": (d, h1)}, float_mode="auto")
+        assert payload2["count"] == 0
+        assert payload2["diagnostics"]["reject_reasons"].get("float_too_big") == 1
+
+        # الوضع الصارم: لا قبول إلا بـ Float دقيق
+        strict_none = {"value": None, "exact": False, "source": None,
+                       "float_shares": None, "shares_outstanding": 6_000_000}
+        payload3 = run_scanner(tmp, ["STRC"], {"STRC": strict_none}, {"STRC": (d, h1)}, float_mode="strict")
+        assert payload3["count"] == 0
+        assert payload3["diagnostics"]["reject_reasons"].get("float_missing") == 1
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
 if __name__ == "__main__":
     tests = [case01_ready_stock_end_to_end, case02_float_paths_no_crash,
-             case03_zero_results_writes_diagnostics, case04_watch_and_ready_sorted]
+             case03_zero_results_writes_diagnostics, case04_watch_and_ready_sorted,
+             case05_float_upper_bound_mode]
     failed = 0
     for t in tests:
         try:

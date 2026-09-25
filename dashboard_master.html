@@ -260,6 +260,14 @@ async function refreshData(){
   else if(D.updated_at===before)toast('تم التحميل — لا توجد بيانات أحدث من آخر مسح ('+fmtTime(D.updated_at)+')');
   else toast('✅ تم تحديث البيانات');
 }
+const FLOAT_SRC_AR={
+  yahoo_float:'Yahoo (Float دقيق)',
+  yahoo_outstanding:'Yahoo (أسهم مُصدَرة)',
+  yahoo_shares_full:'Yahoo (أسهم مُصدَرة)',
+  sec_edgar:'SEC EDGAR (أسهم مُصدَرة)',
+  watchlist:'قائمة المتابعة (قيمة محفوظة)',
+  unknown:'غير معروف'
+};
 const REASON_AR={
   float_missing:'Float غير متوفر (شرط صارم: يُستبعد)',
   float_too_big:'Float أكبر من 10M',
@@ -279,7 +287,10 @@ function diagHtml(){
     ['لديها صعود +100% (20 جلسة)',g.prior_rally_pass],['داخل 20 جلسة من القمة',g.days_since_peak_pass],
     ['Float متوفر ومقبول',g.float_pass]];
   let h='<div class="funnel">'+steps.map(([l,v])=>'<div class="fstep"><span>'+esc(l)+'</span><b>'+esc(v??0)+'</b></div>').join('')+'</div>';
-  h+='<div class="note" style="margin:0 0 10px">تغطية بيانات Yahoo في آخر مسح: <b>'+esc(g.data_coverage_pct??0)+'%</b> من الرموز · Float متوفر لـ <b>'+esc(g.float_available??0)+'</b> سهم من المرشحين.</div>';
+  h+='<div class="note" style="margin:0 0 10px">تغطية بيانات Yahoo في آخر مسح: <b>'+esc(g.data_coverage_pct??0)+'%</b> من الرموز · Float متوفر لـ <b>'+esc(g.float_available??0)+'</b> سهم من المرشحين ('+esc(g.float_exact??0)+' قيمة دقيقة) · وضع الفلتر: <b>'+esc(g.float_mode==='strict'?'صارم (Float دقيق فقط)':'تلقائي (يُقبل الحد الأعلى)')+'</b>.</div>';
+  const fs=g.float_sources||{};
+  const fchips=Object.keys(fs).map(k=>'<span class="rchip muted">'+esc(FLOAT_SRC_AR[k]||k)+': <b>'+esc(fs[k])+'</b></span>').join('');
+  if(fchips)h+='<div class="reasons">'+fchips+'</div>';
   const rr=g.reject_reasons||{};
   const chips=Object.keys(rr).sort((a,b)=>rr[b]-rr[a]).map(k=>'<span class="rchip">'+esc(REASON_AR[k]||k)+': <b>'+esc(rr[k])+'</b></span>').join('');
   h+=chips?('<div class="reasons">'+chips+'</div>'):'';
@@ -356,7 +367,7 @@ function render(){
     return '<tr data-ticker="'+esc(x.ticker)+'" data-date="'+esc(x.event_date||'')+'">'+
     '<td data-l="السهم"><span class="tk">'+esc(x.ticker)+'</span></td>'+
     '<td data-l="السعر"><b>'+money(x.price)+'</b></td>'+
-    '<td data-l="Float">'+fmtFloat(floatOf(x))+'</td>'+
+    '<td data-l="Float">'+fmtFloat(floatOf(x))+(x.float_exact===false?' <span class="muted" title="حد أعلى من الأسهم المُصدَرة">(حد أعلى)</span>':'')+'</td>'+
     '<td data-l="المرحلة">'+badge(stageOf(x))+'</td>'+
     '<td data-l="درجة الجاهزية"><div class="score"><b>'+score+'/100</b><div class="bar"><i style="width:'+score+'%"></i></div></div></td>'+
     '<td data-l="البعد عن القاع">'+distCell(x)+'</td>'+
@@ -439,7 +450,7 @@ function showStock(ticker,date){
   '<div class="info"><span>جلسات الثبات فوق الدعم</span><b>'+esc(s.stable_bars??s.stable_sessions??'—')+'</b></div>'+
   '<div class="info"><span>قيعان لمست منطقة الدعم</span><b>'+esc(s.tests??'—')+'</b></div>'+
   '<div class="info"><span>نمط القاع (1h/4h)</span><b>'+esc(patternOf(x).replace(' (Double Bottom)','').replace(' (Higher Low)',''))+'</b></div>'+
-  '<div class="info"><span>Float</span><b>'+fmtFloat(floatOf(x))+'</b></div>'+
+  '<div class="info"><span>Float</span><b>'+fmtFloat(floatOf(x))+(x.float_exact===false?' <span class="muted">(حد أعلى)</span>':'')+'</b><span style="margin-top:4px">'+(FLOAT_SRC_AR[x.float_source]||'—')+'</span></div>'+
   '<div class="info"><span>محفز مستقبلي</span><b class="'+(hasCat(x)?'ok':'muted')+'">'+(hasCat(x)?'نعم':'لا')+'</b></div>'+
   '<div class="info"><span>تحذير</span><b class="'+(hasWarn(x)?'no':'muted')+'">'+(hasWarn(x)?'نعم':'لا')+'</b></div></div>'+
   ((s.false_breakdown)?'<div class="note" style="color:#ffc857">⚠️ كسر بسيط لمنطقة الدعم ثم عودة السعر فوقها (False Breakdown) — مقبول ما لم يكن انهيارًا حقيقيًا.</div>':'')+
@@ -461,6 +472,7 @@ function showStock(ticker,date){
   '<div class="info"><span>أقصى هبوط من القمة</span><b>'+num(x.max_drawdown_pct)+'%</b></div></div></div>'+
   '<div class="section"><h3>📰 الأحداث والأخبار (Yahoo)</h3>'+newsHtml(x)+'</div>'+
   '<div class="chart" id="chart"></div>'+
+  (x.float_exact===false?'<div class="note" style="color:#ffc857">ℹ️ Float هذا السهم لم يتوفر كقيمة دقيقة من Yahoo، فاستُخدم عدد الأسهم المُصدَرة من '+esc(FLOAT_SRC_AR[x.float_source]||'مصدر بديل')+' كحد أعلى — وبما أن Float ≤ الأسهم المُصدَرة، فالسهم منخفض الـ Float قطعًا ('+esc(x.float)+').</div>':'')+
   '<div class="note"><b>الفكرة:</b> سهم صغير منخفض الـ Float صعد +100% أو أكثر خلال 20 جلسة، ثم عاد إلى قاع انطلاقه خلال 20 جلسة من القمة، ويثبت فوق الدعم بفوليوم ضعيف ويشكّل Pivot مبكرًا للرجل الثانية. <b>التنبيه:</b> خطة الصفقة مستخرجة آليًا من القاع والقمة والمقاومات وليست توصية أو ضمانًا للنتيجة.</div>';
   drawChart(x);
 }

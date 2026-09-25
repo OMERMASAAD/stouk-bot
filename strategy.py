@@ -431,7 +431,7 @@ def stage_from_score(score):
     return STAGE_WATCH
 
 
-def float_label(v):
+def float_label(v, exact=True):
     if v is None:
         return "غير متوفر"
     try:
@@ -439,10 +439,12 @@ def float_label(v):
     except Exception:
         return "غير متوفر"
     if v >= 1_000_000:
-        return f"{v / 1_000_000:.1f}M"
-    if v >= 1_000:
-        return f"{v / 1_000:.0f}K"
-    return f"{int(v)}"
+        txt = f"{v / 1_000_000:.1f}M"
+    elif v >= 1_000:
+        txt = f"{v / 1_000:.0f}K"
+    else:
+        txt = str(int(v))
+    return txt if exact else f"≤ {txt}"
 
 
 def _ar_date(date_str, now=None):
@@ -458,12 +460,14 @@ def _ar_date(date_str, now=None):
 
 
 # ---------------- التقييم الكامل ----------------
-def evaluate_event(d, event, float_shares=None, news=None, intraday=None, now=None, trace=None):
+def evaluate_event(d, event, float_shares=None, news=None, intraday=None, now=None, trace=None,
+                   float_exact=True, float_source=None, shares_outstanding=None):
     """
     يقيّم حدث صعود مقابل شروط الاستراتيجية. يعيد None إذا استُبعد السهم.
     d        : شموع يومية
     event    : ناتج find_surge_event
-    float_shares: عدد أسهم التداول الحر (None => استبعاد حسب الشرط الصارم)
+    float_shares: قيمة الـ Float المستخدمة في الفلتر (None => استبعاد حسب الشرط الصارم)
+    float_exact : True إذا كانت القيمة Float دقيقًا، وFalse إذا كانت حدًا أعلى (أسهم مُصدَرة)
     news     : ناتج news.fetch_news / news.analyze_news
     intraday : شموع 1h أو 4h لاكتشاف نمط القاع
     trace    : قائمة اختيارية لتسجيل سبب الاستبعاد (لتشخيص المسح)
@@ -494,6 +498,8 @@ def evaluate_event(d, event, float_shares=None, news=None, intraday=None, now=No
     # ---- 3) فلتر Float (يُستبعد إذا كان أكبر من 10M أو غير متوفر) ----
     if float_shares is None:
         return reject("float_missing")
+    # الشرط الصارم: Float ≤ 10M. وعند استخدام حد أعلى (أسهم مُصدَرة) فالقبول يعني أن الـ Float
+    # أقل من 10M بالضرورة (لأن Float ≤ Shares Outstanding دائمًا).
     if float(float_shares) > MAX_FLOAT:
         return reject("float_too_big")
 
@@ -606,7 +612,10 @@ def evaluate_event(d, event, float_shares=None, news=None, intraday=None, now=No
     return {
         # ---- صيغة JSON المطلوبة ----
         "price": round(price, 4),
-        "float": float_label(float_shares),
+        "float": float_label(float_shares, float_exact),
+        "float_exact": bool(float_exact),
+        "float_source": float_source,
+        "shares_outstanding": int(shares_outstanding) if shares_outstanding else None,
         "stage": stage,
         "readiness_score": int(score),
         "days_since_peak": int(days_since_peak),
