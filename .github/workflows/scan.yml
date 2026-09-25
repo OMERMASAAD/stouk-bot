@@ -5,6 +5,7 @@ on:
     paths:
       - "strategy.py"
       - "scanner.py"
+      - "news.py"
   schedule:
     # فحص 4 مرات في أيام التداول + حفظ قائمة المتابعة.
     - cron: "0 12 * * 1-5"
@@ -26,6 +27,8 @@ jobs:
         with:
           python-version: "3.11"
       - run: pip install -r requirements.txt
+      # اختبار القواعد أولًا (بدون إنترنت): الفلاتر/النقاط/المراحل/التحذيرات/خطة الصفقة
+      - run: python test_strategy.py
       - run: python scanner.py
       - name: Commit dashboard data
         run: |
