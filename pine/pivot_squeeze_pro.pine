@@ -61,7 +61,8 @@ srWidth  = input.int(1  , "سماكة خط المستوى", minval = 1, maxval =
 
 GRP_AN = "③ المرجع (Anchor)"
 anchorLen  = input.int(20   , "طول EMA على اليومي وأعلى", minval = 5, maxval = 200, group = GRP_AN)
-anchorSess = input.bool(false, "VWAP داخل جلسة التداول فقط", group = GRP_AN, tooltip = "فعّلها إذا كان امتداد ما بعد الإغلاق يشوّش الخط.")
+anchorSess = input.bool(false, "حصر VWAP داخل جلسة محددة", group = GRP_AN, tooltip = "فعّلها إذا كان امتداد ما بعد الإغلاق يشوّش خط VWAP، ثم حدد الجلسة في الحقل التالي.")
+sessTxt    = input.session("0930-1600", "جلسة VWAP", group = GRP_AN, tooltip = "تُستخدم فقط إذا كان الخيار السابق مفعّلًا.")
 
 GRP_SG = "④ الإشارة وإدارة المخاطر"
 rsiLen     = input.int(14  , "طول RSI", minval = 2, group = GRP_SG)
@@ -88,9 +89,8 @@ atr14    = ta.atr(14)
 // المرجع: VWAP للدقائق — EMA لليومي وأعلى.
 // تُحسب القيمتان على كل شمعة (خارج أي شرط) ثم يُختار المناسب: أأمن في Pine.
 emaAnchor  = ta.ema(close, anchorLen)
-// حماية: timeframe.session تكون فارغة على الفريم اليومي وأعلى، والجلسة الفارغة
-// تُنتج خطأ تشغيلًا — لذلك نستخدم الجلسة الصريحة للرمز عند الحاجة.
-sessTxt    = na(timeframe.session) or timeframe.session == "" ? session.regular : timeframe.session
+// نص الجلسة يجب أن يأتي من input.session (نص صالح لـ ta.vwap)؛ أما
+// ta.vwap(close) بدون جلسة فيرتكز تلقائيًا على بداية كل يوم تداول.
 vwapAnchor = anchorSess ? ta.vwap(close, sessTxt) : ta.vwap(close)
 useVwap    = isHighTf ? false : not na(vwapAnchor)
 anchorLine = useVwap ? vwapAnchor : emaAnchor
