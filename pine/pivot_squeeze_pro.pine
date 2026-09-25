@@ -41,39 +41,34 @@ N_TX = color.new(#a9bbb0, 0)
 // ───────────────────────────────────────────────────────────────────────────
 // 2) المدخلات
 // ───────────────────────────────────────────────────────────────────────────
-GRP_UI = "① اللوحة والتصميم"
-showDash  = input.bool(true , "عرض لوحة القرار", group = GRP_UI)
-dashPos   = input.string("أعلى اليمين", "موضع اللوحة", options = ["أعلى اليمين", "أسفل اليمين", "أعلى اليسار", "أسفل اليسار"], group = GRP_UI)
-showTags  = input.bool(true , "بطاقات الأسعار على المحور", group = GRP_UI)
-showPlan  = input.bool(true , "خطة الصفقة عند الإشارة", group = GRP_UI)
-showWarn  = input.bool(true , "علامة تحذير المطاردة", group = GRP_UI, tooltip = "تُرسم مرة واحدة فقط عند الدخول في حالة التشبع أو الامتداد.")
-paintBars = input.bool(false, "تلوين الشموع", group = GRP_UI)
+showDash  = input.bool(true , "عرض لوحة القرار", group = "1) اللوحة والتصميم")
+dashPos   = input.string("أعلى اليمين", "موضع اللوحة", options = ["أعلى اليمين", "أسفل اليمين", "أعلى اليسار", "أسفل اليسار"], group = "1) اللوحة والتصميم")
+showTags  = input.bool(true , "بطاقات الأسعار على المحور", group = "1) اللوحة والتصميم")
+showPlan  = input.bool(true , "خطة الصفقة عند الإشارة", group = "1) اللوحة والتصميم")
+showWarn  = input.bool(true , "علامة تحذير المطاردة", group = "1) اللوحة والتصميم", tooltip = "تُرسم مرة واحدة فقط عند الدخول في حالة التشبع أو الامتداد.")
+paintBars = input.bool(false, "تلوين الشموع", group = "1) اللوحة والتصميم")
 
-GRP_SR = "② الدعم والمقاومة"
-pivotLen  = input.int(10 , "طول المحور", minval = 2, maxval = 50, group = GRP_SR)
-showZones = input.bool(true , "منطقة شفافة حول المستوى", group = GRP_SR)
-zoneAtr   = input.float(0.35, "عرض المنطقة (× ATR)", minval = 0.1, maxval = 2.0, step = 0.05, group = GRP_SR)
-showSrLn  = input.bool(true , "خط منتصف المستوى", group = GRP_SR, tooltip = "خط أفقي رفيع واحد من المحور إلى الآن — بلا سلالم تاريخية.")
+pivotLen  = input.int(10 , "طول المحور", minval = 2, maxval = 50, group = "2) الدعم والمقاومة")
+showZones = input.bool(true , "منطقة شفافة حول المستوى", group = "2) الدعم والمقاومة")
+zoneAtr   = input.float(0.35, "عرض المنطقة (× ATR)", minval = 0.1, maxval = 2.0, step = 0.05, group = "2) الدعم والمقاومة")
+showSrLn  = input.bool(true , "خط منتصف المستوى", group = "2) الدعم والمقاومة", tooltip = "خط أفقي رفيع واحد من المحور إلى الآن — بلا سلالم تاريخية.")
 
-GRP_AN = "③ المرجع"
-anchorLen     = input.int(20, "طول EMA على اليومي وأعلى", minval = 5, maxval = 200, group = GRP_AN)
-vwapAnchorOpt = input.string("يومي", "مرتكز VWAP", options = ["يومي", "أسبوعي", "شهري"], group = GRP_AN)
+anchorLen     = input.int(20, "طول EMA على اليومي وأعلى", minval = 5, maxval = 200, group = "3) المرجع")
+vwapAnchorOpt = input.string("يومي", "مرتكز VWAP", options = ["يومي", "أسبوعي", "شهري"], group = "3) المرجع")
 
-GRP_SG = "④ الإشارة والمخاطر"
-rsiLen     = input.int(14  , "طول RSI", minval = 2, group = GRP_SG)
-rsiMin     = input.int(40  , "أدنى RSI للدخول", minval = 1, maxval = 70, group = GRP_SG)
-rsiTrap    = input.int(80  , "حد التشبع الشرائي", minval = 60, maxval = 95, group = GRP_SG)
-squeezeLen = input.int(20  , "طول قياس الانضغاط", minval = 10, maxval = 200, group = GRP_SG)
-squeezePct = input.int(25  , "عتبة الانضغاط (مئوي)", minval = 5, maxval = 50, group = GRP_SG)
-extMult    = input.float(2.5, "حد الامتداد عن المرجع (× ATR)", minval = 0.5, maxval = 10.0, step = 0.5, group = GRP_SG)
-stopMult   = input.float(1.5, "مسافة الوقف (× ATR)", minval = 0.2, maxval = 10.0, step = 0.1, group = GRP_SG)
-rrTarget   = input.float(2.0, "الهدف (عائد ÷ مخاطرة)", minval = 0.5, maxval = 10.0, step = 0.5, group = GRP_SG)
+rsiLen     = input.int(14, "طول RSI", minval = 2, group = "4) الإشارة والمخاطر")
+rsiMin     = input.int(40,  "أدنى RSI للدخول", minval = 1, maxval = 70, group = "4) الإشارة والمخاطر")
+rsiTrap    = input.int(80,  "حد التشبع الشرائي", minval = 60, maxval = 95, group = "4) الإشارة والمخاطر")
+squeezeLen = input.int(20,  "طول قياس الانضغاط", minval = 10, maxval = 200, group = "4) الإشارة والمخاطر")
+squeezePct = input.int(25,  "عتبة الانضغاط (مئوي)", minval = 5, maxval = 50, group = "4) الإشارة والمخاطر")
+extMult    = input.float(2.5, "حد الامتداد عن المرجع (× ATR)", minval = 0.5, maxval = 10.0, step = 0.5, group = "4) الإشارة والمخاطر")
+stopMult   = input.float(1.5, "مسافة الوقف (× ATR)", minval = 0.2, maxval = 10.0, step = 0.1, group = "4) الإشارة والمخاطر")
+rrTarget   = input.float(2.0, "الهدف (عائد ÷ مخاطرة)", minval = 0.5, maxval = 10.0, step = 0.5, group = "4) الإشارة والمخاطر")
 
-GRP_HT = "⑤ الفريم الأعلى"
-htfOn     = input.bool(true, "اشتراط موافقة الفريم الأعلى", group = GRP_HT)
-htfTf     = input.timeframe("D", "الفريم الأعلى", group = GRP_HT)
-htfEmaLen = input.int(50, "طول EMA للفريم الأعلى", minval = 5, maxval = 200, group = GRP_HT)
-htfRsiMin = input.int(50, "أدنى RSI للفريم الأعلى", minval = 1, maxval = 90, group = GRP_HT)
+htfOn     = input.bool(true, "اشتراط موافقة الفريم الأعلى", group = "5) الفريم الأعلى")
+htfTf     = input.timeframe("D", "الفريم الأعلى", group = "5) الفريم الأعلى")
+htfEmaLen = input.int(50, "طول EMA للفريم الأعلى", minval = 5, maxval = 200, group = "5) الفريم الأعلى")
+htfRsiMin = input.int(50, "أدنى RSI للفريم الأعلى", minval = 1, maxval = 90, group = "5) الفريم الأعلى")
 
 // ───────────────────────────────────────────────────────────────────────────
 // 3) الحسابات
