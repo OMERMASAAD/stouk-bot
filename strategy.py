@@ -312,7 +312,6 @@ def _post_peak_state(d, event):
     n = len(d)
     ev = int(event["event_idx"])
     base = float(event["base"])
-    highs = d["High"].astype(float).values
     lows = d["Low"].astype(float).values
     closes = d["Close"].astype(float).values
     since_lows = lows[ev + 1:]

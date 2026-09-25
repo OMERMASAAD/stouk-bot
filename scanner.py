@@ -214,6 +214,7 @@ def main():
     passed = [t for t, fl in floats.items() if fl is not None and fl <= MAX_FLOAT]
     funnel["float_available"] = sum(1 for fl in floats.values() if fl is not None)
     funnel["float_pass"] = len(passed)
+    float_excluded = []
     for t in candidates:
         why = None
         if floats.get(t) is None:
@@ -226,14 +227,15 @@ def main():
         funnel.setdefault("pre_float_reasons", {})
         funnel["pre_float_reasons"][why] = funnel["pre_float_reasons"].get(why, 0) + 1
         d0, ev0 = candidates[t]
-        if len(near_misses) < 40:
-            near_misses.append({
-                "ticker": t, "reason": why,
-                "price": round(float(d0["Close"].iloc[-1]), 2),
-                "rally_pct": round(float(ev0["rally_pct"]), 1),
-                "days_since_peak": int(len(d0) - 1 - int(ev0["event_idx"])),
-                "float": floats.get(t),
-            })
+        float_excluded.append({
+            "ticker": t, "reason": why,
+            "price": round(float(d0["Close"].iloc[-1]), 2),
+            "rally_pct": round(float(ev0["rally_pct"]), 1),
+            "days_since_peak": int(len(d0) - 1 - int(ev0["event_idx"])),
+            "float": floats.get(t),
+        })
+        funnel["reasons"] = funnel.get("reasons", {})
+        funnel["reasons"][why] = funnel["reasons"].get(why, 0) + 1
     print("candidates after float filter:", len(passed))
 
     # ---------- 3) شموع 1h/4h والأخبار للمرشحين ----------
@@ -258,15 +260,17 @@ def main():
 
     # ---------- 4) التقييم الكامل ----------
     signals, new_watch = [], []
-    reject_reasons = {}
-    near_misses = []
+    reject_reasons = dict(funnel.get("reasons", {}))
+    near_misses = list(float_excluded)
     for ticker in passed:
         d, event = candidates[ticker]
         h1 = intraday.get(ticker)
         h4 = resample_4h(h1)
         trace = []
+        # ملاحظة: لا تستخدم `h1 or h4` مع DataFrame (يُقيّم boolean فيرفع استثناءً)
+        intraday_df = h1 if h1 is not None else h4
         try:
-            item = evaluate_event(d, event, floats[ticker], news_map.get(ticker), h1 or h4, now=now, trace=trace)
+            item = evaluate_event(d, event, floats[ticker], news_map.get(ticker), intraday_df, now=now, trace=trace)
         except Exception as e:
             print("evaluate error", ticker, e)
             item = None

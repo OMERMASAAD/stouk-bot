@@ -27,8 +27,10 @@ jobs:
         with:
           python-version: "3.11"
       - run: pip install -r requirements.txt
-      # اختبار القواعد أولًا (بدون إنترنت): الفلاتر/النقاط/المراحل/التحذيرات/خطة الصفقة
+      # اختبارات القواعد (بدون إنترنت): الفلاتر/النقاط/المراحل/التحذيرات/خطة الصفقة
       - run: python test_strategy.py
+      # اختبار شامل للسكانر على بيانات اصطناعية (يمنع أخطاء مسارات الاستبعاد والكتابة)
+      - run: python test_scanner.py
       - run: python scanner.py
       - name: Commit dashboard data
         run: |
