@@ -288,6 +288,11 @@ function diagHtml(){
     ['Float متوفر ومقبول',g.float_pass]];
   let h='<div class="funnel">'+steps.map(([l,v])=>'<div class="fstep"><span>'+esc(l)+'</span><b>'+esc(v??0)+'</b></div>').join('')+'</div>';
   h+='<div class="note" style="margin:0 0 10px">تغطية بيانات Yahoo في آخر مسح: <b>'+esc(g.data_coverage_pct??0)+'%</b> من الرموز · Float متوفر لـ <b>'+esc(g.float_available??0)+'</b> سهم من المرشحين ('+esc(g.float_exact??0)+' قيمة دقيقة) · وضع الفلتر: <b>'+esc(g.float_mode==='strict'?'صارم (Float دقيق فقط)':'تلقائي (يُقبل الحد الأعلى)')+'</b>.</div>';
+  const sec=g.sec_status||{};
+  const secAr={used:'SEC: تم جلب الأسهم', no_cik:'SEC: لا يوجد CIK', no_data:'SEC: لا بيانات', error:'SEC: فشل الطلب', skipped:'SEC: لم يُستدعَ', unknown:'SEC: غير معروف'};
+  if(Object.keys(sec).length){
+    h+='<div class="note" style="margin:0 0 10px">مصادر الـ Float البديلة: '+Object.keys(sec).sort((a,b)=>sec[b]-sec[a]).map(k=>esc(secAr[k]||k)+' <b>'+esc(sec[k])+'</b>').join(' · ')+'</div>';
+  }
   const fs=g.float_sources||{};
   const fchips=Object.keys(fs).map(k=>'<span class="rchip muted">'+esc(FLOAT_SRC_AR[k]||k)+': <b>'+esc(fs[k])+'</b></span>').join('');
   if(fchips)h+='<div class="reasons">'+fchips+'</div>';

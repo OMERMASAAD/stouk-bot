@@ -30,6 +30,8 @@ SOURCE_YAHOO_SHARES = "yahoo_shares_full"
 SOURCE_SEC = "sec_edgar"
 
 _cik_cache = None
+_cik_attempts = 0
+MAX_CIK_ATTEMPTS = 3          # لا نكرر محاولة تحميل ملف SEC أكثر من 3 مرات في التشغيل الواحد
 
 
 def _http_json(url, timeout=12):
@@ -45,24 +47,35 @@ def _http_json(url, timeout=12):
 
 
 def cik_map():
-    """خريطة رمز السهم → رقم CIK من ملف SEC الرسمي (تُحمّل مرة واحدة)."""
-    global _cik_cache
-    if _cik_cache is None:
-        try:
-            data = _http_json(SEC_TICKERS_URL)
-            _cik_cache = {str(v.get("ticker", "")).upper(): int(v.get("cik_str"))
-                          for v in data.values() if v.get("ticker") and v.get("cik_str")}
-        except Exception as e:
-            print("SEC cik map error:", e)
+    """
+    خريطة رمز السهم → رقم CIK من ملف SEC الرسمي (تُحمّل مرة واحدة).
+    عند الفشل تُعاد المحاولة في النداء التالي (حتى 3 محاولات) بدل تعطيل SEC لكل الرموز.
+    """
+    global _cik_cache, _cik_attempts
+    if _cik_cache is not None:
+        return _cik_cache
+    _cik_attempts += 1
+    try:
+        data = _http_json(SEC_TICKERS_URL)
+        _cik_cache = {str(v.get("ticker", "")).upper(): int(v.get("cik_str"))
+                      for v in data.values() if v.get("ticker") and v.get("cik_str")}
+        print("SEC ticker map loaded:", len(_cik_cache), "tickers")
+    except Exception as e:
+        print("SEC cik map error (attempt %d/%d):" % (_cik_attempts, MAX_CIK_ATTEMPTS), e)
+        if _cik_attempts >= MAX_CIK_ATTEMPTS:
             _cik_cache = {}
-    return _cik_cache
+    return _cik_cache if _cik_cache is not None else {}
 
 
 def sec_shares_outstanding(ticker):
-    """أسهم قائمة المالكين من SEC EDGAR (حد أعلى للـ Float) أو None."""
+    """
+    أسهم قائمة المالكين من SEC EDGAR (حد أعلى للـ Float).
+    يعيد (value, status) حيث status: used / no_cik / no_data / error.
+    """
     cik = cik_map().get(str(ticker).upper())
     if not cik:
-        return None
+        return None, "no_cik"
+    had_error = False
     for tpl in SEC_CONCEPT_URLS:
         try:
             d = _http_json(tpl.format(cik=f"{cik:010d}"))
@@ -73,10 +86,12 @@ def sec_shares_outstanding(ticker):
             rows.sort(key=lambda u: (str(u.get("end") or ""), str(u.get("filed") or "")))
             val = int(rows[-1]["val"])
             if val > 0:
-                return val
-        except Exception:
+                return val, "used"
+        except Exception as e:
+            had_error = True
+            print("SEC concept error", ticker, type(e).__name__, e)
             continue
-    return None
+    return None, ("error" if had_error else "no_data")
 
 
 def yahoo_shares_outstanding(ticker):
@@ -121,13 +136,16 @@ def resolve(ticker, mode="auto"):
     except Exception as e:
         print("float info error", ticker, e)
 
+    sec_status = "skipped"
     if mode == "strict":
         return {"value": float_shares, "exact": bool(float_shares), "source": source,
-                "float_shares": float_shares, "shares_outstanding": outstanding}
+                "float_shares": float_shares, "shares_outstanding": outstanding,
+                "sec_status": sec_status}
 
     # SEC EDGAR أولًا (مصدر مستقل لا يستهلك حصة Yahoo)
+    sec_status = "skipped"
     if not outstanding:
-        sec = sec_shares_outstanding(ticker)
+        sec, sec_status = sec_shares_outstanding(ticker)
         if sec:
             outstanding = sec
             source = SOURCE_SEC
@@ -159,12 +177,15 @@ def resolve(ticker, mode="auto"):
 
     if float_shares:
         return {"value": float_shares, "exact": True, "source": source or SOURCE_YAHOO_FLOAT,
-                "float_shares": float_shares, "shares_outstanding": outstanding}
+                "float_shares": float_shares, "shares_outstanding": outstanding,
+                "sec_status": sec_status}
     if outstanding and mode != "strict":
         return {"value": outstanding, "exact": False, "source": source or SOURCE_YAHOO_OUTSTANDING,
-                "float_shares": None, "shares_outstanding": outstanding}
+                "float_shares": None, "shares_outstanding": outstanding,
+                "sec_status": sec_status}
     return {"value": None, "exact": False, "source": None,
-            "float_shares": float_shares, "shares_outstanding": outstanding}
+            "float_shares": float_shares, "shares_outstanding": outstanding,
+            "sec_status": sec_status}
 
 
 def label(value, exact):

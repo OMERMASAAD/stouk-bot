@@ -233,15 +233,18 @@ def main():
             floats[ticker] = info or {"value": None, "exact": False, "source": None,
                                       "float_shares": None, "shares_outstanding": None}
     passed = [t for t, i in floats.items() if i.get("value") is not None and i["value"] <= MAX_FLOAT]
-    float_sources = {}
+    float_sources, sec_status_counts = {}, {}
     for i in floats.values():
         if i.get("value") is not None:
             key = i.get("source") or "unknown"
             float_sources[key] = float_sources.get(key, 0) + 1
+        st_key = i.get("sec_status") or "unknown"
+        sec_status_counts[st_key] = sec_status_counts.get(st_key, 0) + 1
     funnel["float_available"] = sum(1 for i in floats.values() if i.get("value") is not None)
     funnel["float_exact"] = sum(1 for i in floats.values() if i.get("exact"))
     funnel["float_pass"] = len(passed)
     funnel["float_sources"] = float_sources
+    funnel["sec_status"] = sec_status_counts
     funnel["float_mode"] = FLOAT_MODE
     float_excluded = []
     for t in candidates:
@@ -382,6 +385,7 @@ def main():
         "float_pass": funnel.get("float_pass", 0),
         "float_mode": funnel.get("float_mode", FLOAT_MODE),
         "float_sources": funnel.get("float_sources", {}),
+        "sec_status": funnel.get("sec_status", {}),
         "reject_reasons": reject_reasons,
         "news": news_stats,
         "near_misses": near_misses[:15],
