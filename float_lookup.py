@@ -96,15 +96,21 @@ def resolve(ticker, mode="auto"):
     يعيد {"value", "exact", "source", "float_shares", "shares_outstanding"}.
     mode="auto"   : يُقبل الحد الأعلى (شرط: ≤ 10M في مرحلة الفلترة).
     mode="strict" : Float الدقيق فقط، وما عداه غير متوفر.
+
+    ترتيب المصادر مُحسَّن لتقليل ضغط Yahoo (يُستدعى مرة واحدة لكل سهم):
+      info (floatShares/sharesOutstanding) ← SEC EDGAR ← بقية مصادر yfinance.
+    وعند تشغيل السكانر بـ FLOAT_MODE=strict لا نستدعي إلا Yahoo للحصول على Float دقيق.
     """
     import yfinance as yf
 
     float_shares = None
     outstanding = None
     source = None
+    info_ok = False
     t = yf.Ticker(ticker)
     try:
         info = t.info or {}
+        info_ok = bool(info)
         f = info.get("floatShares")
         if f:
             float_shares = int(f)
@@ -115,7 +121,19 @@ def resolve(ticker, mode="auto"):
     except Exception as e:
         print("float info error", ticker, e)
 
+    if mode == "strict":
+        return {"value": float_shares, "exact": bool(float_shares), "source": source,
+                "float_shares": float_shares, "shares_outstanding": outstanding}
+
+    # SEC EDGAR أولًا (مصدر مستقل لا يستهلك حصة Yahoo)
     if not outstanding:
+        sec = sec_shares_outstanding(ticker)
+        if sec:
+            outstanding = sec
+            source = SOURCE_SEC
+
+    # بدائل yfinance فقط إذا فشل info (تجنّب طلبات إضافية على Yahoo)
+    if not outstanding and not info_ok:
         try:
             s = t.get_shares_full(period="6mo")
             if s is not None and len(s):
@@ -125,26 +143,19 @@ def resolve(ticker, mode="auto"):
                     source = source or SOURCE_YAHOO_SHARES
         except Exception as e:
             print("shares_full error", ticker, e)
-
-    if not outstanding:
-        try:
-            bs = t.balance_sheet
-            if bs is not None and not bs.empty:
-                for key in ("Ordinary Shares Number", "Share Issued"):
-                    if key in bs.index:
-                        vals = [int(float(x)) for x in bs.loc[key].dropna() if float(x) > 0]
-                        if vals:
-                            outstanding = vals[0]
-                            source = source or SOURCE_YAHOO_SHARES
-                            break
-        except Exception as e:
-            print("balance sheet error", ticker, e)
-
-    if not outstanding and mode == "auto":
-        sec = sec_shares_outstanding(ticker)
-        if sec:
-            outstanding = sec
-            source = SOURCE_SEC
+        if not outstanding:
+            try:
+                bs = t.balance_sheet
+                if bs is not None and not bs.empty:
+                    for key in ("Ordinary Shares Number", "Share Issued"):
+                        if key in bs.index:
+                            vals = [int(float(x)) for x in bs.loc[key].dropna() if float(x) > 0]
+                            if vals:
+                                outstanding = vals[0]
+                                source = source or SOURCE_YAHOO_SHARES
+                                break
+            except Exception as e:
+                print("balance sheet error", ticker, e)
 
     if float_shares:
         return {"value": float_shares, "exact": True, "source": source or SOURCE_YAHOO_FLOAT,

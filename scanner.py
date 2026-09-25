@@ -16,6 +16,7 @@
 import argparse
 import json
 import os
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta, timezone
 
@@ -135,7 +136,8 @@ def main():
     if args.limit:
         symbols = symbols[:args.limit]
     if not args.tickers and len(symbols) < 500:
-        raise SystemExit(f"universe too small ({len(symbols)}) — NASDAQ symbol list unavailable; refusing to overwrite data.json")
+        print("::warning title=Scan skipped::قائمة رموز NASDAQ غير متاحة (عدد الرموز %d) — لم يتم لمس data.json" % len(symbols))
+        raise SystemExit(0)
     print("symbols:", len(symbols))
 
     watch = {x.get("ticker"): x for x in load_json(WATCHLIST_FILE, {}).get("items", []) if x.get("ticker")}
@@ -184,8 +186,29 @@ def main():
 
     coverage = downloaded / max(1, len(symbols))
     print("daily data coverage: %.1f%% (%d/%d)" % (coverage * 100, downloaded, len(symbols)))
-    if coverage < 0.10 and prev_signals:
-        raise SystemExit("data coverage too low (<10%) — Yahoo unreachable; keeping previous data.json")
+
+    # إعادة محاولة واحدة عند تقييد Yahoo (Too Many Requests) — لأهم جزء من الرموز فقط
+    if coverage < 0.60 and not args.tickers:
+        retry_pool = [t for t in symbols if t not in candidates][:2000]
+        print("retrying", len(retry_pool), "symbols after temporary Yahoo throttling ...")
+        time.sleep(20)
+        with ThreadPoolExecutor(max_workers=max(2, args.workers // 2)) as pool:
+            futures = {pool.submit(prepass, t): t for t in retry_pool}
+            for fut in as_completed(futures):
+                try:
+                    res = fut.result()
+                except Exception:
+                    res = None
+                if res:
+                    ticker, d, event = res
+                    candidates[ticker] = (d, event)
+                    downloaded += 1
+        coverage = downloaded / max(1, len(symbols))
+        print("daily data coverage after retry: %.1f%% (%d/%d)" % (coverage * 100, downloaded, len(symbols)))
+
+    if coverage < 0.10:
+        print("::warning title=Scan skipped::تغطية بيانات Yahoo ضعيفة (%.1f%%) — لم يتم لمس data.json" % (coverage * 100))
+        raise SystemExit(0)
 
     print("candidates after price/rally/20-day filters:", len(candidates))
 
@@ -387,7 +410,8 @@ def main():
     # إذا كانت التغطية ضعيفة (Yahoo متعثر) وصفر نتائج: نحتفظ بالبيانات السابقة بدل مسحها.
     # أما إذا كانت التغطية جيدة فهذا يعني فعليًا «لا يوجد سهم مطابق» ونكتب النتيجة الحقيقية (حتى لو كانت صفرًا).
     if not signals and prev_signals and coverage < 0.5 and not args.tickers:
-        raise SystemExit("scan produced no signals with %.0f%% data coverage — keeping previous data.json" % (coverage * 100))
+        print("::warning title=Scan skipped::لا نتائج مع تغطية %.0f%% — تم الاحتفاظ ببيانات المسح السابق" % (coverage * 100))
+        raise SystemExit(0)
 
     if args.dry_run:
         print("dry-run: no files written")
@@ -403,4 +427,15 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except SystemExit as e:
+        code = e.code if isinstance(e.code, str) else ""
+        if code:
+            print("::error title=Scanner stopped::" + code.splitlines()[0][:400])
+        raise
+    except Exception as e:                                  # noqa: BLE001
+        import traceback
+        print("::error title=Scanner crashed::%s: %s" % (type(e).__name__, str(e)[:300]))
+        traceback.print_exc()
+        raise
