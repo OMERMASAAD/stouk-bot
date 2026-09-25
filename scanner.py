@@ -316,8 +316,10 @@ def main():
         "signals": signals,
     }
 
-    if not signals and prev_signals and not args.tickers:
-        raise SystemExit("scan produced no signals while previous data exists — refusing to overwrite data.json")
+    # إذا كانت التغطية ضعيفة (Yahoo متعثر) وصفر نتائج: نحتفظ بالبيانات السابقة بدل مسحها.
+    # أما إذا كانت التغطية جيدة فهذا يعني فعليًا «لا يوجد سهم مطابق» ونكتب النتيجة الحقيقية (حتى لو كانت صفرًا).
+    if not signals and prev_signals and coverage < 0.5 and not args.tickers:
+        raise SystemExit("scan produced no signals with %.0f%% data coverage — keeping previous data.json" % (coverage * 100))
 
     if args.dry_run:
         print("dry-run: no files written")

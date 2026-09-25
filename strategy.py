@@ -452,7 +452,7 @@ def _ar_date(date_str, now=None):
     except Exception:
         return str(date_str)
     label = f"{dt.day} {AR_MONTHS.get(dt.month, '')}"
-    today = pd.Timestamp(now.date()) if now is not None else pd.Timestamp.utcnow().normalize().tz_localize(None)
+    today = pd.Timestamp(now.date()) if now is not None else pd.Timestamp.now("UTC").normalize().tz_localize(None)
     if dt.year != today.year:
         label += f" {dt.year}"
     return label.strip()
