@@ -1,7 +1,141 @@
 {
-  "updated_at": "2026-09-25T18:37:56.292615+00:00",
+  "updated_at": "2026-09-25T18:46:21.814167+00:00",
   "strategy": "Bottom Radar — Second Leg Setup",
   "count": 0,
+  "diagnostics": {
+    "symbols_total": 6970,
+    "data_coverage_pct": 92.2,
+    "price_pass": 1264,
+    "prior_rally_pass": 394,
+    "days_since_peak_pass": 101,
+    "float_available": 0,
+    "float_pass": 0,
+    "reject_reasons": {
+      "float_missing": 101
+    },
+    "near_misses": [
+      {
+        "ticker": "NTRBW",
+        "reason": "float_missing",
+        "price": 1.74,
+        "rally_pct": 1328.6,
+        "days_since_peak": 0,
+        "float": null
+      },
+      {
+        "ticker": "IZM",
+        "reason": "float_missing",
+        "price": 1.26,
+        "rally_pct": 769.4,
+        "days_since_peak": 0,
+        "float": null
+      },
+      {
+        "ticker": "NCPL",
+        "reason": "float_missing",
+        "price": 1.32,
+        "rally_pct": 325.6,
+        "days_since_peak": 0,
+        "float": null
+      },
+      {
+        "ticker": "CYPH",
+        "reason": "float_missing",
+        "price": 3.97,
+        "rally_pct": 161.6,
+        "days_since_peak": 0,
+        "float": null
+      },
+      {
+        "ticker": "SRFM",
+        "reason": "float_missing",
+        "price": 1.12,
+        "rally_pct": 150.0,
+        "days_since_peak": 0,
+        "float": null
+      },
+      {
+        "ticker": "ONCO",
+        "reason": "float_missing",
+        "price": 1.03,
+        "rally_pct": 142.3,
+        "days_since_peak": 0,
+        "float": null
+      },
+      {
+        "ticker": "CNET",
+        "reason": "float_missing",
+        "price": 1.69,
+        "rally_pct": 137.2,
+        "days_since_peak": 0,
+        "float": null
+      },
+      {
+        "ticker": "SDEV",
+        "reason": "float_missing",
+        "price": 1.53,
+        "rally_pct": 134.6,
+        "days_since_peak": 0,
+        "float": null
+      },
+      {
+        "ticker": "MGLD",
+        "reason": "float_missing",
+        "price": 1.94,
+        "rally_pct": 117.3,
+        "days_since_peak": 0,
+        "float": null
+      },
+      {
+        "ticker": "TDIC",
+        "reason": "float_missing",
+        "price": 2.71,
+        "rally_pct": 116.2,
+        "days_since_peak": 0,
+        "float": null
+      },
+      {
+        "ticker": "ZKIN",
+        "reason": "float_missing",
+        "price": 1.98,
+        "rally_pct": 111.7,
+        "days_since_peak": 0,
+        "float": null
+      },
+      {
+        "ticker": "DUKRW",
+        "reason": "float_missing",
+        "price": 1.21,
+        "rally_pct": 110.0,
+        "days_since_peak": 0,
+        "float": null
+      },
+      {
+        "ticker": "ELPW",
+        "reason": "float_missing",
+        "price": 2.9,
+        "rally_pct": 101.7,
+        "days_since_peak": 0,
+        "float": null
+      },
+      {
+        "ticker": "PMAX",
+        "reason": "float_missing",
+        "price": 1.52,
+        "rally_pct": 282.7,
+        "days_since_peak": 1,
+        "float": null
+      },
+      {
+        "ticker": "AIXC",
+        "reason": "float_missing",
+        "price": 1.61,
+        "rally_pct": 164.1,
+        "days_since_peak": 1,
+        "float": null
+      }
+    ]
+  },
   "params": {
     "price_range": [
       1.0,
