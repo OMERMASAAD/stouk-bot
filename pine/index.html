@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>معاينة تصميم — Pivot Squeeze Pro (TradingView)</title>
+<title>معاينة التصميم النظيف — Pivot Squeeze Pro</title>
 <style>
 :root{
   --bg:#07110d; --line:#214634; --text:#f1fff6; --muted:#8fa99a;
@@ -22,212 +22,165 @@ h1{font-size:22px;margin:0 0 4px}
 .filter{background:#0d1f16;color:#9db1a5;border:1px solid var(--line);padding:9px 13px;border-radius:10px;cursor:pointer;font-size:13px;font-family:inherit}
 .filter.active{background:#185a3a;color:#fff;border-color:var(--green)}
 
-/* ── الشارت ─────────────────────────────────────────────── */
-.chart{position:relative;height:520px;border:1px solid var(--line);border-radius:16px;overflow:hidden;
+.chart{position:relative;height:540px;border:1px solid var(--line);border-radius:16px;overflow:hidden;
   background:linear-gradient(180deg,#08140e,#061009)}
-.chart .grid{position:absolute;inset:0;
-  background-image:linear-gradient(rgba(33,70,52,.35) 1px,transparent 1px),linear-gradient(90deg,rgba(33,70,52,.35) 1px,transparent 1px);
-  background-size:100% 52px,110px 100%}
-.axis{position:absolute;top:0;bottom:0;left:0;width:62px;border-left:1px solid #16301f;background:#071309;
+.grid{position:absolute;inset:0;
+  background-image:linear-gradient(rgba(33,70,52,.28) 1px,transparent 1px),linear-gradient(90deg,rgba(33,70,52,.28) 1px,transparent 1px);
+  background-size:100% 54px,120px 100%}
+.axis{position:absolute;top:0;bottom:0;left:0;width:60px;border-left:1px solid #16301f;background:#071309;
   font-size:10px;color:#7f9488;display:flex;flex-direction:column;justify-content:space-between;padding:8px 6px;text-align:left;direction:ltr}
-.candles{position:absolute;top:0;bottom:0;right:62px;left:0}
-.zone{position:absolute;left:0;right:0;opacity:.10}
-.level{position:absolute;left:0;right:0;height:0;border-top:1px solid}
-.anchor{position:absolute;left:0;right:0;height:0;border-top:2px solid rgba(32,212,123,.6)}
-.tag{position:absolute;left:2px;transform:translateY(-50%);font-size:11px;padding:2px 7px;border-radius:5px;white-space:nowrap}
-.sig{position:absolute;font-size:10px;font-weight:700;transform:translateX(-50%)}
-.plan{position:absolute;transform:translateX(-50%);background:rgba(10,23,16,.96);border:1px solid rgba(32,212,123,.45);
-  border-radius:9px;padding:8px 11px;font-size:11px;line-height:1.95;white-space:nowrap;box-shadow:0 8px 22px rgba(0,0,0,.45)}
-.plan b{color:var(--muted);font-weight:400;display:inline-block;width:88px}
-.stopline{position:absolute;height:0;border-top:1px dashed rgba(255,82,100,.6)}
+.candles{position:absolute;top:0;bottom:0;right:60px;left:0}
 
-/* ── لوحة المؤشر ────────────────────────────────────────── */
-.dash{position:absolute;top:12px;left:12px;width:352px;background:rgba(10,23,16,.94);
-  border:1px solid rgba(22,168,95,.45);border-radius:12px;overflow:hidden;
-  box-shadow:0 14px 40px rgba(0,0,0,.55);backdrop-filter:blur(3px)}
-.dash .row{display:flex;border-bottom:1px solid rgba(33,70,52,.8)}
+/* مستوى واحد نشط: منطقة شفافة + خط منتصف رفيع، من المحور إلى الآن فقط */
+.zone{position:absolute;right:0;opacity:.09}
+.mid{position:absolute;right:0;height:0;border-top:1px solid}
+.anchor{position:absolute;left:0;right:0;height:0;border-top:1.5px solid rgba(32,212,123,.55)}
+.tag{position:absolute;left:2px;transform:translateY(-50%);font-size:10.5px;padding:2px 7px;border-radius:5px;white-space:nowrap}
+.sig{position:absolute;font-size:10px;font-weight:700;transform:translateX(-50%)}
+.plan{position:absolute;transform:translateX(-50%);background:rgba(14,33,23,.97);border-radius:8px;padding:7px 11px;
+  font-size:11px;line-height:1.95;white-space:nowrap;box-shadow:0 8px 22px rgba(0,0,0,.45)}
+.plan b{color:var(--muted);font-weight:400;display:inline-block;width:86px}
+.stopline{position:absolute;height:0;border-top:1px dashed rgba(255,82,100,.55)}
+
+.dash{position:absolute;top:12px;left:12px;width:330px;background:rgba(10,23,16,.95);
+  border:1px solid rgba(22,168,95,.45);border-radius:10px;overflow:hidden;box-shadow:0 14px 40px rgba(0,0,0,.55)}
+.dash .row{display:flex;border-bottom:1px solid rgba(33,70,52,.75)}
 .dash .row:last-child{border-bottom:0}
-.dash .k{flex:1;padding:8px 11px;font-size:12px;color:var(--muted)}
-.dash .v{width:148px;padding:8px 10px;font-size:12px;text-align:center;border-right:1px solid rgba(33,70,52,.8)}
-.dash .head{background:var(--panel2);padding:10px 12px;font-size:13px;font-weight:700;
-  border-bottom:1px solid rgba(33,70,52,.9);display:flex;justify-content:space-between;gap:8px}
-.dash .head span{color:var(--muted);font-weight:400;font-size:11px;direction:ltr}
+.dash .k{flex:1;padding:7px 11px;font-size:12px;color:var(--muted)}
+.dash .v{width:128px;padding:7px 10px;font-size:12px;text-align:center;border-right:1px solid rgba(33,70,52,.75)}
+.dash .head{display:flex;border-bottom:1px solid rgba(33,70,52,.9)}
+.dash .head .k{color:var(--text);font-weight:700;background:var(--panel2);font-size:12.5px}
+.dash .head .v{background:var(--panel2);color:var(--muted);font-size:10.5px;direction:ltr}
 .on{background:var(--g-on);color:var(--g-tx)} .off{background:var(--r-on);color:var(--r-tx)}
 .warn{background:var(--y-on);color:var(--y-tx)} .info{background:var(--t-on);color:var(--teal)}
 .none{background:var(--n-on);color:var(--n-tx)}
 .dash .verdict .k{color:var(--text);font-weight:700}
 .dash .verdict .v{font-weight:700}
 
-/* ── بقية الصفحة ────────────────────────────────────────── */
-.cards{display:grid;grid-template:repeat(auto-fit,minmax(255px,1fr));gap:12px;margin-top:18px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:18px}
 .card{background:linear-gradient(145deg,#0e2418,#0a1710);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
 .card h3{margin:0 0 8px;font-size:14px}
-.card p,.card li{color:#c6e6d3;font-size:12.5px;line-height:2;margin:0}
-.sw{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
-.sw i{width:38px;height:24px;border-radius:7px;display:block;border:1px solid rgba(255,255,255,.08)}
-code{background:#0d1f16;border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:11.5px;color:#7cf0d8;direction:ltr;display:inline-block}
+.card li{color:#c6e6d3;font-size:12.5px;line-height:2}
+.bad{color:var(--red)} .good{color:var(--g-tx)}
 .note{color:var(--muted);font-size:11.5px;margin-top:14px;line-height:2}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>معاينة تصميم — Pivot Squeeze Pro</h1>
-  <div class="sub">
-    هذه محاكاة بصرية لما سيظهر على شارت TradingView بعد تطبيق <code>pine/pivot_squeeze_pro.pine</code> —
-    نفس الألوان ونفس الأحجام ونفس اللوحة. الأزرار تعمل كمدخلات المؤشر تمامًا (تشغيل/إطفاء كل طبقة).
-  </div>
+  <h1>معاينة التصميم النظيف — Pivot Squeeze Pro (v3)</h1>
+  <div class="sub">محاكاة لما يظهر على شارت TradingView بعد النسخة المُعاد تصميمها. الأزرار تعمل كمدخلات المؤشر.</div>
 
   <div class="toolbar">
-    <button class="filter active" data-t="dash">لوحة المعلومات</button>
+    <button class="filter active" data-t="dash">لوحة القرار</button>
     <button class="filter active" data-t="tags">بطاقات الأسعار</button>
-    <button class="filter active" data-t="zones">مناطق المحاور</button>
+    <button class="filter active" data-t="zones">منطقة المستوى</button>
     <button class="filter active" data-t="plan">خطة الصفقة</button>
-    <button class="filter" data-t="bars">تلوين الشموع</button>
-    <button class="filter active" data-t="sigs">علامات الإشارات</button>
+    <button class="filter active" data-t="warn">تحذير المطاردة</button>
   </div>
 
-  <div class="chart" id="chart">
+  <div class="chart">
     <div class="grid"></div>
     <div class="candles" id="candles"></div>
     <div class="axis" id="axis"></div>
 
-    <div class="zone" id="zoneR" style="top:118px;height:16px;background:var(--red)"></div>
-    <div class="zone" id="zoneS" style="top:372px;height:16px;background:var(--deep)"></div>
-    <div class="level" id="lvlR" style="top:126px;border-color:rgba(255,82,100,.75)"></div>
-    <div class="level" id="lvlS" style="top:380px;border-color:rgba(22,168,95,.85)"></div>
+    <div class="zone" id="zoneR" style="top:120px;height:14px;background:var(--red)"></div>
+    <div class="mid"  id="midR"  style="top:127px;border-color:rgba(255,82,100,.5)"></div>
+    <div class="zone" id="zoneS" style="top:384px;height:14px;background:var(--deep)"></div>
+    <div class="mid"  id="midS"  style="top:391px;border-color:rgba(22,168,95,.6)"></div>
     <div class="anchor" id="anchor"></div>
 
-    <div class="tag" id="tagR" style="top:126px;background:rgba(255,82,100,.15);color:var(--red)">مقاومة 12.84</div>
-    <div class="tag" id="tagS" style="top:380px;background:rgba(22,168,95,.15);color:#6dffb3">دعم 11.06</div>
+    <div class="tag" id="tagR" style="top:127px;background:rgba(255,82,100,.12);color:var(--red)">مقاومة 12.84</div>
+    <div class="tag" id="tagS" style="top:391px;background:rgba(22,168,95,.12);color:#6dffb3">دعم 11.06</div>
 
-    <div class="plan" id="plan" style="bottom:26px;left:34%">
+    <div class="plan" id="plan" style="bottom:30px;left:38%">
       <div><b>دخول</b> 12.31</div>
       <div><b>وقف</b> 11.72</div>
       <div><b>هدف</b> 13.49</div>
       <div><b>عائد/مخاطرة</b> 2.0</div>
     </div>
-    <div class="stopline" id="stopline" style="bottom:112px;left:20%;right:14%"></div>
+    <div class="stopline" id="stopline" style="bottom:118px;left:24%;right:10%"></div>
 
     <div class="dash" id="dash">
-      <div class="head"><div>الانضغاط عند المحاور</div><span>2222 · D</span></div>
-      <div class="row"><div class="k">المرجع · EMA20</div><div class="v on">▲ فوق</div></div>
-      <div class="row"><div class="k">الزخم · MACD</div><div class="v on">▲ صاعد</div></div>
-      <div class="row"><div class="k">السيولة · OBV</div><div class="v on">▲ داخل</div></div>
-      <div class="row"><div class="k">RSI · نطاق صحي</div><div class="v on">58.4</div></div>
-      <div class="row"><div class="k">الانضغاط والامتداد</div><div class="v warn">◆ انضغاط 18%</div></div>
-      <div class="row"><div class="k">الفريم الأعلى · D</div><div class="v info">▲ داعم 61</div></div>
-      <div class="row"><div class="k">قوة الالتقاء</div><div class="v on">6 / 6</div></div>
-      <div class="row verdict"><div class="k">قرار النظام</div><div class="v on">جاهز — دخول</div></div>
+      <div class="head"><div class="k">لوحة القرار</div><div class="v">EMA20 · D · 2222</div></div>
+      <div class="row"><div class="k">الموقع من المرجع</div><div class="v on">فوق</div></div>
+      <div class="row"><div class="k">زخم الحركة</div><div class="v on">صاعد</div></div>
+      <div class="row"><div class="k">تدفق السيولة</div><div class="v on">داخل</div></div>
+      <div class="row"><div class="k">القوة النسبية</div><div class="v on">58.4</div></div>
+      <div class="row"><div class="k">حالة التذبذب</div><div class="v warn">انضغاط</div></div>
+      <div class="row"><div class="k">الفريم الأكبر</div><div class="v info">داعم</div></div>
+      <div class="row"><div class="k">قوة الالتقاء</div><div class="v on">6 من 6</div></div>
+      <div class="row verdict"><div class="k">قرار النظام</div><div class="v on">جاهز للدخول</div></div>
     </div>
   </div>
 
   <div class="cards">
     <div class="card">
-      <h3>نظام الألوان (مطابق للداشبورد)</h3>
-      <p>خلفية اللوحة <code>#0A1710</code> · الحدود <code>#214634</code> · النص <code>#F1FFF6</code> · الخافت <code>#8FA99A</code></p>
-      <div class="sw">
-        <i style="background:#20d47b" title="#20D47B"></i>
-        <i style="background:#16a85f" title="#16A85F"></i>
-        <i style="background:#ff5264" title="#FF5264"></i>
-        <i style="background:#ffc857" title="#FFC857"></i>
-        <i style="background:#7cf0d8" title="#7CF0D8"></i>
-        <i style="background:#0d4d30" title="خلية إيجابية"></i>
-        <i style="background:#4a1a20" title="خلية سلبية"></i>
-        <i style="background:#554314" title="خلية تحذير"></i>
-      </div>
-    </div>
-    <div class="card">
-      <h3>قواعد «شارت نظيف» المطبَّقة</h3>
+      <h3>ما أُصلح في هذه النسخة</h3>
       <ul>
-        <li>٣ طبقات فقط: المرجع + آخر دعم + آخر مقاومة.</li>
-        <li>المستويات مناطق شفافة ٩٣٪ بلا حدود بدل خطوط عريضة.</li>
-        <li>علامة واحدة لكل حالة — لا تكرار بين الشكل والتلوين والبطاقة.</li>
-        <li>بطاقات الأسعار وخطة الصفقة تُرسم عند آخر شمعة فقط.</li>
-        <li>اللوحة تُبنى مرة واحدة وتُحدَّث خلاياها (بلا وميض).</li>
+        <li><span class="bad">قبل:</span> عشرات ✕ حمراء على كل شمعة مشبعة. <span class="good">بعد:</span> علامة واحدة عند تغيّر الحالة فقط.</li>
+        <li><span class="bad">قبل:</span> خطوط دعم/مقاومة متدرجة ترسم التاريخ كله. <span class="good">بعد:</span> مستوى واحد نشط: منطقة شفافة + خط منتصف رفيع.</li>
+        <li><span class="bad">قبل:</span> جدول مشوّش بخلط عربي/لاتيني ورموز. <span class="good">بعد:</span> كل خلية اتجاه نصي واحد — عربي صرف أو لاتيني صرف.</li>
       </ul>
     </div>
     <div class="card">
-      <h3>التسلسل البصري في اللوحة</h3>
-      <p>الرأس بحجم <code>size.small</code> عريض، التسميات بلون خافت، والقيم في عمود ثابت العرض بلون الحالة —
-      فلا تقرأ النص لتعرف الحالة، اللون يكفي. الصف الأخير «قرار النظام» هو الوحيد بنص أبيض في العمود الأول.</p>
+      <h3>قراءة اللوحة</h3>
+      <ul>
+        <li>العمود الأيمن قيم ملوّنة: أخضر = شرط محقق، أحمر = مخالف، أصفر = تحذير، رمادي = محايد.</li>
+        <li>الصف الأخير «قرار النظام» هو الخلاصة: جاهز للدخول / انتظار الاختراق / لا تطارد / لا صفقة.</li>
+        <li>«قوة الالتقاء» عدد الشروط المحققة من 6 — تحت 5 لا تظهر إشارة دخول أصلًا.</li>
+      </ul>
     </div>
   </div>
 
-  <div class="note">
-    ملاحظة: هذه معاينة تصميم فقط (HTML) وليست شارت TradingView حقيقي — الخطوط على TradingView هي خطوط المنصة،
-    لكن الألوان والأحجام النسبية وترتيب اللوحة مطابقة تمامًا لما ينتجه ملف Pine.
-  </div>
+  <div class="note">معاينة تصميم HTML فقط؛ الخطوط على TradingView هي خطوط المنصة لكن الألوان والأحجام والترتيب مطابقة لملف Pine.</div>
 </div>
 
 <script>
-// ── توليد شموع تجريبية: تجميع ثم انضغاط ثم إشارة ──
 (function(){
-  const N=64, top=126, bot=380, H=520;
-  const px=[], base=[];
-  let p=11.9;
+  const N=70, top=127, bot=391;
+  const base=[]; let p=11.9;
   for(let i=0;i<N;i++){
-    // موجة هبوط خفيفة ثم تجميع ضيق (انضغاط) ثم انطلاق
-    let vol = i<26 ? 0.16 : i<50 ? 0.055 : 0.19;
-    let drift = i<26 ? -0.012 : i<50 ? 0.002 : 0.028;
-    p = p + drift + (Math.sin(i*1.7)+Math.cos(i*0.9))*vol*0.5 + (Math.random()-0.5)*vol;
+    const vol = i<26 ? .16 : i<52 ? .05 : .19;
+    const drift = i<26 ? -.012 : i<52 ? .002 : .028;
+    p = p + drift + (Math.sin(i*1.7)+Math.cos(i*.9))*vol*.5 + (Math.random()-.5)*vol;
     base.push(p);
   }
   const lo=Math.min(...base), hi=Math.max(...base);
   const y = v => bot - (v-lo)/(hi-lo)*(bot-top);
-  const c=document.getElementById('candles'), W=c.clientWidth||900;
-  const step=W/N;
+  const c=document.getElementById('candles'); const W=c.clientWidth||1100; const step=W/N;
   base.forEach((v,i)=>{
-    const o = i? base[i-1] : v;
-    const x = i*step+step/2;
-    const up = v>=o;
+    const o=i?base[i-1]:v, x=i*step+step/2, up=v>=o;
     const bodyH=Math.max(2,Math.abs(y(o)-y(v)));
-    const el=document.createElement('div');
-    el.className='c'; el.dataset.up = up ? '1':'0';
-    el.style.cssText=`position:absolute;left:${x-step*0.32}px;width:${step*0.64}px;top:${Math.min(y(o),y(v))}px;height:${bodyH}px;`+
-      `background:${up?'var(--green)':'var(--red)'};opacity:.88;border-radius:1px`;
-    const wick=document.createElement('div');
-    wick.style.cssText=`position:absolute;left:${x-0.5}px;width:1px;top:${y(v)-8}px;height:${bodyH+16}px;`+
-      `background:${up?'rgba(32,212,123,.55)':'rgba(255,82,100,.5)'}`;
-    c.appendChild(wick); c.appendChild(el);
-    if(i===52){
-      const s=document.createElement('div');
-      s.className='sig sigbuy';
-      s.style.cssText+=`;left:${x}px;top:${Math.min(y(o),y(v))+bodyH+16}px;color:var(--green)`;
-      s.textContent='▲ دخول';
-      c.appendChild(s);
-      const pl=document.getElementById('plan'); pl.style.left=(x/W*100)+'%';
-      document.getElementById('stopline').style.left=(x/W*100-9)+'%';
-    }
-    if(i===58){
+    const w=document.createElement('div');
+    w.style.cssText=`position:absolute;left:${x-.5}px;width:1px;top:${y(v)-7}px;height:${bodyH+14}px;background:${up?'rgba(32,212,123,.5)':'rgba(255,82,100,.45)'}`;
+    const e=document.createElement('div'); e.dataset.up=up?'1':'0';
+    e.style.cssText=`position:absolute;left:${x-step*.3}px;width:${step*.6}px;top:${Math.min(y(o),y(v))}px;height:${bodyH}px;background:${up?'var(--green)':'var(--red)'};opacity:.88`;
+    c.appendChild(w); c.appendChild(e);
+    if(i===56){ // إشارة دخول واحدة
       const s=document.createElement('div'); s.className='sig';
-      s.style.cssText+=`;left:${x}px;top:${y(v)-30}px;color:var(--red)`; s.textContent='✕';
+      s.style.cssText+=`;left:${x}px;top:${Math.min(y(o),y(v))+bodyH+14}px;color:var(--green)`; s.textContent='▲ دخول';
+      c.appendChild(s);
+      document.getElementById('plan').style.left=(x/W*100)+'%';
+      document.getElementById('stopline').style.left=(x/W*100-8)+'%';
+    }
+    if(i===63){ // تحذير مطاردة واحد فقط
+      const s=document.createElement('div'); s.className='sig warnm';
+      s.style.cssText+=`;left:${x}px;top:${y(v)-26}px;color:var(--red)`; s.textContent='▼';
       c.appendChild(s);
     }
+    if(i===54){ const d=document.createElement('div'); d.className='sig';
+      d.style.cssText+=`;left:${x}px;top:${Math.min(y(o),y(v))+bodyH+10}px;color:var(--yellow)`; d.textContent='●'; c.appendChild(d); }
   });
-  // خط المرجع (EMA/VWAP) منحني بسيط تحت السعر
-  const a=document.getElementById('anchor');
-  a.style.top=(y(base[base.length-1])+26)+'px';
-  // محور الأسعار
+  document.getElementById('anchor').style.top=(y(base[N-1])+24)+'px';
   const ax=document.getElementById('axis');
-  for(let i=0;i<=8;i++){ const v=hi-(hi-lo)*i/8; const d=document.createElement('div'); d.textContent=v.toFixed(2); ax.appendChild(d); }
+  for(let i=0;i<=8;i++){ const d=document.createElement('div'); d.textContent=(hi-(hi-lo)*i/8).toFixed(2); ax.appendChild(d); }
 })();
-
-// ── أزرار الطبقات ──
-const map={dash:['#dash'],tags:['#tagR','#tagS'],zones:['#zoneR','#zoneS'],
-  plan:['#plan','#stopline'],sigs:['.sig'],bars:[]};
+const map={dash:['#dash'],tags:['#tagR','#tagS'],zones:['#zoneR','#zoneS','#midR','#midS'],
+  plan:['#plan','#stopline'],warn:['.warnm']};
 document.querySelectorAll('.filter').forEach(b=>{
-  b.onclick=()=>{
-    b.classList.toggle('active');
-    const on=b.classList.contains('active'), t=b.dataset.t;
-    map[t].forEach(sel=>document.querySelectorAll(sel).forEach(e=>e.style.display=on?'':'none'));
-    if(t==='zones'){ document.querySelectorAll('#lvlR,#lvlS').forEach(e=>e.style.opacity=on?.35:1); }
-    if(t==='bars'){
-      document.querySelectorAll('.c').forEach(e=>{
-        if(!on){e.style.boxShadow='';e.style.opacity=.88;return;}
-        const g=e.dataset.up==='1';
-        e.style.opacity=1; e.style.boxShadow='0 0 14px '+(g?'rgba(32,212,123,.8)':'rgba(255,82,100,.75)');
-      });
-    }
+  b.onclick=()=>{ b.classList.toggle('active');
+    const on=b.classList.contains('active');
+    map[b.dataset.t].forEach(s=>document.querySelectorAll(s).forEach(e=>e.style.display=on?'':'none'));
   };
 });
 </script>
