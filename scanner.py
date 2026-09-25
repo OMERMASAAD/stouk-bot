@@ -322,10 +322,10 @@ def main():
             continue
         item["ticker"] = ticker
         item["computed_at"] = now.isoformat()
-        if h4 is not None:
-            item["technical_4h"] = technicals(h4.tail(30), 30)
-        if h1 is not None:
-            item["technical_1h"] = technicals(h1.tail(30), 30)
+        if h4 is not None and len(h4) >= 20:
+            item["technical_4h"] = technicals(h4.tail(30))
+        if h1 is not None and len(h1) >= 20:
+            item["technical_1h"] = technicals(h1.tail(30))
         item["chart"] = chart_data(d, 30)
         meta = watch.get(ticker, {})
         item["discovered_at"] = meta.get("discovered_at") or now.isoformat()
@@ -444,6 +444,8 @@ if __name__ == "__main__":
         raise
     except Exception as e:                                  # noqa: BLE001
         import traceback
-        print("::error title=Scanner crashed::%s: %s" % (type(e).__name__, str(e)[:300]))
+        tb = traceback.extract_tb(e.__traceback__)
+        where = " < ".join("%s:%s" % (f.filename.split("/")[-1], f.lineno) for f in tb[-3:])
+        print("::error title=Scanner crashed::%s: %s | at %s" % (type(e).__name__, str(e)[:200], where))
         traceback.print_exc()
         raise

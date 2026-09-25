@@ -145,8 +145,10 @@ def anchored_vwap(d, start_abs):
 
 
 def technicals(d, n=None):
-    """مؤشرات فنية على الشموع الممررة (n=None: كلها)."""
+    """مؤشرات فنية على الشموع الممررة (n=None: كلها). تعيد {} إذا كانت الشموع أقل من 3."""
     x = d if n is None else d.tail(n)
+    if x is None or len(x) < 3:
+        return {}
     close = x["Close"].astype(float)
     open_ = x["Open"].astype(float)
     volume = x["Volume"].astype(float)
