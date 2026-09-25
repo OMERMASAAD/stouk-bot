@@ -1,0 +1,302 @@
+//@version=5
+// ═══════════════════════════════════════════════════════════════════════════
+//  PIVOT SQUEEZE PRO  ·  مؤشر الانضغاط عند المحاور
+//  إعادة بناء كاملة بتركيز على التصميم: هوية لونية واحدة مطابقة لداشبورد
+//  «رادار القاع» (#07110d خلفية · #20d47b أخضر · #ff5264 أحمر · #ffc857 أصفر
+//  · #8fa99a نص خافت)، وشارت نظيف بلا عناصر متكررة.
+//
+//  قواعد التصميم المعتمدة هنا:
+//   1) ثلاث طبقات فقط على الشارت: المرجع (VWAP/EMA) + آخر دعم + آخر مقاومة.
+//   2) كل عنصر إضافي (بطاقات الأسعار، مناطق المحاور، خطة الصفقة، تلوين الشموع)
+//      قابل للإطفاء من الإعدادات، والافتراضي هو الأهدأ للعين.
+//   3) إشارة واحدة لكل حالة، بلا تكرار (لا shapes + barcolor + labels معًا).
+//   4) لوحة واحدة تُبنى مرة واحدة ثم تُحدَّث خلاياها (بلا وميض أو إعادة رسم).
+//   5) كل كائن رسم (label/line/box) يُنشأ مرة واحدة ويُحدَّث بالمُعيِّنات،
+//      حتى لا يمتلئ حد الكائنات على الفريمات الصغيرة.
+// ═══════════════════════════════════════════════════════════════════════════
+indicator("Pivot Squeeze Pro | مؤشر الانضغاط عند المحاور", shorttitle = "Squeeze Pro",
+     overlay = true, max_labels_count = 100, max_lines_count = 100, max_boxes_count = 20)
+
+// ───────────────────────────────────────────────────────────────────────────
+// 1) نظام الألوان (Brand Tokens)
+// ───────────────────────────────────────────────────────────────────────────
+C_BG     = color.new(#0a1710, 4)     // خلفية اللوحة
+C_PANEL  = color.new(#0e2117, 0)     // خلفية الرأس
+C_BORDER = color.new(#214634, 20)    // حدود الخلايا
+C_TEXT   = color.new(#f1fff6, 0)     // نص أساسي
+C_MUTED  = color.new(#8fa99a, 0)     // نص خافت (التسميات)
+C_GREEN  = color.new(#20d47b, 0)
+C_DEEP   = color.new(#16a85f, 0)
+C_RED    = color.new(#ff5264, 0)
+C_YELLOW = color.new(#ffc857, 0)
+C_TEAL   = color.new(#7cf0d8, 0)
+
+// أزواج (خلفية خلية / نص خلية) — نفس أسلوب بطاقات الداشبورد
+G_ON   = color.new(#0d4d30, 8)
+G_TX   = color.new(#6dffb3, 0)
+R_ON   = color.new(#4a1a20, 8)
+R_TX   = color.new(#ff9aa5, 0)
+Y_ON   = color.new(#554314, 8)
+Y_TX   = color.new(#ffd978, 0)
+T_ON   = color.new(#123d3a, 8)
+T_TX   = C_TEAL
+N_ON   = color.new(#12291e, 0)
+N_TX   = color.new(#a9bbb0, 0)
+
+// ───────────────────────────────────────────────────────────────────────────
+// 2) المدخلات
+// ───────────────────────────────────────────────────────────────────────────
+GRP_UI = "① اللوحة والتصميم"
+showDash  = input.bool(true , "عرض لوحة المعلومات", group = GRP_UI, tooltip = "جدول ملخّص يوضح حالة كل شرط بلون واحد واضح.")
+dashPos   = input.string("أعلى اليمين", "موضع اللوحة", options = ["أعلى اليمين", "أسفل اليمين", "أعلى اليسار", "أسفل اليسار"], group = GRP_UI)
+showTags  = input.bool(true , "بطاقات الأسعار على المحور الأيمن", group = GRP_UI, tooltip = "سعر الدعم والمقاومة مكتوبًا بدل قراءته بصريًا.")
+showPlan  = input.bool(true , "خطة الصفقة عند الإشارة", group = GRP_UI, tooltip = "دخول / وقف / هدف مع نسبة العائد إلى المخاطرة.")
+paintBars = input.bool(false, "تلوين الشموع عند الحالات", group = GRP_UI, tooltip = "متوقف افتراضيًا للحفاظ على نظافة الشارت.")
+
+GRP_SR = "② الدعم والمقاومة"
+pivotLen = input.int(10 , "طول المحور (يمين/يسار)", minval = 2 , maxval = 50 , group = GRP_SR, tooltip = "رقم أكبر = محاور أقل وأقوى وشارت أهدأ.")
+showZones= input.bool(true , "مناطق بدل خطوط حادة", group = GRP_SR, tooltip = "تحول المستوى إلى منطقة شفافة بعرض ATR — أدق فنيًا وأخف بصريًا.")
+zoneAtr  = input.float(0.35, "عرض المنطقة (× ATR)", minval = 0.1, maxval = 2.0, step = 0.05, group = GRP_SR)
+srWidth  = input.int(1  , "سماكة خط المستوى", minval = 1, maxval = 3, group = GRP_SR)
+
+GRP_AN = "③ المرجع (Anchor)"
+anchorLen  = input.int(20   , "طول EMA على اليومي وأعلى", minval = 5, maxval = 200, group = GRP_AN)
+anchorSess = input.bool(false, "VWAP داخل جلسة التداول فقط", group = GRP_AN, tooltip = "فعّلها إذا كان امتداد ما بعد الإغلاق يشوّش الخط.")
+
+GRP_SG = "④ الإشارة وإدارة المخاطر"
+rsiLen     = input.int(14  , "طول RSI", minval = 2, group = GRP_SG)
+rsiMin     = input.int(40  , "أدنى RSI للدخول", minval = 1, maxval = 70, group = GRP_SG)
+rsiTrap    = input.int(80  , "حد التشبع الشرائي (فخ المطاردة)", minval = 60, maxval = 95, group = GRP_SG)
+squeezeLen = input.int(20  , "طول قياس الانضغاط (Bollinger)", minval = 10, maxval = 200, group = GRP_SG)
+squeezePct = input.int(25  , "عتبة الانضغاط (مئوي)", minval = 5, maxval = 50, group = GRP_SG, tooltip = "عرض بولنجر ضمن أضعف هذه النسبة من تاريخه = انضغاط.")
+extMult    = input.float(2.5, "حد الامتداد عن المرجع (× ATR)", minval = 0.5, maxval = 10.0, step = 0.5, group = GRP_SG)
+stopMult   = input.float(1.5, "مسافة الوقف الاحتياطية (× ATR)", minval = 0.2, maxval = 10.0, step = 0.1, group = GRP_SG)
+rrTarget   = input.float(2.0, "الهدف (العائد ÷ المخاطرة)", minval = 0.5, maxval = 10.0, step = 0.5, group = GRP_SG)
+
+GRP_HT = "⑤ تأكيد الفريم الأعلى"
+htfOn     = input.bool(true, "اشتراط موافقة الفريم الأعلى", group = GRP_HT, tooltip = "لا تظهر إشارة دخول إلا إذا كان اتجاه الفريم الأكبر موافقًا.")
+htfTf     = input.timeframe("D", "الفريم الأعلى", group = GRP_HT)
+htfEmaLen = input.int(50, "طول EMA للفريم الأعلى", minval = 5, maxval = 200, group = GRP_HT)
+htfRsiMin = input.int(50, "أدنى RSI للفريم الأعلى", minval = 1, maxval = 90, group = GRP_HT)
+
+// ───────────────────────────────────────────────────────────────────────────
+// 3) الحسابات
+// ───────────────────────────────────────────────────────────────────────────
+isHighTf = timeframe.isdaily or timeframe.isweekly or timeframe.ismonthly
+atr14    = ta.atr(14)
+
+// المرجع: VWAP للدقائق — EMA لليومي وأعلى.
+// تُحسب القيمتان على كل شمعة (خارج أي شرط) ثم يُختار المناسب: أأمن في Pine.
+emaAnchor  = ta.ema(close, anchorLen)
+// حماية: timeframe.session تكون فارغة على الفريم اليومي وأعلى، والجلسة الفارغة
+// تُنتج خطأ تشغيلًا — لذلك نستخدم الجلسة الصريحة للرمز عند الحاجة.
+sessTxt    = na(timeframe.session) or timeframe.session == "" ? session.regular : timeframe.session
+vwapAnchor = anchorSess ? ta.vwap(close, sessTxt) : ta.vwap(close)
+useVwap    = isHighTf ? false : not na(vwapAnchor)
+anchorLine = useVwap ? vwapAnchor : emaAnchor
+anchorName = useVwap ? "VWAP" : "EMA" + str.tostring(anchorLen)
+aboveAnchor = not na(anchorLine) and close > anchorLine
+
+// OBV
+obvVal = ta.obv
+obvEma = ta.ema(obvVal, 20)
+hasVol = not na(volume) and volume > 0
+obvUp  = hasVol and obvVal > obvEma and ta.change(obvVal) > 0
+
+// RSI و MACD
+rsiVal  = ta.rsi(close, rsiLen)
+rsiOk   = rsiVal > rsiMin and rsiVal < rsiTrap
+[macdLine, signalLine, histLine] = ta.macd(close, 12, 26, 9)
+macdBull = macdLine > signalLine and histLine > histLine[1]
+
+// الانضغاط: عرض بولنجر كنسبة مئوية من تاريخه
+basis  = ta.sma(close, squeezeLen)
+dev    = squeezeLen * ta.stdev(close, squeezeLen)
+bbw    = (4 * dev) / basis * 100
+bbwRank = ta.percentrank(bbw, squeezeLen)          // يُحسب على كل شمعة (أأمن في Pine)
+bbwPct  = bar_index > squeezeLen ? bbwRank : 100.0
+isSqueeze = bbwPct <= squeezePct
+
+// الفريم الأعلى — يُقرأ من آخر شمعة مكتملة (لا إعادة رسم)
+f_htf() => [close > ta.ema(close, htfEmaLen), ta.rsi(close, rsiLen)]
+[htfTrendRaw, htfRsiRaw] = request.security(syminfo.tickerid, htfTf, f_htf(), barmerge.gaps_off, barmerge.lookahead_on)
+htfTrend = na(htfTrendRaw[1]) ? false : htfTrendRaw[1]
+htfRsi   = na(htfRsiRaw[1]) ? rsiVal : htfRsiRaw[1]
+htfOk    = not htfOn or (htfTrend and htfRsi > htfRsiMin)
+
+// الحالات
+coreLong     = aboveAnchor and macdBull and obvUp and rsiOk and htfOk
+buySignal    = coreLong and not coreLong[1]
+squeezeBreak = isSqueeze[1] and not isSqueeze and close > close[1] and aboveAnchor and hasVol
+stretched    = not na(anchorLine) and close > anchorLine + extMult * atr14
+lateSignal   = aboveAnchor and (rsiVal >= rsiTrap or stretched)
+
+// درجة الالتقاء من 6
+score = (aboveAnchor ? 1 : 0) + (macdBull ? 1 : 0) + (obvUp ? 1 : 0) + (rsiOk ? 1 : 0) + (isSqueeze ? 1 : 0) + (htfOk ? 1 : 0)
+
+// ───────────────────────────────────────────────────────────────────────────
+// 4) المحاور — آخر دعم وآخر مقاومة فقط
+// ───────────────────────────────────────────────────────────────────────────
+pHi = ta.pivothigh(high, pivotLen, pivotLen)
+pLo = ta.pivotlow(low , pivotLen, pivotLen)
+
+var float lastRes = na
+var float lastSup = na
+var int   resBar  = na
+var int   supBar  = na
+
+if not na(pHi)
+    lastRes := pHi
+    resBar  := bar_index - pivotLen
+if not na(pLo)
+    lastSup := pLo
+    supBar  := bar_index - pivotLen
+
+zoneHalf = showZones ? math.max(atr14 * zoneAtr, syminfo.mintick) : 0.0
+plot(lastRes   , "المقاومة الهيكلية"    , color = color.new(C_RED , 25), linewidth = srWidth, style = plot.style_linebr)
+plot(lastSup   , "الدعم الهيكلي"        , color = color.new(C_DEEP, 15), linewidth = srWidth, style = plot.style_linebr)
+plot(anchorLine, "المرجع VWAP أو EMA"   , color = aboveAnchor ? color.new(C_GREEN, 40) : color.new(C_RED, 50), linewidth = 2)
+
+// مناطق المحاور (شفافة وبلا حدود)
+var box resZone = na
+var box supZone = na
+if showZones and barstate.islast
+    if not na(lastRes) and not na(resBar)
+        if na(resZone)
+            resZone := box.new(resBar, lastRes + zoneHalf, bar_index + 12, lastRes - zoneHalf, bgcolor = color.new(C_RED, 93), border_color = color.new(C_RED, 100), border_width = 1)
+        else
+            box.set_lefttop(resZone, resBar, lastRes + zoneHalf)
+            box.set_rightbottom(resZone, bar_index + 12, lastRes - zoneHalf)
+    if not na(lastSup) and not na(supBar)
+        if na(supZone)
+            supZone := box.new(supBar, lastSup + zoneHalf, bar_index + 12, lastSup - zoneHalf, bgcolor = color.new(C_DEEP, 93), border_color = color.new(C_DEEP, 100), border_width = 1)
+        else
+            box.set_lefttop(supZone, supBar, lastSup + zoneHalf)
+            box.set_rightbottom(supZone, bar_index + 12, lastSup - zoneHalf)
+
+// ───────────────────────────────────────────────────────────────────────────
+// 5) الإشارات — علامة واحدة نظيفة لكل حالة
+// ───────────────────────────────────────────────────────────────────────────
+plotshape(buySignal   , title = "إشارة دخول"     , style = shape.triangleup, location = location.belowbar, color = C_GREEN , textcolor = C_GREEN , size = size.small, text = "دخول")
+plotshape(squeezeBreak, title = "اختراق انضغاط"  , style = shape.circle    , location = location.belowbar, color = C_YELLOW, textcolor = C_YELLOW, size = size.tiny)
+plotshape(lateSignal  , title = "تحذير مطاردة"   , style = shape.xcross    , location = location.abovebar, color = color.new(C_RED, 20), textcolor = C_RED, size = size.tiny)
+
+barcolor(paintBars ? buySignal ? C_GREEN : lateSignal ? C_RED : squeezeBreak ? C_YELLOW : na : na)
+
+// بطاقات الأسعار
+var label resTag = na
+var label supTag = na
+resTxt = " مقاومة  " + str.tostring(lastRes, format.mintick) + " "
+supTxt = " دعم  " + str.tostring(lastSup, format.mintick) + " "
+if showTags and barstate.islast
+    if not na(lastRes)
+        if na(resTag)
+            resTag := label.new(bar_index, lastRes, resTxt, xloc = xloc.bar_index, style = label.style_label_left, color = color.new(C_RED, 85), textcolor = C_RED, size = size.small)
+        else
+            label.set_xy(resTag, bar_index, lastRes)
+            label.set_text(resTag, resTxt)
+    if not na(lastSup)
+        if na(supTag)
+            supTag := label.new(bar_index, lastSup, supTxt, xloc = xloc.bar_index, style = label.style_label_left, color = color.new(C_DEEP, 85), textcolor = color.new(#6dffb3, 0), size = size.small)
+        else
+            label.set_xy(supTag, bar_index, lastSup)
+            label.set_text(supTag, supTxt)
+if not showTags and barstate.islast
+    if not na(resTag)
+        label.delete(resTag)
+        resTag := na
+    if not na(supTag)
+        label.delete(supTag)
+        supTag := na
+
+// خطة الصفقة
+var label planTag = na
+var line  stopLn  = na
+planTxt = ""
+stopP   = float(na)
+if buySignal
+    entryP = close
+    stopP := not na(lastSup) and lastSup < entryP ? math.min(lastSup - 0.25 * atr14, entryP - stopMult * atr14) : entryP - stopMult * atr14
+    riskP  = math.max(entryP - stopP, syminfo.mintick)
+    targP  = entryP + riskP * rrTarget
+    planTxt := "دخول  " + str.tostring(entryP, format.mintick) + "\nوقف  " + str.tostring(stopP , format.mintick) + "\nهدف  " + str.tostring(targP , format.mintick) + "\nعائد/مخاطرة  " + str.tostring(rrTarget, "#.#")
+if showPlan and barstate.islast and buySignal
+    if na(planTag)
+        planTag := label.new(bar_index, low - 1.5 * atr14, planTxt, xloc = xloc.bar_index, style = label.style_label_up, color = color.new(C_BG, 0), textcolor = C_TEXT, size = size.small, border_color = color.new(C_GREEN, 55), border_width = 1)
+    else
+        label.set_xy(planTag, bar_index, low - 1.5 * atr14)
+        label.set_text(planTag, planTxt)
+    if na(stopLn)
+        stopLn := line.new(bar_index - 3, stopP, bar_index + 10, stopP, xloc = xloc.bar_index, color = color.new(C_RED, 40), style = line.style_dashed, width = 1)
+    else
+        line.set_xy1(stopLn, bar_index - 3, stopP)
+        line.set_xy2(stopLn, bar_index + 10, stopP)
+if (not showPlan or not buySignal) and barstate.islast
+    if not na(planTag)
+        label.delete(planTag)
+        planTag := na
+    if not na(stopLn)
+        line.delete(stopLn)
+        stopLn := na
+
+// ───────────────────────────────────────────────────────────────────────────
+// 6) لوحة المعلومات — تُبنى مرة واحدة وتُحدَّث خلاياها
+// ───────────────────────────────────────────────────────────────────────────
+// ملاحظة تقنية: موضع table.new يجب أن يكون ثابتًا، لذا يُضبط الموضع المختار
+// عبر table.set_position الذي يقبل قيمة متغيرة.
+var table dash = table.new(position.top_right, 2, 9, bgcolor = C_BG, border_width = 1, border_color = C_BORDER, frame_color = color.new(C_DEEP, 55), frame_width = 1)
+var bool dashAlive = true
+
+dashPosFinal = dashPos == "أعلى اليمين" ? position.top_right : dashPos == "أسفل اليمين" ? position.bottom_right : dashPos == "أعلى اليسار" ? position.top_left : position.bottom_left
+
+rsiState  = rsiVal >= rsiTrap ? "تشبع شرائي" : rsiVal <= rsiMin ? "قاعدة" : "نطاق صحي"
+htfTxt    = not htfOn ? "معطّل" : htfTrend ? "▲ داعم " + str.tostring(math.round(htfRsi)) : "▼ معاكس " + str.tostring(math.round(htfRsi))
+sqzTxt    = isSqueeze ? "◆ انضغاط " + str.tostring(math.round(bbwPct)) + "%" : stretched ? "▲ ممتد" : "○ طبيعي"
+verdict   = buySignal or coreLong ? "جاهز — دخول" : isSqueeze ? "انضغاط — انتظر الاختراق" : lateSignal ? "متأخر — لا تطارد" : "تجميع — لا صفقة"
+
+if showDash and barstate.islast
+    if not dashAlive
+        dash := table.new(position.top_right, 2, 9, bgcolor = C_BG, border_width = 1, border_color = C_BORDER, frame_color = color.new(C_DEEP, 55), frame_width = 1)
+        dashAlive := true
+    table.set_position(dash, dashPosFinal)
+    table.merge_cells(dash, 0, 0, 1, 0)
+
+    table.cell(dash, 0, 0, "الانضغاط عند المحاور   " + timeframe.period + "   " + syminfo.ticker, bgcolor = C_PANEL, text_color = C_TEXT  , text_size = size.small)
+    table.cell(dash, 1, 0, ""            , bgcolor = C_PANEL)
+
+    table.cell(dash, 0, 1, "المرجع · " + anchorName, text_color = C_MUTED, text_size = size.small)
+    table.cell(dash, 1, 1, aboveAnchor ? "▲ فوق" : "▼ تحت", bgcolor = aboveAnchor ? G_ON : R_ON, text_color = aboveAnchor ? G_TX : R_TX, text_size = size.small)
+
+    table.cell(dash, 0, 2, "الزخم · MACD", text_color = C_MUTED, text_size = size.small)
+    table.cell(dash, 1, 2, macdBull ? "▲ صاعد" : "▼ ضعيف", bgcolor = macdBull ? G_ON : R_ON, text_color = macdBull ? G_TX : R_TX, text_size = size.small)
+
+    table.cell(dash, 0, 3, "السيولة · OBV", text_color = C_MUTED, text_size = size.small)
+    table.cell(dash, 1, 3, not hasVol ? "— لا بيانات" : obvUp ? "▲ داخل" : "▼ خارج", bgcolor = not hasVol ? N_ON : obvUp ? G_ON : R_ON, text_color = not hasVol ? N_TX : obvUp ? G_TX : R_TX, text_size = size.small)
+
+    table.cell(dash, 0, 4, "RSI · " + rsiState, text_color = C_MUTED, text_size = size.small)
+    table.cell(dash, 1, 4, str.tostring(math.round(rsiVal, 1)), bgcolor = rsiVal >= rsiTrap ? R_ON : rsiOk ? G_ON : Y_ON, text_color = rsiVal >= rsiTrap ? R_TX : rsiOk ? G_TX : Y_TX, text_size = size.small)
+
+    table.cell(dash, 0, 5, "الانضغاط والامتداد", text_color = C_MUTED, text_size = size.small)
+    table.cell(dash, 1, 5, sqzTxt, bgcolor = isSqueeze ? Y_ON : stretched ? R_ON : N_ON, text_color = isSqueeze ? Y_TX : stretched ? R_TX : N_TX, text_size = size.small)
+
+    table.cell(dash, 0, 6, "الفريم الأعلى · " + htfTf, text_color = C_MUTED, text_size = size.small)
+    table.cell(dash, 1, 6, htfTxt, bgcolor = not htfOn ? N_ON : htfTrend ? T_ON : R_ON, text_color = not htfOn ? N_TX : htfTrend ? T_TX : R_TX, text_size = size.small)
+
+    table.cell(dash, 0, 7, "قوة الالتقاء", text_color = C_MUTED, text_size = size.small)
+    table.cell(dash, 1, 7, str.tostring(score) + " / 6", bgcolor = score >= 5 ? G_ON : score >= 3 ? Y_ON : N_ON, text_color = score >= 5 ? G_TX : score >= 3 ? Y_TX : N_TX, text_size = size.small)
+
+    table.cell(dash, 0, 8, "قرار النظام", text_color = C_TEXT, text_size = size.small)
+    table.cell(dash, 1, 8, verdict, bgcolor = buySignal or coreLong ? G_ON : isSqueeze ? Y_ON : lateSignal ? R_ON : N_ON, text_color = buySignal or coreLong ? G_TX : isSqueeze ? Y_TX : lateSignal ? R_TX : N_TX, text_size = size.small)
+
+if not showDash and dashAlive and barstate.islast
+    table.delete(dash)
+    dashAlive := false
+
+// ───────────────────────────────────────────────────────────────────────────
+// 7) التنبيهات
+// ───────────────────────────────────────────────────────────────────────────
+alertcondition(buySignal   , title = "إشارة دخول نظيفة"          , message = "🟢 {{ticker}} على {{interval}} — التقاء كامل: فوق المرجع، زخم صاعد، تدفق سيولة داخل، والفريم الأعلى موافق.")
+alertcondition(squeezeBreak, title = "اختراق انضغاط"             , message = "🟡 {{ticker}} على {{interval}} — انتهى الانضغاط وبدأ التمدد لأعلى مع المرجع والفوليوم.")
+alertcondition(lateSignal  , title = "تحذير مطاردة (تشبع/امتداد)", message = "🔴 {{ticker}} على {{interval}} — السعر ممتد أو RSI فوق حد التشبع: الدخول الآن مخاطرة عالية.")
+alertcondition(ta.crossover(close, lastRes) , title = "اختراق المقاومة الهيكلية", message = "🚀 {{ticker}} على {{interval}} — اختراق آخر مقاومة هيكلية.")
+alertcondition(ta.crossunder(close, lastSup), title = "كسر الدعم الهيكلي"      , message = "⚠️ {{ticker}} على {{interval}} — كسر آخر دعم هيكلي: إلغاء الفكرة.")
