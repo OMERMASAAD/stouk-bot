@@ -176,7 +176,11 @@ def analyze_news(items, earnings_dates, now=None):
 
     warnings.sort(key=lambda x: x["age_days"])
     catalysts.sort(key=lambda x: (x["days_until"] is None, x["days_until"] if x["days_until"] is not None else 0))
-    return {"warnings": warnings, "catalysts": catalysts, "temp_excluded": temp_excluded}
+    return {
+        "warnings": warnings, "catalysts": catalysts, "temp_excluded": temp_excluded,
+        # عدّادات للتشخيص فقط (عدد العناوين المقروءة وتواريخ النتائج المتاحة)
+        "headlines_count": len(seen), "earnings_dates_count": len(list(earnings_dates or [])),
+    }
 
 
 def summarize_news(news, now=None, min_days=CATALYST_MIN_DAYS, max_days=CATALYST_DAYS):

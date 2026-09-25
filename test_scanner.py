@@ -93,6 +93,7 @@ def case01_ready_stock_end_to_end():
         assert "technical_1h" in sig
         diag = payload["diagnostics"]
         assert diag["symbols_total"] == 1 and diag["float_pass"] == 1
+        assert "news" in diag and "float_sources" in diag and "reject_reasons" in diag
         assert diag["data_coverage_pct"] == 100.0
         # watchlist محفوظة
         with open(scanner.WATCHLIST_FILE, encoding="utf-8") as f:

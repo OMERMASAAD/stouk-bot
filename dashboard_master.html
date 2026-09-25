@@ -291,6 +291,10 @@ function diagHtml(){
   const fs=g.float_sources||{};
   const fchips=Object.keys(fs).map(k=>'<span class="rchip muted">'+esc(FLOAT_SRC_AR[k]||k)+': <b>'+esc(fs[k])+'</b></span>').join('');
   if(fchips)h+='<div class="reasons">'+fchips+'</div>';
+  const nw=g.news||{};
+  if(Object.keys(nw).length){
+    h+='<div class="note" style="margin:0 0 10px">طبقة الأخبار (Yahoo): عناوين مقروءة <b>'+esc(nw.headlines_total??0)+'</b> لـ <b>'+esc(nw.tickers_with_headlines??0)+'</b> سهم · تواريخ نتائج متاحة لـ <b>'+esc(nw.tickers_with_earnings_dates??0)+'</b> سهم · تحذيرات <b>'+esc(nw.warnings_found??0)+'</b> · محفزات <b>'+esc(nw.catalysts_found??0)+'</b>.</div>';
+  }
   const rr=g.reject_reasons||{};
   const chips=Object.keys(rr).sort((a,b)=>rr[b]-rr[a]).map(k=>'<span class="rchip">'+esc(REASON_AR[k]||k)+': <b>'+esc(rr[k])+'</b></span>').join('');
   h+=chips?('<div class="reasons">'+chips+'</div>'):'';

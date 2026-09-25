@@ -363,6 +363,13 @@ def main():
         -int(x.get("readiness_score", 0)),
     ))
 
+    news_stats = {
+        "tickers_with_headlines": sum(1 for n in news_map.values() if (n or {}).get("headlines_count")),
+        "tickers_with_earnings_dates": sum(1 for n in news_map.values() if (n or {}).get("earnings_dates_count")),
+        "headlines_total": sum(int((n or {}).get("headlines_count") or 0) for n in news_map.values()),
+        "warnings_found": sum(len((n or {}).get("warnings") or []) for n in news_map.values()),
+        "catalysts_found": sum(len((n or {}).get("catalysts") or []) for n in news_map.values()),
+    }
     near_misses.sort(key=lambda x: (x["days_since_peak"], -x["rally_pct"]))
     diagnostics = {
         "symbols_total": len(symbols),
@@ -376,6 +383,7 @@ def main():
         "float_mode": funnel.get("float_mode", FLOAT_MODE),
         "float_sources": funnel.get("float_sources", {}),
         "reject_reasons": reject_reasons,
+        "news": news_stats,
         "near_misses": near_misses[:15],
     }
 
