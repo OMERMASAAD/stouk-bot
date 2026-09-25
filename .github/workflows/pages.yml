@@ -4,6 +4,13 @@ on:
   push:
     branches:
       - main
+  # دفعات المسح تستخدم GITHUB_TOKEN ولا تُفعّل push workflows، لذلك ننشر بعد انتهاء المسح مباشرة
+  workflow_run:
+    workflows: ["Stock Radar"]
+    types: [completed]
+  # ونشر احتياطي دوري بعد إغلاق السوق
+  schedule:
+    - cron: "30 21 * * 1-5"
 
 concurrency:
   group: github-pages-deploy

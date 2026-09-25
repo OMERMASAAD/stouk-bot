@@ -228,24 +228,29 @@ async function fetchGithubApi(){
 }
 async function loadData(){
   const stamp=Date.now();
+  /* نجلب كل المصادر المتاحة ونختار الأحدث (updated_at) — لأن نسخة GitHub Pages
+     قد تكون أقدم من ملف المستودع بين نشرين. */
   const loaders=[
-    ()=>fetchJson('data.json?x='+stamp),
-    ()=>fetchJson('https://raw.githubusercontent.com/OMERMASAAD/stouk-bot/main/data.json?x='+stamp),
-    ()=>fetchGithubApi()
+    ['النسخة المنشورة',()=>fetchJson('data.json?x='+stamp)],
+    ['المستودع (raw)',()=>fetchJson('https://raw.githubusercontent.com/OMERMASAAD/stouk-bot/main/data.json?x='+stamp)],
+    ['GitHub API',()=>fetchGithubApi()]
   ];
-  let lastErr=null;
-  for(const load of loaders){
-    try{
-      D=await load();
-      if(D.demo){const dn=document.getElementById('demoNote');if(dn)dn.style.display='block'}
-      document.getElementById('updated').innerHTML='آخر تحديث: <b>'+esc(fmtTime(D.updated_at))+'</b> · الأسهم في الرادار: <b>'+esc(D.count??(D.signals||[]).length)+'</b> · محفزات قادمة: <b>'+esc((D.stats||{}).catalysts??0)+'</b> · بيانات الرادار من Yahoo Finance فقط';
-      renderRules();renderDiag();render();route();return true;
-    }catch(e){lastErr=e;console.warn(e)}
+  const results=await Promise.all(loaders.map(async([name,load])=>{
+    try{return [name,await load()]}catch(e){console.warn(name,e);return null}
+  }).map(p=>p.catch(e=>null)));
+  const ok=results.filter(Boolean).map(([name,d])=>({name,d,ts:Date.parse(d.updated_at||'')||0}));
+  if(!ok.length){
+    document.getElementById('updated').textContent='تعذر تحميل البيانات';
+    document.getElementById('rows').innerHTML='<tr><td colspan="10" class="empty">تعذر تحميل بيانات الأسهم. اضغط 🔄 تحديث البيانات أو افتح الصفحة مرة أخرى.</td></tr>';
+    return false;
   }
-  document.getElementById('updated').textContent='تعذر تحميل البيانات';
-  document.getElementById('rows').innerHTML='<tr><td colspan="10" class="empty">تعذر تحميل بيانات الأسهم. اضغط 🔄 تحديث البيانات أو افتح الصفحة مرة أخرى.</td></tr>';
-  console.error(lastErr);
-  return false;
+  ok.sort((a,b)=>b.ts-a.ts);
+  const pick=ok[0];
+  D=pick.d;
+  D._source=pick.name;
+  if(D.demo){const dn=document.getElementById('demoNote');if(dn)dn.style.display='block'}
+  document.getElementById('updated').innerHTML='آخر تحديث: <b>'+esc(fmtTime(D.updated_at))+'</b> · الأسهم في الرادار: <b>'+esc(D.count??(D.signals||[]).length)+'</b> · محفزات قادمة: <b>'+esc((D.stats||{}).catalysts??0)+'</b> · المصدر: '+esc(pick.name)+' · بيانات الرادار من Yahoo Finance فقط';
+  renderRules();renderDiag();render();route();return true;
 }
 function toast(msg,err){
   const t=document.getElementById('toast');t.textContent=msg;t.className='toast'+(err?' err':'');t.style.display='block';
