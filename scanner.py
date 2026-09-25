@@ -154,6 +154,7 @@ def main():
     candidates = {}      # ticker -> (daily_df, event)
     checked = 0
     downloaded = 0
+    funnel = {"price_pass": 0, "rally_pass": 0, "days_pass": 0}
 
     def prepass(ticker):
         nonlocal downloaded
@@ -164,11 +165,14 @@ def main():
         price = float(d["Close"].iloc[-1])
         if not MIN_PRICE <= price <= MAX_PRICE:
             return None
+        funnel["price_pass"] += 1
         event = find_surge_event(d)
         if not event:
             return None
+        funnel["rally_pass"] += 1
         if len(d) - 1 - int(event["event_idx"]) > MAX_DAYS_SINCE_PEAK:
             return None
+        funnel["days_pass"] += 1
         return ticker, d, event
 
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
@@ -208,11 +212,28 @@ def main():
                 fl = int(watch[ticker]["float_shares"])       # آخر قيمة معروفة
             floats[ticker] = fl
     passed = [t for t, fl in floats.items() if fl is not None and fl <= MAX_FLOAT]
+    funnel["float_available"] = sum(1 for fl in floats.values() if fl is not None)
+    funnel["float_pass"] = len(passed)
     for t in candidates:
+        why = None
         if floats.get(t) is None:
-            print("excluded (float unavailable):", t)
+            why = "float_missing"
         elif floats[t] > MAX_FLOAT:
-            print("excluded (float > 10M):", t, floats[t])
+            why = "float_too_big"
+        if not why:
+            continue
+        print("excluded (%s):" % why, t)
+        funnel.setdefault("pre_float_reasons", {})
+        funnel["pre_float_reasons"][why] = funnel["pre_float_reasons"].get(why, 0) + 1
+        d0, ev0 = candidates[t]
+        if len(near_misses) < 40:
+            near_misses.append({
+                "ticker": t, "reason": why,
+                "price": round(float(d0["Close"].iloc[-1]), 2),
+                "rally_pct": round(float(ev0["rally_pct"]), 1),
+                "days_since_peak": int(len(d0) - 1 - int(ev0["event_idx"])),
+                "float": floats.get(t),
+            })
     print("candidates after float filter:", len(passed))
 
     # ---------- 3) شموع 1h/4h والأخبار للمرشحين ----------
@@ -237,16 +258,29 @@ def main():
 
     # ---------- 4) التقييم الكامل ----------
     signals, new_watch = [], []
+    reject_reasons = {}
+    near_misses = []
     for ticker in passed:
         d, event = candidates[ticker]
         h1 = intraday.get(ticker)
         h4 = resample_4h(h1)
+        trace = []
         try:
-            item = evaluate_event(d, event, floats[ticker], news_map.get(ticker), h1 or h4, now=now)
+            item = evaluate_event(d, event, floats[ticker], news_map.get(ticker), h1 or h4, now=now, trace=trace)
         except Exception as e:
             print("evaluate error", ticker, e)
             item = None
+            trace.append("error")
         if item is None:
+            reason = trace[-1] if trace else "unknown"
+            reject_reasons[reason] = reject_reasons.get(reason, 0) + 1
+            near_misses.append({
+                "ticker": ticker, "reason": reason,
+                "price": round(float(d["Close"].iloc[-1]), 2),
+                "rally_pct": round(float(event["rally_pct"]), 1),
+                "days_since_peak": int(len(d) - 1 - int(event["event_idx"])),
+                "float": floats.get(ticker),
+            })
             continue
         item["ticker"] = ticker
         item["computed_at"] = now.isoformat()
@@ -289,10 +323,24 @@ def main():
         -int(x.get("readiness_score", 0)),
     ))
 
+    near_misses.sort(key=lambda x: (x["days_since_peak"], -x["rally_pct"]))
+    diagnostics = {
+        "symbols_total": len(symbols),
+        "data_coverage_pct": round(coverage * 100, 1),
+        "price_pass": funnel.get("price_pass", 0),
+        "prior_rally_pass": funnel.get("rally_pass", 0),
+        "days_since_peak_pass": funnel.get("days_pass", 0),
+        "float_available": funnel.get("float_available", 0),
+        "float_pass": funnel.get("float_pass", 0),
+        "reject_reasons": reject_reasons,
+        "near_misses": near_misses[:15],
+    }
+
     payload = {
         "updated_at": now.isoformat(),
         "strategy": "Bottom Radar — Second Leg Setup",
         "count": len(signals),
+        "diagnostics": diagnostics,
         "params": {
             "price_range": [MIN_PRICE, MAX_PRICE],
             "prior_rally_pct_min": MIN_PRIOR_RALLY_PCT,

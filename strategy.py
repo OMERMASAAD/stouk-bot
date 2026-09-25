@@ -459,7 +459,7 @@ def _ar_date(date_str, now=None):
 
 
 # ---------------- التقييم الكامل ----------------
-def evaluate_event(d, event, float_shares=None, news=None, intraday=None, now=None):
+def evaluate_event(d, event, float_shares=None, news=None, intraday=None, now=None, trace=None):
     """
     يقيّم حدث صعود مقابل شروط الاستراتيجية. يعيد None إذا استُبعد السهم.
     d        : شموع يومية
@@ -467,9 +467,16 @@ def evaluate_event(d, event, float_shares=None, news=None, intraday=None, now=No
     float_shares: عدد أسهم التداول الحر (None => استبعاد حسب الشرط الصارم)
     news     : ناتج news.fetch_news / news.analyze_news
     intraday : شموع 1h أو 4h لاكتشاف نمط القاع
+    trace    : قائمة اختيارية لتسجيل سبب الاستبعاد (لتشخيص المسح)
     """
-    if d is None or event is None or len(d) < RALLY_WINDOW + 2:
+
+    def reject(reason):
+        if trace is not None:
+            trace.append(reason)
         return None
+
+    if d is None or event is None or len(d) < RALLY_WINDOW + 2:
+        return reject("no_data")
 
     n = len(d)
     price = float(d["Close"].iloc[-1])
@@ -479,24 +486,24 @@ def evaluate_event(d, event, float_shares=None, news=None, intraday=None, now=No
 
     # ---- 4) فلتر انتهاء الصلاحية الزمنية ----
     if days_since_peak > MAX_DAYS_SINCE_PEAK:
-        return None
+        return reject("expired")        # تجاوز 20 جلسة من القمة
     if int(event["event_idx"]) >= n - 1:
-        return None                     # القمة نفسها في آخر جلسة: لا يوجد قاع بعدها ليقيسه الرادار
+        return reject("peak_is_last_bar")   # القمة نفسها في آخر جلسة
     # ---- 1) فلتر السعر ----
     if not MIN_PRICE <= price <= MAX_PRICE:
-        return None
+        return reject("price")
     # ---- 3) فلتر Float (يُستبعد إذا كان أكبر من 10M أو غير متوفر) ----
     if float_shares is None:
-        return None
+        return reject("float_missing")
     if float(float_shares) > MAX_FLOAT:
-        return None
+        return reject("float_too_big")
 
     state = _post_peak_state(d, event)
     if state["real_breakdown"]:
-        return None                                    # انهيار حقيقي => إلغاء الـ setup
+        return reject("breakdown")                     # انهيار حقيقي => إلغاء الـ setup
     # لا بد أن السهم عاد فعلًا إلى منطقة القاع (ولمسها) بعد القمة
     if state["trough_low"] > base * (1 + NEAR_BASE):
-        return None
+        return reject("no_return_to_base")
 
     dist_pct = (price - base) / base * 100 if base > 0 else 0.0
     dist_ratio = dist_pct / 100.0

@@ -85,6 +85,16 @@ tbody tr:hover{background:#10271c}
 .newsitem a{color:#72c2ff;text-decoration:none}
 .newsmeta{color:var(--muted);font-size:12px}
 .banner{border-radius:14px;padding:14px;margin-top:14px;line-height:1.8;font-size:14px}
+.funnel{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-bottom:12px}
+.fstep{background:#091810;border:1px solid var(--line);border-radius:12px;padding:11px}
+.fstep span{color:var(--muted);font-size:11px;display:block}
+.fstep b{font-size:19px;display:block;margin-top:5px}
+.reasons{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}
+.rchip{background:#3a1218;border:1px solid #7d2b34;color:#ffc9d0;border-radius:99px;padding:6px 11px;font-size:12px}
+.rchip.muted{background:#12241a;border-color:var(--line);color:#a9bbb0}
+.nm{width:100%;border-collapse:collapse;font-size:13px}
+.nm th,.nm td{border-bottom:1px solid #16301f;padding:7px 8px;text-align:right;white-space:nowrap}
+.nm th{background:none;color:var(--muted);font-size:11px;position:static}
 .banner.warn{background:#3a1218;border:1px solid #ff5264;color:#ffc9d0}
 .banner.cat{background:#0d2a24;border:1px solid #2b8d70;color:#bdf5e6}
 .chart{margin-top:14px;background:#06110b;border:1px solid var(--line);border-radius:15px;padding:10px;overflow:hidden}
@@ -146,6 +156,10 @@ td:before{content:attr(data-l);color:var(--muted);font-size:12px;flex:0 0 auto}
 <tbody id="rows"></tbody>
 </table></div>
 <div class="note" id="rulesNote"></div>
+<div class="section" id="diagPanel">
+<h3>🔍 تشخيص المسح — لماذا هذه النتائج؟</h3>
+<div id="diagBody"><div class="muted">لا يوجد تشخيص محفوظ بعد (سيظهر بعد أول مسح جديد).</div></div>
+</div>
 </div>
 
 <div id="detailPage" class="page">
@@ -225,7 +239,7 @@ async function loadData(){
       D=await load();
       if(D.demo){const dn=document.getElementById('demoNote');if(dn)dn.style.display='block'}
       document.getElementById('updated').innerHTML='آخر تحديث: <b>'+esc(fmtTime(D.updated_at))+'</b> · الأسهم في الرادار: <b>'+esc(D.count??(D.signals||[]).length)+'</b> · محفزات قادمة: <b>'+esc((D.stats||{}).catalysts??0)+'</b> · بيانات الرادار من Yahoo Finance فقط';
-      renderRules();render();route();return true;
+      renderRules();renderDiag();render();route();return true;
     }catch(e){lastErr=e;console.warn(e)}
   }
   document.getElementById('updated').textContent='تعذر تحميل البيانات';
@@ -245,6 +259,40 @@ async function refreshData(){
   if(!ok)toast('تعذر تحميل البيانات، حاول مرة أخرى',true);
   else if(D.updated_at===before)toast('تم التحميل — لا توجد بيانات أحدث من آخر مسح ('+fmtTime(D.updated_at)+')');
   else toast('✅ تم تحديث البيانات');
+}
+const REASON_AR={
+  float_missing:'Float غير متوفر (شرط صارم: يُستبعد)',
+  float_too_big:'Float أكبر من 10M',
+  expired:'عمر القمة تجاوز 20 جلسة',
+  price:'السعر خارج نطاق $1–$5',
+  no_return_to_base:'لم يعد بعد إلى منطقة القاع (خلال 15%)',
+  breakdown:'انهيار حقيقي تحت الدعم',
+  peak_is_last_bar:'القمة في آخر جلسة (لا قاع بعدها بعد)',
+  no_data:'بيانات غير كافية',
+  error:'خطأ في التقييم',
+  unknown:'غير محدد'
+};
+function diagHtml(){
+  const g=D.diagnostics;
+  if(!g)return '<div class="muted">لا يوجد تشخيص محفوظ بعد (سيظهر بعد أول مسح جديد).</div>';
+  const steps=[['رموز مفحوصة',g.symbols_total],['تجاوزت فلتر السعر $1–$5',g.price_pass],
+    ['لديها صعود +100% (20 جلسة)',g.prior_rally_pass],['داخل 20 جلسة من القمة',g.days_since_peak_pass],
+    ['Float متوفر ومقبول',g.float_pass]];
+  let h='<div class="funnel">'+steps.map(([l,v])=>'<div class="fstep"><span>'+esc(l)+'</span><b>'+esc(v??0)+'</b></div>').join('')+'</div>';
+  h+='<div class="note" style="margin:0 0 10px">تغطية بيانات Yahoo في آخر مسح: <b>'+esc(g.data_coverage_pct??0)+'%</b> من الرموز · Float متوفر لـ <b>'+esc(g.float_available??0)+'</b> سهم من المرشحين.</div>';
+  const rr=g.reject_reasons||{};
+  const chips=Object.keys(rr).sort((a,b)=>rr[b]-rr[a]).map(k=>'<span class="rchip">'+esc(REASON_AR[k]||k)+': <b>'+esc(rr[k])+'</b></span>').join('');
+  h+=chips?('<div class="reasons">'+chips+'</div>'):'';
+  const nm=(g.near_misses||[]).filter(x=>x.reason!=='float_missing'||(g.float_available||0)>=0);
+  if(nm.length){
+    h+='<div class="note" style="margin:0 0 6px"><b>أقرب المرشحين الذين استُبعدوا</b> (مرتبة بالأحدث من القمة):</div><div style="overflow-x:auto"><table class="nm"><thead><tr><th>السهم</th><th>السعر</th><th>الصعود السابق</th><th>منذ القمة</th><th>Float</th><th>سبب الاستبعاد</th></tr></thead><tbody>'+
+    nm.map(x=>'<tr><td><b>'+esc(x.ticker)+'</b></td><td>'+money(x.price)+'</td><td class="ok">+'+esc(x.rally_pct)+'%</td><td>'+esc(x.days_since_peak)+' / 20</td><td>'+(x.float?esc((x.float/1e6).toFixed(1))+'M':'غير متوفر')+'</td><td class="mid">'+esc(REASON_AR[x.reason]||x.reason)+'</td></tr>').join('')+'</tbody></table></div>';
+  }
+  return h;
+}
+function renderDiag(){
+  const el=document.getElementById('diagBody');
+  if(el)el.innerHTML=diagHtml();
 }
 function renderRules(){
   const p=D.params||{};
@@ -316,7 +364,7 @@ function render(){
     '<td data-l="النمط">'+esc(patternOf(x).replace(' (Double Bottom)','').replace(' (Higher Low)',''))+'</td>'+
     '<td data-l="المحفز">'+catCell(x)+'</td>'+
     '<td data-l="تحذير">'+eventCell(x)+'</td></tr>';
-  }).join(''):'<tr><td colspan="10" class="empty">لا توجد أسهم مطابقة للفلتر الحالي.<br>الرادار يستبعد أي سهم خارج فلاتر السعر/Float/الصعود/عمر 20 جلسة.</td></tr>';
+  }).join(''):'<tr><td colspan="10" class="empty">لا توجد أسهم مطابقة للفلتر الحالي.<br>الرادار يستبعد أي سهم خارج فلاتر السعر/Float/الصعود/عمر 20 جلسة — راجع <b>🔍 تشخيص المسح</b> بالأسفل لمعرفة أين يتساقط المرشحون.</td></tr>';
   document.querySelectorAll('#rows tr[data-ticker]').forEach(r=>r.addEventListener('click',()=>openStock(r.dataset.ticker,r.dataset.date)));
 }
 
@@ -437,6 +485,7 @@ function drawChart(x){
   svg+='<text x="'+L+'" y="'+(H-12)+'" fill="#7890aa" font-size="11">'+esc(data[0].date)+'</text><text x="'+(W-R)+'" y="'+(H-12)+'" text-anchor="end" fill="#7890aa" font-size="11">'+esc(data[data.length-1].date)+'</text></svg>';
   el.innerHTML='<div style="padding:5px 4px 10px;font-weight:800">📈 حركة السهم — آخر 30 جلسة (خط الدعم + VWAP + EMA20)</div>'+svg;
 }
+renderDiag();
 loadData();
 </script>
 </body>
