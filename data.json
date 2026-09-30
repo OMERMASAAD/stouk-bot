@@ -1,13 +1,13 @@
 {
-  "updated_at": "2026-09-29T23:36:27.581247+00:00",
+  "updated_at": "2026-09-30T02:39:39.319491+00:00",
   "strategy": "Bottom Radar — Second Leg Setup",
   "count": 7,
   "diagnostics": {
     "symbols_total": 6966,
     "data_coverage_pct": 92.3,
-    "price_pass": 1274,
+    "price_pass": 1275,
     "prior_rally_pass": 398,
-    "days_since_peak_pass": 109,
+    "days_since_peak_pass": 105,
     "float_available": 7,
     "float_exact": 7,
     "float_pass": 7,
@@ -16,11 +16,11 @@
       "yahoo_float": 7
     },
     "sec_status": {
-      "no_cik": 102,
+      "no_cik": 98,
       "unknown": 7
     },
     "reject_reasons": {
-      "float_missing": 102
+      "float_missing": 98
     },
     "news": {
       "tickers_with_headlines": 0,
@@ -31,26 +31,10 @@
     },
     "near_misses": [
       {
-        "ticker": "CDT",
-        "reason": "float_missing",
-        "price": 1.45,
-        "rally_pct": 2670.7,
-        "days_since_peak": 0,
-        "float": null
-      },
-      {
-        "ticker": "AGRZ",
-        "reason": "float_missing",
-        "price": 3.27,
-        "rally_pct": 1988.4,
-        "days_since_peak": 0,
-        "float": null
-      },
-      {
         "ticker": "MTNB",
         "reason": "float_missing",
         "price": 2.88,
-        "rally_pct": 1919.8,
+        "rally_pct": 1919.9,
         "days_since_peak": 0,
         "float": null
       },
@@ -59,14 +43,6 @@
         "reason": "float_missing",
         "price": 4.71,
         "rally_pct": 1773.1,
-        "days_since_peak": 0,
-        "float": null
-      },
-      {
-        "ticker": "TRUG",
-        "reason": "float_missing",
-        "price": 2.96,
-        "rally_pct": 1332.0,
         "days_since_peak": 0,
         "float": null
       },
@@ -148,6 +124,30 @@
         "price": 1.2,
         "rally_pct": 163.2,
         "days_since_peak": 0,
+        "float": null
+      },
+      {
+        "ticker": "ABLV",
+        "reason": "float_missing",
+        "price": 1.78,
+        "rally_pct": 138.7,
+        "days_since_peak": 0,
+        "float": null
+      },
+      {
+        "ticker": "HLP",
+        "reason": "float_missing",
+        "price": 2.45,
+        "rally_pct": 108.3,
+        "days_since_peak": 0,
+        "float": null
+      },
+      {
+        "ticker": "GMEX",
+        "reason": "float_missing",
+        "price": 3.17,
+        "rally_pct": 930.1,
+        "days_since_peak": 1,
         "float": null
       }
     ]
@@ -329,7 +329,7 @@
         "macd_improving": true,
         "rvol": 0.0,
         "volume_ratio": 0.0,
-        "body_pct": 0.35,
+        "body_pct": 2.9,
         "volume_confirm": false,
         "positive_confirmations": 1,
         "vwap": 1.555,
@@ -413,7 +413,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "FLYE",
-      "computed_at": "2026-09-29T23:36:27.581247+00:00",
+      "computed_at": "2026-09-30T02:39:39.319491+00:00",
       "technical_4h": {
         "rsi": 37.62,
         "rsi_prev": 39.47,
@@ -724,11 +724,11 @@
         },
         {
           "date": "2026-09-29",
-          "open": 1.425,
+          "open": 1.38,
           "high": 1.425,
           "low": 1.38,
           "close": 1.42,
-          "volume": 6284,
+          "volume": 6300,
           "rsi": 42.92
         }
       ],
@@ -755,7 +755,7 @@
         "rsi_prev": 55.08,
         "ema9": 2.0256,
         "ema20": 1.9843,
-        "vwap": 1.9894,
+        "vwap": 1.9893,
         "rvol": 0.04,
         "macd_hist": 0.00015
       },
@@ -860,10 +860,10 @@
         "macd_improving": false,
         "rvol": 0.04,
         "volume_ratio": 0.04,
-        "body_pct": 3.85,
+        "body_pct": 4.31,
         "volume_confirm": false,
         "positive_confirmations": 2,
-        "vwap": 1.9894,
+        "vwap": 1.9893,
         "vwap_reclaim": true,
         "volume_ok": true,
         "volume_mode": "dry",
@@ -944,7 +944,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "GRI",
-      "computed_at": "2026-09-29T23:36:27.581247+00:00",
+      "computed_at": "2026-09-30T02:39:39.319491+00:00",
       "technical_4h": {
         "rsi": 51.88,
         "rsi_prev": 58.07,
@@ -962,8 +962,8 @@
         "macd_hist_prev": 0.01071,
         "macd_cross": false,
         "macd_improving": false,
-        "rvol": 0.24,
-        "volume_ratio": 0.24,
+        "rvol": 0.23,
+        "volume_ratio": 0.23,
         "body_pct": 1.95,
         "volume_confirm": false,
         "positive_confirmations": 2
@@ -1255,11 +1255,11 @@
         },
         {
           "date": "2026-09-29",
-          "open": 2.08,
-          "high": 2.1062,
+          "open": 2.09,
+          "high": 2.106,
           "low": 2.0,
           "close": 2.0,
-          "volume": 25616,
+          "volume": 25600,
           "rsi": 53.63
         }
       ],
@@ -1286,7 +1286,7 @@
         "rsi_prev": 50.32,
         "ema9": 2.0456,
         "ema20": 2.1327,
-        "vwap": 2.3191,
+        "vwap": 2.3192,
         "rvol": 0.56,
         "macd_hist": 0.07346
       },
@@ -1394,7 +1394,7 @@
         "body_pct": 15.25,
         "volume_confirm": false,
         "positive_confirmations": 3,
-        "vwap": 2.3191,
+        "vwap": 2.3192,
         "vwap_reclaim": true,
         "volume_ok": true,
         "volume_mode": "dry",
@@ -1475,7 +1475,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "NAMI",
-      "computed_at": "2026-09-29T23:36:27.581247+00:00",
+      "computed_at": "2026-09-30T02:39:39.319491+00:00",
       "technical_4h": {
         "rsi": 66.49,
         "rsi_prev": 66.52,
@@ -1790,7 +1790,7 @@
           "high": 3.11,
           "low": 2.19,
           "close": 2.57,
-          "volume": 2530444,
+          "volume": 2539200,
           "rsi": 55.58
         }
       ],
@@ -2008,7 +2008,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "NCRA",
-      "computed_at": "2026-09-29T23:36:27.581247+00:00",
+      "computed_at": "2026-09-30T02:39:39.319491+00:00",
       "technical_4h": {
         "rsi": 44.29,
         "rsi_prev": 45.03,
@@ -2320,10 +2320,10 @@
         {
           "date": "2026-09-29",
           "open": 1.71,
-          "high": 1.7896,
+          "high": 1.79,
           "low": 1.71,
           "close": 1.76,
-          "volume": 53787,
+          "volume": 53800,
           "rsi": 43.65
         }
       ],
@@ -2351,7 +2351,7 @@
         "ema9": 1.0919,
         "ema20": 1.121,
         "vwap": 1.136,
-        "rvol": 2.97,
+        "rvol": 2.98,
         "macd_hist": 0.00708
       },
       "checklist": [
@@ -2454,8 +2454,8 @@
         "macd_hist_prev": 0.00108,
         "macd_cross": false,
         "macd_improving": true,
-        "rvol": 2.97,
-        "volume_ratio": 2.97,
+        "rvol": 2.98,
+        "volume_ratio": 2.98,
         "body_pct": 4.59,
         "volume_confirm": true,
         "positive_confirmations": 3,
@@ -2540,7 +2540,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "TURB",
-      "computed_at": "2026-09-29T23:36:27.581247+00:00",
+      "computed_at": "2026-09-30T02:39:39.319491+00:00",
       "technical_4h": {
         "rsi": 49.41,
         "rsi_prev": 50.16,
@@ -2581,8 +2581,8 @@
         "macd_hist_prev": 0.00817,
         "macd_cross": false,
         "macd_improving": false,
-        "rvol": 0.31,
-        "volume_ratio": 0.31,
+        "rvol": 0.3,
+        "volume_ratio": 0.3,
         "body_pct": 1.79,
         "volume_confirm": false,
         "positive_confirmations": 3
@@ -2855,7 +2855,7 @@
           "high": 1.22,
           "low": 1.06,
           "close": 1.14,
-          "volume": 13418135,
+          "volume": 13449800,
           "rsi": 49.38
         }
       ],
@@ -3072,7 +3072,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "MSS",
-      "computed_at": "2026-09-29T23:36:27.581247+00:00",
+      "computed_at": "2026-09-30T02:39:39.319491+00:00",
       "technical_4h": {
         "rsi": 53.28,
         "rsi_prev": 50.0,
@@ -3384,10 +3384,10 @@
         {
           "date": "2026-09-29",
           "open": 1.64,
-          "high": 1.8193,
+          "high": 1.819,
           "low": 1.63,
           "close": 1.79,
-          "volume": 364756,
+          "volume": 366000,
           "rsi": 54.5
         }
       ],
@@ -3606,7 +3606,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "SUNE",
-      "computed_at": "2026-09-29T23:36:27.581247+00:00",
+      "computed_at": "2026-09-30T02:39:39.319491+00:00",
       "technical_4h": {
         "rsi": 36.61,
         "rsi_prev": 37.37,
@@ -3921,7 +3921,7 @@
           "high": 2.41,
           "low": 2.3,
           "close": 2.31,
-          "volume": 78418,
+          "volume": 78700,
           "rsi": 44.45
         }
       ],
