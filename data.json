@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-02T23:41:26.471039+00:00",
+  "updated_at": "2026-10-03T02:34:09.911092+00:00",
   "strategy": "Bottom Radar — Second Leg Setup",
   "count": 5,
   "diagnostics": {
@@ -7,7 +7,7 @@
     "data_coverage_pct": 92.4,
     "price_pass": 1274,
     "prior_rally_pass": 395,
-    "days_since_peak_pass": 104,
+    "days_since_peak_pass": 103,
     "float_available": 5,
     "float_exact": 5,
     "float_pass": 5,
@@ -16,11 +16,11 @@
       "yahoo_float": 5
     },
     "sec_status": {
-      "no_cik": 99,
+      "no_cik": 98,
       "unknown": 5
     },
     "reject_reasons": {
-      "float_missing": 99
+      "float_missing": 98
     },
     "news": {
       "tickers_with_headlines": 0,
@@ -63,18 +63,10 @@
         "float": null
       },
       {
-        "ticker": "ZCMD",
-        "reason": "float_missing",
-        "price": 1.85,
-        "rally_pct": 156.8,
-        "days_since_peak": 0,
-        "float": null
-      },
-      {
         "ticker": "CMCT",
         "reason": "float_missing",
         "price": 3.8,
-        "rally_pct": 151.7,
+        "rally_pct": 152.8,
         "days_since_peak": 0,
         "float": null
       },
@@ -114,7 +106,7 @@
         "ticker": "PACB",
         "reason": "float_missing",
         "price": 2.54,
-        "rally_pct": 111.6,
+        "rally_pct": 112.0,
         "days_since_peak": 0,
         "float": null
       },
@@ -147,6 +139,14 @@
         "reason": "float_missing",
         "price": 4.0,
         "rally_pct": 432.8,
+        "days_since_peak": 2,
+        "float": null
+      },
+      {
+        "ticker": "TGE",
+        "reason": "float_missing",
+        "price": 1.11,
+        "rally_pct": 136.6,
         "days_since_peak": 2,
         "float": null
       }
@@ -413,7 +413,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "NAMI",
-      "computed_at": "2026-10-02T23:41:26.471039+00:00",
+      "computed_at": "2026-10-03T02:34:09.911092+00:00",
       "technical_4h": {
         "rsi": 55.28,
         "rsi_prev": 54.8,
@@ -728,7 +728,7 @@
           "high": 2.36,
           "low": 2.23,
           "close": 2.28,
-          "volume": 62691,
+          "volume": 62700,
           "rsi": 49.88
         }
       ],
@@ -945,7 +945,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "SUNE",
-      "computed_at": "2026-10-02T23:41:26.471039+00:00",
+      "computed_at": "2026-10-03T02:34:09.911092+00:00",
       "technical_4h": {
         "rsi": 34.82,
         "rsi_prev": 31.95,
@@ -963,8 +963,8 @@
         "macd_hist_prev": 0.01288,
         "macd_cross": false,
         "macd_improving": true,
-        "rvol": 0.79,
-        "volume_ratio": 0.79,
+        "rvol": 0.76,
+        "volume_ratio": 0.76,
         "body_pct": 1.73,
         "volume_confirm": false,
         "positive_confirmations": 2
@@ -1260,7 +1260,7 @@
           "high": 2.42,
           "low": 2.29,
           "close": 2.34,
-          "volume": 94359,
+          "volume": 94600,
           "rsi": 47.59
         }
       ],
@@ -1478,7 +1478,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "MSS",
-      "computed_at": "2026-10-02T23:41:26.471039+00:00",
+      "computed_at": "2026-10-03T02:34:09.911092+00:00",
       "technical_4h": {
         "rsi": 41.4,
         "rsi_prev": 42.19,
@@ -1519,8 +1519,8 @@
         "macd_hist_prev": -0.00863,
         "macd_cross": false,
         "macd_improving": false,
-        "rvol": 2.19,
-        "volume_ratio": 2.19,
+        "rvol": 2.21,
+        "volume_ratio": 2.21,
         "body_pct": 3.1,
         "volume_confirm": true,
         "positive_confirmations": 1
@@ -1793,7 +1793,7 @@
           "high": 1.63,
           "low": 1.54,
           "close": 1.555,
-          "volume": 80989,
+          "volume": 81000,
           "rsi": 48.21
         }
       ],
@@ -1927,7 +1927,7 @@
         "macd_improving": false,
         "rvol": 0.02,
         "volume_ratio": 0.02,
-        "body_pct": 2.27,
+        "body_pct": 2.86,
         "volume_confirm": false,
         "positive_confirmations": 0,
         "vwap": 1.1352,
@@ -2011,7 +2011,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "TURB",
-      "computed_at": "2026-10-02T23:41:26.471039+00:00",
+      "computed_at": "2026-10-03T02:34:09.911092+00:00",
       "technical_4h": {
         "rsi": 48.0,
         "rsi_prev": 48.0,
@@ -2322,11 +2322,11 @@
         },
         {
           "date": "2026-10-02",
-          "open": 1.056,
-          "high": 1.1099,
-          "low": 1.0401,
+          "open": 1.05,
+          "high": 1.11,
+          "low": 1.04,
           "close": 1.08,
-          "volume": 110201,
+          "volume": 115400,
           "rsi": 48.11
         }
       ],
@@ -2545,7 +2545,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "GRI",
-      "computed_at": "2026-10-02T23:41:26.471039+00:00",
+      "computed_at": "2026-10-03T02:34:09.911092+00:00",
       "technical_4h": {
         "rsi": 45.12,
         "rsi_prev": 48.79,
@@ -2860,7 +2860,7 @@
           "high": 2.02,
           "low": 1.95,
           "close": 1.96,
-          "volume": 38401,
+          "volume": 38400,
           "rsi": 53.05
         }
       ],
