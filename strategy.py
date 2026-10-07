@@ -463,7 +463,7 @@ def _ar_date(date_str, now=None):
 
 # ---------------- التقييم الكامل ----------------
 def evaluate_event(d, event, float_shares=None, news=None, intraday=None, now=None, trace=None,
-                   float_exact=True, float_source=None, shares_outstanding=None):
+                   float_exact=True, float_source=None, shares_outstanding=None, float_status=None):
     """
     يقيّم حدث صعود مقابل شروط الاستراتيجية. يعيد None إذا استُبعد السهم.
     d        : شموع يومية
@@ -498,11 +498,13 @@ def evaluate_event(d, event, float_shares=None, news=None, intraday=None, now=No
     if not MIN_PRICE <= price <= MAX_PRICE:
         return reject("price")
     # ---- 3) فلتر Float (يُستبعد إذا كان أكبر من 10M أو غير متوفر) ----
-    if float_shares is None:
+    # float_status = unverified/unknown => لا نستبعد (يُقبل بتحفظ ويُسقَف في المرحلة بالسكانر)
+    unverified = float_status in ("unverified", "unknown")
+    if float_shares is None and not unverified:
         return reject("float_missing")
     # الشرط الصارم: Float ≤ 10M. وعند استخدام حد أعلى (أسهم مُصدَرة) فالقبول يعني أن الـ Float
     # أقل من 10M بالضرورة (لأن Float ≤ Shares Outstanding دائمًا).
-    if float(float_shares) > MAX_FLOAT:
+    if float_shares is not None and float(float_shares) > MAX_FLOAT and not unverified:
         return reject("float_too_big")
 
     state = _post_peak_state(d, event)
@@ -644,7 +646,7 @@ def evaluate_event(d, event, float_shares=None, news=None, intraday=None, now=No
         "surge_pct": round(float(event["rally_pct"]), 2),
         "max_drawdown_pct": round(state["max_drawdown_pct"], 2),
         "drawdown_pct": round((peak - price) / peak * 100, 2) if peak else 0.0,
-        "float_shares": int(float_shares),
+        "float_shares": int(float_shares) if float_shares else None,
         "support": {
             "level": round(base, 4),
             "trough_low": round(float(state["trough_low"]), 4),

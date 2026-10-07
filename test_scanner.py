@@ -56,7 +56,7 @@ def build_fake(tickers, floats, data=None):
     return fake_fetch, fake_universe, fake_float, fake_news
 
 
-def run_scanner(tmp, tickers, floats, data=None, patch_news=None, float_mode="auto"):
+def run_scanner(tmp, tickers, floats, data=None, patch_news=None, float_mode="auto", float_policy="exclude"):
     """يشغّل main() على رموز محددة ويكتب في مجلد مؤقت."""
     scanner.DATA_FILE = os.path.join(tmp, "data.json")
     scanner.WATCHLIST_FILE = os.path.join(tmp, "watchlist.json")
@@ -67,12 +67,14 @@ def run_scanner(tmp, tickers, floats, data=None, patch_news=None, float_mode="au
     scanner.fetch_news = patch_news or getn
     old_mode, argv = scanner.FLOAT_MODE, sys.argv
     scanner.FLOAT_MODE = float_mode
+    old_pol, scanner.FLOAT_UNKNOWN_POLICY = scanner.FLOAT_UNKNOWN_POLICY, float_policy
     sys.argv = ["scanner.py", "--tickers", ",".join(tickers)]
     try:
         scanner.main()
     finally:
         sys.argv = argv
         scanner.FLOAT_MODE = old_mode
+        scanner.FLOAT_UNKNOWN_POLICY = old_pol
     with open(scanner.DATA_FILE, encoding="utf-8") as f:
         return json.load(f)
 
@@ -192,10 +194,33 @@ def case05_float_upper_bound_mode():
         shutil.rmtree(tmp, ignore_errors=True)
 
 
+def case06_unknown_float_kept_as_unverified():
+    """سياسة watch: Float مجهول أو أسهم مُصدَرة 10–30M لا تُستبعد، وتُعلَّم «غير مؤكد» ولا تصل «جاهز فنيًا»."""
+    tmp = tempfile.mkdtemp()
+    try:
+        d, h1 = decline_setup(READY_RATES, rec_bars=6, rec_rate=0.022)
+        mid = {"value": 18_000_000, "exact": False, "source": "sec_edgar",
+               "float_shares": None, "shares_outstanding": 18_000_000}
+        huge = {"value": 90_000_000, "exact": False, "source": "sec_edgar",
+                "float_shares": None, "shares_outstanding": 90_000_000}
+        payload = run_scanner(
+            tmp, ["UNK", "MID", "HUGE"], {"UNK": None, "MID": mid, "HUGE": huge},
+            {"UNK": (d, h1), "MID": (d, h1), "HUGE": (d, h1)}, float_policy="watch")
+        got = {s["ticker"]: s for s in payload["signals"]}
+        assert set(got) == {"UNK", "MID"}, set(got)
+        for s in got.values():
+            assert s["float_unverified"] is True and s["stage"] != st.STAGE_READY, s["stage"]
+        assert payload["diagnostics"]["reject_reasons"].get("float_too_big") == 1
+        assert payload["diagnostics"]["float_status"].get("unknown") == 1
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
 if __name__ == "__main__":
     tests = [case01_ready_stock_end_to_end, case02_float_paths_no_crash,
              case03_zero_results_writes_diagnostics, case04_watch_and_ready_sorted,
-             case05_float_upper_bound_mode]
+             case05_float_upper_bound_mode,
+             case06_unknown_float_kept_as_unverified]
     failed = 0
     for t in tests:
         try:

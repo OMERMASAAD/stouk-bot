@@ -24,6 +24,7 @@ import pandas as pd
 import yfinance as yf
 
 import float_lookup
+from master_scan import build_master, pool_record
 from news import fetch_news
 from strategy import (
     MAX_DAYS_SINCE_PEAK, MAX_FLOAT, MAX_PRICE, MIN_PRICE, MIN_PRIOR_RALLY_PCT,
@@ -41,6 +42,9 @@ STALE_REUSE_DAYS = 3          # إعادة استخدام آخر تقييم إذ
 #   "strict" : Float الدقيق فقط، وأي سهم بلا Float دقيق يُستبعد (أدق لكنه يفرّغ الرادار
 #              لأن Yahoo لا يعيد floatShares من GitHub Actions).
 FLOAT_MODE = os.environ.get("FLOAT_MODE", "auto")
+# سياسة الـ Float المجهول: watch = لا نستبعد السهم (يُعلَّم «Float غير مؤكد» ويُسقَّف في «شبه جاهز»)
+#                        exclude = السلوك القديم الصارم
+FLOAT_UNKNOWN_POLICY = os.environ.get("FLOAT_UNKNOWN_POLICY", "watch")
 
 
 def universe():
@@ -146,6 +150,7 @@ def main():
 
     # ---------- 1) تحميل يومي + فلاتر سريعة (سعر/صعود/صلاحية زمنية) ----------
     candidates = {}      # ticker -> (daily_df, event)
+    master_pool = {}     # ticker -> {price, avg_vol, range_pct}
     checked = 0
     downloaded = 0
     funnel = {"price_pass": 0, "rally_pass": 0, "days_pass": 0}
@@ -157,6 +162,9 @@ def main():
             return None
         downloaded += 1
         price = float(d["Close"].iloc[-1])
+        rec = pool_record(d, price)                 # مجمّع الماستر ($0.50–$10)
+        if rec:
+            master_pool[ticker] = rec
         if not MIN_PRICE <= price <= MAX_PRICE:
             return None
         funnel["price_pass"] += 1
@@ -213,6 +221,7 @@ def main():
     print("candidates after price/rally/20-day filters:", len(candidates))
 
     # ---------- 2) Float (شرط صارم) ----------
+    float_lookup.load_cache()
     floats = {}
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
         ff = {pool.submit(get_float_info, t): t for t in candidates}
@@ -232,7 +241,9 @@ def main():
                         "shares_outstanding": watch[ticker].get("shares_outstanding")}
             floats[ticker] = info or {"value": None, "exact": False, "source": None,
                                       "float_shares": None, "shares_outstanding": None}
-    passed = [t for t, i in floats.items() if i.get("value") is not None and i["value"] <= MAX_FLOAT]
+    float_lookup.save_cache()
+    float_status = {t: float_lookup.classify(i, MAX_FLOAT, FLOAT_UNKNOWN_POLICY) for t, i in floats.items()}
+    passed = [t for t, (ok, _) in float_status.items() if ok]
     float_sources, sec_status_counts = {}, {}
     for i in floats.values():
         if i.get("value") is not None:
@@ -243,6 +254,9 @@ def main():
     funnel["float_available"] = sum(1 for i in floats.values() if i.get("value") is not None)
     funnel["float_exact"] = sum(1 for i in floats.values() if i.get("exact"))
     funnel["float_pass"] = len(passed)
+    funnel["float_status"] = {}
+    for _, (ok, stt) in float_status.items():
+        funnel["float_status"][stt] = funnel["float_status"].get(stt, 0) + 1
     funnel["float_sources"] = float_sources
     funnel["sec_status"] = sec_status_counts
     funnel["float_mode"] = FLOAT_MODE
@@ -250,10 +264,8 @@ def main():
     for t in candidates:
         why = None
         val = (floats.get(t) or {}).get("value")
-        if val is None:
-            why = "float_missing"
-        elif val > MAX_FLOAT:
-            why = "float_too_big"
+        if t not in passed:
+            why = "float_missing" if val is None else "float_too_big"
         if not why:
             continue
         print("excluded (%s):" % why, t)
@@ -307,7 +319,8 @@ def main():
             item = evaluate_event(d, event, fi.get("value"), news_map.get(ticker), intraday_df,
                                   now=now, trace=trace, float_exact=bool(fi.get("exact")),
                                   float_source=fi.get("source"),
-                                  shares_outstanding=fi.get("shares_outstanding"))
+                                  shares_outstanding=fi.get("shares_outstanding"),
+                                  float_status=float_status[ticker][1])
         except Exception as e:
             print("evaluate error", ticker, e)
             item = None
@@ -325,6 +338,15 @@ def main():
             continue
         item["ticker"] = ticker
         item["computed_at"] = now.isoformat()
+        item["float_status"] = float_status[ticker][1]
+        if item["float_status"] in ("unverified", "unknown"):
+            # Float غير مؤكد: لا يدخل «جاهز فنيًا» قبل التأكد (حماية من سهم كبير الفلوت)
+            item["float_unverified"] = True
+            item["float"] = ("غير مؤكد · أسهم مُصدَرة " + float_lookup.label(fi.get("value"), True)
+                             if fi.get("value") else "غير مؤكد")
+            if item["stage"] == STAGE_READY:
+                item["stage"] = STAGE_SEMI
+                item["stage_note"] = "سُقِّف إلى «شبه جاهز» لأن الـ Float غير مؤكد"
         if h4 is not None and len(h4) >= 20:
             item["technical_4h"] = technicals(h4.tail(30))
         if h1 is not None and len(h1) >= 20:
@@ -385,6 +407,7 @@ def main():
         "float_pass": funnel.get("float_pass", 0),
         "float_mode": funnel.get("float_mode", FLOAT_MODE),
         "float_sources": funnel.get("float_sources", {}),
+        "float_status": funnel.get("float_status", {}),
         "sec_status": funnel.get("sec_status", {}),
         "reject_reasons": reject_reasons,
         "news": news_stats,
@@ -430,6 +453,12 @@ def main():
     else:
         save_json(DATA_FILE, payload)
         save_json(WATCHLIST_FILE, {"updated_at": now.isoformat(), "items": new_watch})
+
+    if not args.dry_run and not args.tickers:
+        try:
+            build_master(master_pool, now, force=bool(os.environ.get("FORCE_MASTER")))
+        except Exception as e:                       # لا نُسقط المسح اليومي بسبب الماستر
+            print("::warning title=Master scan failed::%s" % str(e)[:200])
 
     print("signals:", len(signals),
           "| ready:", payload["stats"]["ready"],
