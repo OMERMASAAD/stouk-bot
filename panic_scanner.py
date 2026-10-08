@@ -36,6 +36,28 @@ def obv(close, volume):
     return (np.sign(close.diff().fillna(0)) * volume).cumsum()
 
 
+def strength_score(checks, near_low):
+    """درجة تحليلية من 100، وليست توصية شراء."""
+    weights = {"base": 35, "rsi": 20, "obv": 20, "macd": 15}
+    score = sum(weight for key, weight in weights.items() if checks.get(key))
+    score += 10 if near_low else 0
+    label = "مكتمل وقوي" if score >= 80 else ("قريب من الاكتمال" if score >= 55 else "يحتاج متابعة")
+    return score, label
+
+
+def chart_points(df, limit=72):
+    """نقاط آخر 6 ساعات تقريبًا للرسم اللحظي في الداشبورد."""
+    x = df.tail(limit)
+    return [{
+        "time": idx.isoformat(),
+        "open": round(float(row["Open"]), 4),
+        "high": round(float(row["High"]), 4),
+        "low": round(float(row["Low"]), 4),
+        "close": round(float(row["Close"]), 4),
+        "volume": int(row["Volume"]),
+    } for idx, row in x.iterrows()]
+
+
 def _et_index(df):
     idx = df.index
     df = df.copy()
@@ -95,6 +117,10 @@ def evaluate_panic(df, now=None):
     cross = bool(((ml.shift(1) <= ms.shift(1)) & (ml > ms)).iloc[-3:].any())
     macd_ok = cross or float(mh.iloc[-1]) > 0
     checks = {"base": bool(base_ok), "rsi": bool(rsi_ok), "obv": bool(obv_ok), "macd": bool(macd_ok)}
+    score, score_label = strength_score(checks, near_low)
+    volume_last = float(vol.iloc[-1])
+    volume_avg = float(vol.tail(20).mean())
+    rvol = volume_last / volume_avg if volume_avg > 0 else None
     return {
         "price": round(price, 4), "day_high": round(day_high, 4), "day_low": round(day_low, 4),
         "drop_pct": round(drop, 1), "hold_min": hold_min, "hold_needed": CONS_MIN_MIN,
@@ -106,6 +132,10 @@ def evaluate_panic(df, now=None):
         "obv": "صاعد" if obv_rising else ("انحراف إيجابي" if obv_div else "ضعيف"),
         "macd": "تقاطع" if cross else ("هيستوجرام أخضر" if macd_ok else "سلبي"),
         "checks": checks, "complete": all(checks.values()),
+        "strength_score": score, "strength_label": score_label,
+        "volume_last": int(volume_last), "volume_avg": int(volume_avg),
+        "rvol": round(rvol, 2) if rvol is not None else None,
+        "dollar_volume": round(price * volume_last, 2),
         "last_bar": last_ts.isoformat(),
     }, "ok"
 
@@ -177,6 +207,14 @@ def run(master, prev, frames, now):
                        detected_at=old.get("detected_at", now.isoformat()), still_valid=True,
                        had_base=had_base,
                        base_low=old["base_low"] if old.get("had_base") else res["base_low"])  # قاع الثبات الأول هو مرجع الشطب
+            history = list(old.get("history") or [])
+            snapshot = {k: res.get(k) for k in (
+                "last_bar", "price", "drop_pct", "hold_min", "strength_score",
+                "complete", "checks", "rvol")}
+            if not history or history[-1].get("last_bar") != snapshot["last_bar"]:
+                history.append(snapshot)
+            res["history"] = history[-48:]
+            res["chart"] = chart_points(df)
             items[t] = res
         elif t in items:
             if items[t].get("had_base"):                # كان ثابتًا ولم يُكسر قاعه بعد: يبقى مع علامة «ضعفت»

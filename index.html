@@ -62,6 +62,22 @@ tbody tr:hover{background:#10271c}
 .pcard{background:#0a1710;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:4px 0;font-size:13px;color:var(--muted)}
 .ptag{display:inline-block;padding:2px 8px;border-radius:8px;font-size:12px;background:#16301f}
 .ptag.w{background:#4a3a10;color:#ffc857}
+.panic-toolbar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin:12px 0}
+.panic-toolbar .search{min-width:180px;flex:1}
+.panic-toolbar select{background:#0d1f16;color:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 12px;font-family:inherit}
+.panic-filter{background:#0d1f16;color:#9db1a5;border:1px solid var(--line);padding:10px 12px;border-radius:10px;cursor:pointer;font-family:inherit}
+.panic-filter.active{background:#185a3a;color:#fff;border-color:#20d47b}
+.panic-score{display:flex;align-items:center;gap:7px;min-width:110px}
+.panic-score b{min-width:34px}.panic-score .bar{min-width:55px}
+.panic-detail{margin-top:14px;background:linear-gradient(145deg,#0e2418,#08140e);border:1px solid var(--line);border-radius:17px;padding:17px;display:none}
+.panic-detail.open{display:block}
+.panic-detail-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.panic-detail-title{font-size:25px;font-weight:900}.panic-detail-title small{font-size:13px;color:var(--muted);font-weight:400;display:block;margin-top:5px}
+.panic-kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:14px 0}
+.panic-kpi{background:#091810;border:1px solid var(--line);border-radius:11px;padding:10px}.panic-kpi span{display:block;color:var(--muted);font-size:11px}.panic-kpi b{display:block;margin-top:5px;font-size:16px}
+.panic-detail-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:12px}.panic-detail-box{background:#091810;border:1px solid var(--line);border-radius:12px;padding:13px}.panic-detail-box h4{margin:0 0 10px}
+.panic-check{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #16301f;padding:9px 0}.panic-check:last-child{border-bottom:0}.panic-check small{display:block;color:var(--muted);margin-top:3px}
+.panic-chart{width:100%;height:255px}.panic-chart svg{width:100%;height:100%;display:block}.panic-history{width:100%;border-collapse:collapse}.panic-history td,.panic-history th{padding:7px 6px;font-size:12px;border-bottom:1px solid #16301f}.panic-history th{position:static;background:none}
 
 .detail-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
 .detail-title{font-size:28px;font-weight:900}
@@ -116,7 +132,8 @@ tbody tr:hover{background:#10271c}
 @media(max-width:1050px){.info-grid{grid-template-columns:repeat(2,1fr)}.cards{grid-template-columns:repeat(2,1fr)}.plan{grid-template-columns:repeat(2,1fr)}.rules{grid-template-columns:1fr}}
 @media(max-width:700px){
 .app{padding:12px}.title{font-size:21px}.hero{grid-template-columns:1fr}.plan{grid-template-columns:1fr 1fr}
-.checks{grid-template-columns:1fr}.bigprice{font-size:32px}.chart svg{height:280px}
+ .checks{grid-template-columns:1fr}.bigprice{font-size:32px}.chart svg{height:280px}
+ .panic-kpis{grid-template-columns:repeat(2,1fr)}.panic-detail-grid{grid-template-columns:1fr}.panic-detail-title{font-size:21px}.panic-toolbar select{width:100%}
 .tablewrap{background:none;border:none;overflow:visible}
 table,thead,tbody,tr,td{display:block;min-width:0;width:100%}
 thead{display:none}
@@ -144,7 +161,13 @@ td:before{content:attr(data-l);color:var(--muted);font-size:12px;flex:0 0 auto}
 <div id="panicPage" class="page">
 <div class="note" style="margin:0 0 12px"><b>⚡ قنص الذعر (فريم 5 دقائق):</b> يظهر هنا <b>أي سهم هبط 30% أو أكثر من قمة اليوم</b>، وفي عمود «الشروط» حالة كل شرط: ✅ تحقق / ❌ لم يتحقق (ثبات أفقي ≤ 5% لمدة ≥ 60 دقيقة قرب القاع · RSI يخرج من التشبع · OBV صاعد أو انحراف إيجابي · MACD إيجابي). السهم الذي تتحقق كل شروطه يصبح <b>⚡ مكتمل</b> ويُعرض في أعلى الجدول. يُحدَّث كل 15 دقيقة تقريبًا، ويُشطب السهم الذي ثبت ثم كسر قاعه بـ -3%.</div>
 <div class="updated" id="panicUpdated">آخر تحديث: —</div>
-<div class="tablewrap"><table><thead><tr><th>السهم</th><th>السعر</th><th>نسبة الهبوط</th><th>زمن الثبات</th><th>البعد عن القاع</th><th>قاع الثبات</th><th>الهدف +25%</th><th>Float</th><th>الشروط</th><th>الحالة</th></tr></thead><tbody id="panicRows"><tr><td colspan="10" class="empty">جارٍ التحميل...</td></tr></tbody></table></div>
+<div class="panic-toolbar">
+<input class="search" id="panicSearch" placeholder="🔎 ابحث عن سهم مرصود..." oninput="renderPanic()">
+<div class="filters"><button class="panic-filter active" data-panic-filter="all" onclick="setPanicFilter(this)">الكل</button><button class="panic-filter" data-panic-filter="complete" onclick="setPanicFilter(this)">⚡ مكتمل</button><button class="panic-filter" data-panic-filter="near" onclick="setPanicFilter(this)">قريب من الاكتمال</button><button class="panic-filter" data-panic-filter="weak" onclick="setPanicFilter(this)">هبوط بلا تأكيد</button></div>
+<select id="panicSortSelect" onchange="panicSort=this.value;renderPanic()"><option value="score">ترتيب: القوة</option><option value="drop">ترتيب: أكبر هبوط</option><option value="hold">ترتيب: مدة الثبات</option><option value="recent">ترتيب: الأحدث</option></select>
+</div>
+<div class="tablewrap"><table><thead><tr><th>السهم</th><th>السعر</th><th>نسبة الهبوط</th><th>القوة</th><th>RVOL</th><th>زمن الثبات</th><th>البعد عن القاع</th><th>قاع الثبات</th><th>الهدف +25%</th><th>Float</th><th>الشروط</th><th>الحالة</th></tr></thead><tbody id="panicRows"><tr><td colspan="12" class="empty">جارٍ التحميل...</td></tr></tbody></table></div>
+<div id="panicDetail" class="panic-detail"></div>
 <div id="panicPurged" style="margin-top:12px"></div>
 </div>
 
@@ -412,7 +435,7 @@ function findStock(ticker,date){return (D.signals||[]).find(x=>x.ticker===ticker
 function openStock(ticker,date){location.hash='stock='+encodeURIComponent(ticker)+'&date='+encodeURIComponent(date||'');showStock(ticker,date)}
 
 /* ================= ⚡ قنص الذعر ================= */
-let TAB='swing',P=null,panicTimer=null;
+let TAB='swing',P=null,panicTimer=null,panicFilter='all',panicSort='score',panicSelected=null;
 function setTab(n){TAB=n;document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===n));if(n!=='panic')document.getElementById('panicPage').classList.remove('active')}
 function showTab(n){
   setTab(n);
@@ -439,6 +462,37 @@ async function loadPanic(light){
   }
   P=r.d;renderPanic();
 }
+function panicScore(x){
+  if(Number.isFinite(Number(x.strength_score)))return Number(x.strength_score);
+  const c=x.checks||{};return (c.base?35:0)+(c.rsi?20:0)+(c.obv?20:0)+(c.macd?15:0)+(x.near_low?10:0);
+}
+function compactVol(v){if(v===null||v===undefined)return '—';v=Number(v);return v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(0)+'K':String(Math.round(v))}
+function panicVisibleItems(){
+  const q=(document.getElementById('panicSearch')?.value||'').trim().toUpperCase();
+  let a=(P?.items||[]).filter(x=>!q||String(x.ticker||'').toUpperCase().includes(q));
+  a=a.filter(x=>panicFilter==='all'||(panicFilter==='complete'&&x.complete)||(panicFilter==='near'&&panicScore(x)>=55&&!x.complete)||(panicFilter==='weak'&&panicScore(x)<55));
+  return a.sort((a,b)=>panicSort==='drop'?a.drop_pct-b.drop_pct:panicSort==='hold'?(b.hold_min||0)-(a.hold_min||0):panicSort==='recent'?String(b.last_bar||'').localeCompare(String(a.last_bar||'')):panicScore(b)-panicScore(a));
+}
+function setPanicFilter(el){panicFilter=el.dataset.panicFilter;document.querySelectorAll('[data-panic-filter]').forEach(b=>b.classList.toggle('active',b===el));renderPanic()}
+function panicScoreHtml(x){const s=panicScore(x);return '<div class="panic-score"><b>'+s+'</b><div class="bar"><i style="width:'+Math.min(100,s)+'%"></i></div></div>'}
+function panicChart(x){
+  const p=x.chart||[];if(p.length<2)return '<div class="empty">لا يتوفر الرسم اللحظي لهذا السهم بعد. سيظهر بعد المسح القادم.</div>';
+  const W=900,H=235,L=42,R=16,T=18,B=28,vals=p.flatMap(a=>[Number(a.high),Number(a.low)]),min=Math.min(...vals),max=Math.max(...vals),range=max-min||1;
+  const sx=i=>L+i*(W-L-R)/Math.max(1,p.length-1),sy=v=>T+(max-v)*(H-T-B)/range,line=p.map((a,i)=>sx(i).toFixed(1)+','+sy(Number(a.close)).toFixed(1)).join(' '),target=Number(x.target),ty=sy(target),low=sy(Number(x.day_low));
+  return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none"><line x1="'+L+'" y1="'+low+'" x2="'+(W-R)+'" y2="'+low+'" stroke="#ffc857" stroke-dasharray="6 5"/><line x1="'+L+'" y1="'+ty+'" x2="'+(W-R)+'" y2="'+ty+'" stroke="#20d47b" stroke-dasharray="6 5"/><polyline points="'+line+'" fill="none" stroke="#72c2ff" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><text x="'+(W-R)+'" y="'+(low-5)+'" text-anchor="end" fill="#ffc857" font-size="11">قاع اليوم</text><text x="'+(W-R)+'" y="'+(ty-5)+'" text-anchor="end" fill="#20d47b" font-size="11">الهدف</text></svg>';
+}
+function openPanicDetail(ticker){panicSelected=ticker;renderPanicDetail();document.getElementById('panicDetail').classList.add('open');document.getElementById('panicDetail').scrollIntoView({behavior:'smooth',block:'start'})}
+function closePanicDetail(){panicSelected=null;document.getElementById('panicDetail').classList.remove('open')}
+function renderPanicDetail(){
+  const x=(P?.items||[]).find(i=>i.ticker===panicSelected),el=document.getElementById('panicDetail');if(!x){el.classList.remove('open');return}
+  const c=x.checks||{},score=panicScore(x),status=x.complete?'⚡ مكتمل':(x.still_valid===false?'الشروط ضعفت':'⏳ قيد الاكتمال');
+  const check=(ok,title,detail)=>'<div class="panic-check"><div><b>'+ (ok?'✅ ':'❌ ')+esc(title)+'</b><small>'+esc(detail)+'</small></div><b class="'+(ok?'ok':'no')+'">'+(ok?'مكتمل':'ناقص')+'</b></div>';
+  const hist=(x.history||[]).slice(-12).reverse().map(h=>'<tr><td>'+esc(fmtTime(h.last_bar))+'</td><td>'+money(h.price)+'</td><td class="no">'+pctFmt(h.drop_pct)+'</td><td>'+esc(h.hold_min??'—')+' د</td><td>'+panicScore(h)+'/100</td></tr>').join('');
+  el.innerHTML='<div class="panic-detail-head"><div class="panic-detail-title">'+esc(x.ticker)+' <span class="ptag '+(x.complete?'':'w')+'">'+status+'</span><small>آخر تحديث: '+esc(fmtTime(x.last_bar))+' · الدرجة التحليلية '+score+'/100 — ليست توصية شراء</small></div><button class="btn" onclick="closePanicDetail()">إغلاق التفاصيل ×</button></div>'+
+  '<div class="panic-kpis"><div class="panic-kpi"><span>السعر</span><b>'+money(x.price)+'</b></div><div class="panic-kpi"><span>الهبوط من القمة</span><b class="no">'+pctFmt(x.drop_pct)+'</b></div><div class="panic-kpi"><span>القمة / القاع</span><b>'+money(x.day_high)+' / '+money(x.day_low)+'</b></div><div class="panic-kpi"><span>الثبات</span><b>'+esc(x.hold_min??0)+' / '+esc(x.hold_needed||60)+' د</b></div><div class="panic-kpi"><span>RVOL</span><b>'+esc(x.rvol??'—')+'x</b></div><div class="panic-kpi"><span>حجم التداول</span><b>'+compactVol(x.volume_last)+'</b></div></div>'+
+  '<div class="panic-detail-grid"><div class="panic-detail-box"><h4>تفصيل الشروط</h4>'+check(c.base,'الثبات قرب القاع',(x.hold_min??0)+' من '+(x.hold_needed||60)+' دقيقة'+(x.near_low?' · قريب من القاع':' · بعيد عن القاع'))+check(c.rsi,'RSI يخرج من التشبع','RSI الحالي '+(x.rsi??'—')+' · الأدنى '+(x.rsi_min??'—'))+check(c.obv,'OBV داعم',x.obv||'—')+check(c.macd,'MACD إيجابي',x.macd||'—')+'<div class="note">Float: '+fmtFloat(x.float)+' · السيولة بالدولار: '+compactVol(x.dollar_volume)+'</div></div><div class="panic-detail-box"><h4>الرسم اللحظي — آخر '+esc((x.chart||[]).length)+' شمعة 5 دقائق</h4><div class="panic-chart">'+panicChart(x)+'</div></div></div>'+
+  '<div class="panic-detail-box" style="margin-top:12px"><h4>السجل الزمني للحالة</h4>'+(hist?'<div style="overflow-x:auto"><table class="panic-history"><thead><tr><th>الوقت</th><th>السعر</th><th>الهبوط</th><th>الثبات</th><th>القوة</th></tr></thead><tbody>'+hist+'</tbody></table></div>':'<div class="muted">سيظهر السجل بعد تنفيذ أكثر من مسح.</div>')+'</div>';
+}
 function renderPanic(){
   const items=P.items||[],purged=P.purged||[];
   const done=items.filter(x=>x.complete).length;
@@ -446,17 +500,19 @@ function renderPanic(){
   document.getElementById('panicSummary').innerHTML='⚡ قنص الذعر: <b>'+esc(items.length)+'</b> سهم مرصود · مكتمل الشروط: <b>'+esc(done)+'</b>';
   document.getElementById('panicUpdated').innerHTML='آخر تحديث: <b>'+esc(fmtTime(P.updated_at))+'</b> · جلسة '+esc(P.session_date||'—')+' · رموز الماستر: <b>'+esc(P.master_count??0)+'</b> · هابطة ≥30%: <b>'+esc(items.length)+'</b> · مكتملة الشروط: <b>'+esc(done)+'</b> · مشطوبة اليوم: <b>'+esc(purged.length)+'</b>';
   const ck=(ok,t)=>'<div>'+(ok?'✅ ':'❌ ')+esc(t)+'</div>';
-  document.getElementById('panicRows').innerHTML=items.length?items.map(x=>{
+  const visible=panicVisibleItems();
+  document.getElementById('panicRows').innerHTML=visible.length?visible.map(x=>{
     const fl=x.float_status==='unverified'||x.float_status==='unknown',c=x.checks||{};
     const status=x.complete?'<span class="ptag">⚡ مكتمل</span>':(x.still_valid===false?'<span class="ptag w">الشروط ضعفت</span>':'<span class="ptag w">⏳ قيد الاكتمال</span>');
-    return '<tr'+(x.complete?' style="background:#0f2a1b"':'')+'><td data-l="السهم"><b>'+esc(x.ticker)+'</b></td><td data-l="السعر">'+money(x.price)+'</td><td data-l="الهبوط" class="no">'+pctFmt(x.drop_pct)+'</td>'+
+    return '<tr onclick="openPanicDetail(\''+esc(x.ticker)+'\')"'+(x.complete?' style="background:#0f2a1b"':'')+'><td data-l="السهم"><b>'+esc(x.ticker)+'</b></td><td data-l="السعر">'+money(x.price)+'</td><td data-l="الهبوط" class="no">'+pctFmt(x.drop_pct)+'</td><td data-l="القوة">'+panicScoreHtml(x)+'</td><td data-l="RVOL">'+esc(x.rvol??'—')+'x</td>'+
     '<td data-l="زمن الثبات">'+esc(x.hold_min)+' د</td><td data-l="البعد عن القاع" class="mid">+'+num(x.dist_from_low_pct)+'%</td><td data-l="قاع الثبات">'+money(x.base_low)+'</td>'+
     '<td data-l="الهدف" class="ok">'+money(x.target)+' (+'+esc(x.target_pct||25)+'%)</td>'+
     '<td data-l="Float">'+fmtFloat(x.float)+(fl?' <span class="ptag w">⚠️ غير مؤكد</span>':'')+'</td>'+
     '<td data-l="الشروط">'+ck(c.base,'ثبات '+(x.hold_min??0)+'/'+(x.hold_needed||60)+' د'+(x.near_low===false?' (بعيد عن القاع)':''))+ck(c.rsi,'RSI '+(x.rsi==null?'—':num(x.rsi)))+ck(c.obv,'OBV '+(x.obv||'—'))+ck(c.macd,'MACD '+(x.macd||'—'))+'</td>'+
     '<td data-l="الحالة">'+status+'</td></tr>'}).join('')
-   :'<tr><td colspan="10" class="empty">لا يوجد سهم هابط 30% أو أكثر الآن. الرادار يفحص '+esc(P.master_count??0)+' سهمًا منخفض الفلوت كل 15 دقيقة.</td></tr>';
+   :'<tr><td colspan="12" class="empty">لا توجد أسهم مطابقة للفلاتر الحالية. الرادار يفحص '+esc(P.master_count??0)+' سهمًا منخفض الفلوت.</td></tr>';
   document.getElementById('panicPurged').innerHTML=purged.length?'<div class="note" style="margin:0 0 6px"><b>🧹 شُطبت اليوم (كسر قاع الثبات):</b></div>'+purged.map(x=>'<div class="pcard"><b>'+esc(x.ticker)+'</b> · '+money(x.price)+' تحت قاع '+money(x.base_low)+' · '+esc(fmtTime(x.purged_at))+'</div>').join(''):'';
+  if(panicSelected)renderPanicDetail();
 }
 function route(){const h=location.hash;if(h.startsWith('#stock=')){setTab('swing');const p=new URLSearchParams(h.slice(1));showStock(p.get('stock'),p.get('date'))}else if(TAB!=='panic')goHome(false)}
 window.addEventListener('hashchange',route);
