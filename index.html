@@ -187,10 +187,10 @@ td{display:flex;justify-content:space-between;align-items:center;gap:10px;border
 
 <div id="listPage" class="page active">
 <div class="cards">
-<div class="stat s-ready" onclick="quickFilter('جاهز فنيًا')"><div class="label">🟢 جاهز فنيًا</div><div class="num" id="cReady">0</div><div class="hint">الدرجة 80–100</div></div>
-<div class="stat s-semi" onclick="quickFilter('شبه جاهز')"><div class="label">🟠 شبه جاهز</div><div class="num" id="cSemi">0</div><div class="hint">الدرجة 55–75</div></div>
-<div class="stat s-watch" onclick="quickFilter('قيد المتابعة')"><div class="label">🟡 قيد المتابعة</div><div class="num" id="cWatch">0</div><div class="hint">الدرجة 30–50</div></div>
-<div class="stat s-warn" onclick="quickFilter('تحذيرات')"><div class="label">🚨 تحذيرات</div><div class="num" id="cWarn">0</div><div class="hint">تخفيف / أزمات (آخر 5 أيام)</div></div>
+<div class="stat s-ready" role="button" tabindex="0" onclick="openSwingList('جاهز فنيًا')"><div class="label">🟢 جاهز فنيًا</div><div class="num" id="cReady">0</div><div class="hint">اضغط لعرض الأسهم · الدرجة 80–100</div></div>
+<div class="stat s-semi" role="button" tabindex="0" onclick="openSwingList('شبه جاهز')"><div class="label">🟠 شبه جاهز</div><div class="num" id="cSemi">0</div><div class="hint">اضغط لعرض الأسهم · الدرجة 55–75</div></div>
+<div class="stat s-watch" role="button" tabindex="0" onclick="openSwingList('قيد المتابعة')"><div class="label">🟡 قيد المتابعة</div><div class="num" id="cWatch">0</div><div class="hint">اضغط لعرض الأسهم · الدرجة 30–50</div></div>
+<div class="stat s-warn" role="button" tabindex="0" onclick="openSwingList('تحذيرات')"><div class="label">🚨 تحذيرات</div><div class="num" id="cWarn">0</div><div class="hint">اضغط لعرض الأسهم · آخر 5 أيام</div></div>
 </div>
 <div class="opps"><h3>⭐ أفضل الفرص الحالية</h3><div class="opps-sub">ترتيب تحليلي يجمع قوة نمط القاع المزدوج، القرب من الدعم، جاهزية السهم، وهدوء/تأكيد حجم التداول — ليس توصية شراء.</div><div style="overflow-x:auto"><table class="opp-table"><thead><tr><th>#</th><th>السهم</th><th>النمط</th><th>قوة القاع</th><th>RVOL</th><th>RSI</th><th>MACD</th><th>المرحلة</th></tr></thead><tbody id="opportunityRows"></tbody></table></div></div>
 <div class="toolbar">
@@ -204,6 +204,7 @@ td{display:flex;justify-content:space-between;align-items:center;gap:10px;border
 <button class="filter" data-filter="محفزات" onclick="setFilter(this)">📅 محفزات قادمة</button>
 </div>
 </div>
+<div id="listState" class="note" style="margin:0 0 10px"></div>
 <div class="tablewrap"><table>
 <thead><tr><th>السهم</th><th>السعر</th><th>Float</th><th>المرحلة</th><th>درجة الجاهزية</th><th>البعد عن القاع</th><th>منذ القمة</th><th>النمط</th><th>المحفز</th><th>تحذير</th></tr></thead>
 <tbody id="rows"></tbody>
@@ -393,18 +394,18 @@ function renderRules(){
   ' <b>التحذيرات:</b> أي طرح/تخفيف أو تقسيم عكسي أو تحقيق SEC أو إنذار شطب أو إفلاس أو نتائج مخيبة خلال آخر '+esc(p.warning_window_days??5)+' أيام.';
 }
 function setFilter(el){
-  document.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('#filters .filter').forEach(x=>x.classList.remove('active'));
   el.classList.add('active');currentFilter=el.dataset.filter;render();
 }
-function quickFilter(f){
-  setTab('swing');goHome(false);const el=document.querySelector('#filters .filter[data-filter="'+f+'"]');if(el)setFilter(el);document.getElementById('listPage').scrollIntoView({behavior:'smooth',block:'start'});
-}
+function openSwingList(f){setTab('swing');goHome(false);const el=document.querySelector('#filters .filter[data-filter=\"'+f+'\"]');if(el)setFilter(el);document.getElementById('listPage').scrollIntoView({behavior:'smooth',block:'start'})}
+function quickFilter(f){openSwingList(f)}
 function filtered(){
   const q=document.getElementById('search').value.trim().toUpperCase();
   return (D.signals||[]).filter(x=>{
+    const score=Number(x.readiness_score??0),stage=stageOf(x);
     const okF=currentFilter==='الكل'
       ||(currentFilter==='تحذيرات'?hasWarn(x)
-      :(currentFilter==='محفزات'?hasCat(x):stageOf(x)===currentFilter));
+      :(currentFilter==='محفزات'?hasCat(x):(currentFilter==='جاهز فنيًا'?(stage===ST.READY||score>=80):(currentFilter==='شبه جاهز'?(stage===ST.SEMI||(score>=55&&score<80)):(stage===ST.WATCH||score<55)))));
     return okF&&String(x.ticker||'').toUpperCase().includes(q);
   }).sort((a,b)=>(ORDER[stageOf(b)]||0)-(ORDER[stageOf(a)]||0)||(b.readiness_score||0)-(a.readiness_score||0));
 }
@@ -450,6 +451,7 @@ function render(){
   document.getElementById('cWatch').textContent=cnt(ST.WATCH);
   document.getElementById('cWarn').textContent=s.filter(hasWarn).length;
   const a=filtered();
+  const state=document.getElementById('listState');if(state)state.innerHTML='<b>القائمة الحالية:</b> '+esc(currentFilter)+' · <b>'+a.length+'</b> سهم من أصل '+s.length;
   document.getElementById('rows').innerHTML=a.length?a.map(x=>{
     const t=ind(x),i=x.indicators||{},score=Math.min(100,Number(x.readiness_score||0));
     const rsi=Number(i.rsi??t.rsi);
