@@ -20,6 +20,9 @@ def main():
     assert x['conditions']['rsi_oversold'] and x['conditions']['support_stable']
     assert isinstance(x['conditions']['below_ema20_30_50'], bool)
     assert x['plan']['target_main']==x['reverse_split']['split_day_high']
+    assert 'split_day_low' not in x['reverse_split']
+    assert x['support']['sessions_above_support'] == x['support']['stable_sessions']
+    assert set(x['moving_averages']['distance_pct']) == {'ema20','ema30','ema50'}
     old=d.copy(); old.index=old.index-pd.Timedelta(days=70); assert rs.split_event(old,now) is None
     print('✅ reverse split rules passed')
 

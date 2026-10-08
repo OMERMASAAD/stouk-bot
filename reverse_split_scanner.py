@@ -128,7 +128,7 @@ def evaluate(ticker, d, now=None, news=None):
     p = ev["pos"]
     post = d.iloc[p:]
     split_row = d.iloc[p]; split_open, split_high = float(split_row.Open), float(split_row.High)
-    split_low, split_close, split_volume = float(split_row.Low), float(split_row.Close), int(split_row.Volume)
+    split_close, split_volume = float(split_row.Close), int(split_row.Volume)
     peak = float(post.High.max())
     peak_pos = int(post.High.values.argmax())
     current = float(d.Close.iloc[-1])
@@ -145,10 +145,19 @@ def evaluate(ticker, d, now=None, news=None):
     tail = d.iloc[-STABILITY_MAX:]
     base = float(tail.Low.min())
     support_span = (float(tail.High.max()) - base) / base if base else 99
-    stable = bool(len(tail) >= STABILITY_MIN and support_span <= 0.12 and float(tail.Close.iloc[-1]) >= base * .97)
-    stable_days = int(min(STABILITY_MAX, len(tail))) if stable else 0
+    # الثبات يُقاس من آخر جلسة إلى الخلف، وليس بقيمة شرطية تُرجع صفرًا.
+    # الجلسة تُحسب ثابتة إذا أغلقت ولم تكسر الدعم بأكثر من 3%.
+    hold_sessions = 0
+    for _, bar in tail.iloc[::-1].iterrows():
+        if float(bar.Close) >= base * .97:
+            hold_sessions += 1
+        else:
+            break
+    stable = bool(hold_sessions >= STABILITY_MIN and support_span <= 0.12)
+    stable_days = int(hold_sessions)
     support_tests = int((post.Low.astype(float) <= base * 1.05).sum())
     support_distance = (current - base) / base * 100 if base else 0.0
+    ema_distance = {k: round((current - float(tech[k])) / float(tech[k]) * 100, 2) if tech[k] else None for k in ('ema20','ema30','ema50')}
     last_support_idx = post.index[post.Low.astype(float) <= base * 1.05]
     last_support_date = str(pd.Timestamp(last_support_idx[-1]).date()) if len(last_support_idx) else None
     wedge = fit_wedge(d, p)
@@ -161,7 +170,7 @@ def evaluate(ticker, d, now=None, news=None):
     entry = wedge["upper_now"] if wedge else current
     stop = base * .98
     target1 = max(entry, wedge["upper_now"] + (wedge["upper_now"] - wedge["lower_now"]) if wedge else entry * 1.1)
-    return {"ticker":ticker,"reverse_split":{"date":ev["date"],"ratio":ev["ratio"],"ratio_label":ev["ratio_label"],"age_days":ev["age_days"],"trading_days_since_split":int(len(d)-p-1),"opening_price":round(split_open,4),"split_day_high":round(split_high,4),"split_day_low":round(split_low,4),"split_day_close":round(split_close,4),"split_day_volume":split_volume},"price":round(current,4),"peak_after_split":round(peak,4),"peak_date":str(pd.Timestamp(post.index[peak_pos]).date()),"max_rally_pct":round(max_rally,2),"drop_pct":round(drop,2),"base_support":round(base,4),"support":{"level":round(base,4),"tests":support_tests,"stable_sessions":stable_days,"distance_pct":round(support_distance,2),"range_pct":round(support_span*100,2),"last_test_date":last_support_date,"holding":stable},"stable_days":stable_days,"hammer":{"detected_today":hammer_today,"detected_recent":hammer_recent,"bars_ago":hammer_age,"meaning":"احتمال اقتراب انعكاس، ويحتاج تأكيد كسر مقاومة/الوتد"},"readiness_score":int(score),"stage":"جاهز فنيًا" if ready else ("شبه جاهز" if score>=55 else "قيد المتابعة"),"ready":ready,"conditions":{"drop_30":drop>=30,"rsi_oversold":oversold,"rsi_recovery":rsi_recovery,"below_ema20_30_50":under_ma,"below_vwap":under_vwap,"support_stable":stable,"macd_improving":tech["macd_hist"]>tech["macd_hist_prev"],"falling_wedge":bool(wedge and wedge["detected"]),"upper_break":bool(wedge and wedge["upper_break"]),"hammer_recent":hammer_recent},"indicators":{k:round(v,5) for k,v in tech.items()},"wedge":wedge,"plan":{"entry":round(entry,4),"stop":round(stop,4),"target_1":round(target1,4),"target_main":round(split_high,4),"target_main_label":"قمة شمعة يوم التقسيم"},"chart":chart_rows(d),"news":news_summary}
+    return {"ticker":ticker,"reverse_split":{"date":ev["date"],"ratio":ev["ratio"],"ratio_label":ev["ratio_label"],"age_days":ev["age_days"],"trading_days_since_split":int(len(d)-p-1),"opening_price":round(split_open,4),"split_day_high":round(split_high,4),"split_day_close":round(split_close,4),"split_day_volume":split_volume},"price":round(current,4),"peak_after_split":round(peak,4),"peak_date":str(pd.Timestamp(post.index[peak_pos]).date()),"max_rally_pct":round(max_rally,2),"drop_pct":round(drop,2),"base_support":round(base,4),"support":{"level":round(base,4),"tests":support_tests,"stable_sessions":stable_days,"sessions_above_support":hold_sessions,"distance_pct":round(support_distance,2),"range_pct":round(support_span*100,2),"last_test_date":last_support_date,"holding":stable},"stable_days":stable_days,"hammer":{"detected_today":hammer_today,"detected_recent":hammer_recent,"bars_ago":hammer_age,"meaning":"احتمال اقتراب انعكاس، ويحتاج تأكيد كسر مقاومة/الوتد"},"readiness_score":int(score),"stage":"جاهز فنيًا" if ready else ("شبه جاهز" if score>=55 else "قيد المتابعة"),"ready":ready,"conditions":{"drop_30":drop>=30,"rsi_oversold":oversold,"rsi_recovery":rsi_recovery,"below_ema20_30_50":under_ma,"below_vwap":under_vwap,"support_stable":stable,"macd_improving":tech["macd_hist"]>tech["macd_hist_prev"],"falling_wedge":bool(wedge and wedge["detected"]),"upper_break":bool(wedge and wedge["upper_break"]),"hammer_recent":hammer_recent},"moving_averages":{"price":round(current,4),"ema20":round(tech["ema20"],4),"ema30":round(tech["ema30"],4),"ema50":round(tech["ema50"],4),"distance_pct":ema_distance},"indicators":{k:round(v,5) for k,v in tech.items()},"wedge":wedge,"plan":{"entry":round(entry,4),"stop":round(stop,4),"target_1":round(target1,4),"target_main":round(split_high,4),"target_main_label":"قمة شمعة يوم التقسيم"},"chart":chart_rows(d),"news":news_summary}
 
 
 def load_tickers(path=MASTER_FILE):
