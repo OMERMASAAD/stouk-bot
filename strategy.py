@@ -630,6 +630,7 @@ def evaluate_event(d, event, float_shares=None, news=None, intraday=None, now=No
         "has_warning": bool(news_flags["has_warning"]),
         "warning_detail": news_flags["warning_detail"],
         "pattern_type": pattern_type,
+        "pattern_detail": pattern,
         "indicators": {
             "rsi": round(rsi_now, 2), "rsi_prev": round(rsi_prev, 2),
             "ema9": tech["ema9"], "ema20": tech["ema20"], "vwap": round(vwap, 4),
@@ -662,6 +663,12 @@ def evaluate_event(d, event, float_shares=None, news=None, intraday=None, now=No
         "signal_flags": sig,
         "points": {k: (POINTS[k] if sig.get(k) else 0) for k in POINTS},
         "pattern": pattern,
+        "chart_levels": {
+            "support": round(base, 4),
+            "neckline": round(float(pattern.get("neckline")), 4) if pattern and pattern.get("neckline") else None,
+            "resistance": round(float(state["lower_high"]), 4) if state.get("lower_high") else None,
+            "prior_high": round(peak, 4),
+        },
         "plan": plan,
         "status": stage,                     # توافق مع الواجهة الحالية
         "ready": ready,
@@ -678,7 +685,7 @@ def analyze(d, float_shares=None, news=None, intraday=None, now=None):
 def chart_data(d, n=ANALYSIS_DAYS):
     x = d.tail(n).copy()
     rrsi = rsi(x["Close"].astype(float))
-    return [{
+    rows = [{
         "date": str(idx.date()),
         "open": round(float(row.Open), 4),
         "high": round(float(row.High), 4),
@@ -687,3 +694,8 @@ def chart_data(d, n=ANALYSIS_DAYS):
         "volume": int(row.Volume) if pd.notna(row.Volume) else 0,
         "rsi": round(float(rrsi.loc[idx]), 2) if pd.notna(rrsi.loc[idx]) else None,
     } for idx, row in x.iterrows()]
+    # قيعان محلية بسيطة للرسم: تساعد الواجهة على إبراز القاعين والرقبة بصريًا.
+    lows = [float(row["low"]) for row in rows]
+    for i in range(1, len(rows) - 1):
+        rows[i]["swing_low"] = bool(lows[i] <= lows[i - 1] and lows[i] <= lows[i + 1])
+    return rows
