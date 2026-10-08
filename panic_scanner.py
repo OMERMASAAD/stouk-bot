@@ -44,7 +44,10 @@ def _et_index(df):
 
 
 def evaluate_panic(df, now=None):
-    """يعيد (dict | None, reason). df: شموع 5m (5 أيام، تشمل Pre/After)."""
+    """
+    يعيد (dict | None, reason). أي سهم هبط ≤ -30% من قمة اليوم يُعاد مع حالة كل شرط في "checks"،
+    و"complete"=True فقط عند تحقق كل الشروط (ثبات + RSI + OBV + MACD).
+    """
     if df is None or len(df) < 30:
         return None, "no_data"
     df = _et_index(df)
@@ -72,34 +75,37 @@ def evaluate_panic(df, now=None):
     win = after.loc[start_ts:]
     base_low = float(win["Low"].min())
     hold_min = int((last_ts - start_ts).total_seconds() / 60) + 5
-    if hold_min < CONS_MIN_MIN:
-        return None, "no_base"
-    if (base_low - day_low) / day_low * 100 > NEAR_LOW_PCT:
-        return None, "far_from_low"
+    near_low = (base_low - day_low) / day_low * 100 <= NEAR_LOW_PCT
+    base_ok = hold_min >= CONS_MIN_MIN and near_low
     # --- المؤشرات على كامل الـ 5 أيام (تسخين كافٍ) ---
     close, vol = df["Close"].astype(float), df["Volume"].astype(float)
     r = rsi(close, 14)
-    if r.dropna().shape[0] < RSI_LOOK:
-        return None, "no_data"
-    rsi_now, rsi_min = float(r.iloc[-1]), float(r.iloc[-RSI_LOOK:].min())
-    rsi_ok = rsi_min <= RSI_OVERSOLD and rsi_now >= RSI_EXIT and rsi_now - rsi_min >= 3
+    rsi_now = rsi_min = None
+    rsi_ok = False
+    if r.dropna().shape[0] >= RSI_LOOK:
+        rsi_now, rsi_min = float(r.iloc[-1]), float(r.iloc[-RSI_LOOK:].min())
+        rsi_ok = rsi_min <= RSI_OVERSOLD and rsi_now >= RSI_EXIT and rsi_now - rsi_min >= 3
     o = obv(close, vol)
     lows = df["Low"].astype(float)
     obv_rising = bool(o.iloc[-1] > o.iloc[-OBV_LOOK])
     obv_div = bool(lows.iloc[-OBV_LOOK:].min() <= lows.iloc[-2 * OBV_LOOK:-OBV_LOOK].min()
                    and o.iloc[-OBV_LOOK:].min() > o.iloc[-2 * OBV_LOOK:-OBV_LOOK].min())
+    obv_ok = obv_rising or obv_div
     ml, ms, mh = macd(close)
     cross = bool(((ml.shift(1) <= ms.shift(1)) & (ml > ms)).iloc[-3:].any())
     macd_ok = cross or float(mh.iloc[-1]) > 0
-    if not (rsi_ok and (obv_rising or obv_div) and macd_ok):
-        return None, "indicators"
+    checks = {"base": bool(base_ok), "rsi": bool(rsi_ok), "obv": bool(obv_ok), "macd": bool(macd_ok)}
     return {
         "price": round(price, 4), "day_high": round(day_high, 4), "day_low": round(day_low, 4),
-        "drop_pct": round(drop, 1), "hold_min": hold_min, "base_low": round(base_low, 4),
+        "drop_pct": round(drop, 1), "hold_min": hold_min, "hold_needed": CONS_MIN_MIN,
+        "base_low": round(base_low, 4), "near_low": bool(near_low),
         "dist_from_low_pct": round((price / day_low - 1) * 100, 1),
         "target": round(price * (1 + TARGET_PCT / 100), 4), "target_pct": TARGET_PCT,
-        "rsi": round(rsi_now, 1), "rsi_min": round(rsi_min, 1),
-        "obv": "صاعد" if obv_rising else "انحراف إيجابي", "macd": "تقاطع" if cross else "هيستوجرام أخضر",
+        "rsi": round(rsi_now, 1) if rsi_now is not None else None,
+        "rsi_min": round(rsi_min, 1) if rsi_min is not None else None,
+        "obv": "صاعد" if obv_rising else ("انحراف إيجابي" if obv_div else "ضعيف"),
+        "macd": "تقاطع" if cross else ("هيستوجرام أخضر" if macd_ok else "سلبي"),
+        "checks": checks, "complete": all(checks.values()),
         "last_bar": last_ts.isoformat(),
     }, "ok"
 
@@ -140,7 +146,7 @@ def load(path, default):
 
 
 def run(master, prev, frames, now):
-    """منطق الدمج + التنظيف الآلي (منفصل عن الشبكة ليسهل اختباره)."""
+    """الدمج + التنظيف الآلي. أي هابط ≤ -30% يظهر؛ والشطب لمن ثبت فعلًا ثم كسر قاعه بـ -3%."""
     today = now.astimezone(ET).date().isoformat()
     if prev.get("session_date") != today:
         prev = {}
@@ -154,8 +160,9 @@ def run(master, prev, frames, now):
             reasons["no_data"] = reasons.get("no_data", 0) + 1
             continue
         px = float(df["Close"].iloc[-1])
-        if t in items and px < items[t]["base_low"] * (1 - PURGE_BREAK_PCT / 100):   # 🧹 التنظيف الآلي
-            purged[t] = {"ticker": t, "price": round(px, 4), "base_low": items[t]["base_low"],
+        old = items.get(t)
+        if old and old.get("had_base") and px < old["base_low"] * (1 - PURGE_BREAK_PCT / 100):   # 🧹 تنظيف آلي
+            purged[t] = {"ticker": t, "price": round(px, 4), "base_low": old["base_low"],
                          "purged_at": now.isoformat(), "reason": "كسر قاع الثبات بـ -%g%%" % PURGE_BREAK_PCT}
             items.pop(t)
             continue
@@ -164,19 +171,24 @@ def run(master, prev, frames, now):
         res, why = evaluate_panic(df, now)
         reasons[why] = reasons.get(why, 0) + 1
         if res:
-            old = items.get(t, {})
+            old = old or {}
+            had_base = bool(old.get("had_base") or res["checks"]["base"])
             res.update(ticker=t, float=m.get("float"), float_status=m.get("float_status"),
                        detected_at=old.get("detected_at", now.isoformat()), still_valid=True,
-                       base_low=old.get("base_low", res["base_low"]))     # قاع الثبات الأصلي هو مرجع الشطب
+                       had_base=had_base,
+                       base_low=old["base_low"] if old.get("had_base") else res["base_low"])  # قاع الثبات الأول هو مرجع الشطب
             items[t] = res
         elif t in items:
-            items[t]["still_valid"] = False            # الشروط لم تعد كاملة لكن لم يُكسر القاع بعد
-            items[t]["price"] = round(px, 4)
-    out = {"updated_at": now.isoformat(), "session_date": today,
-           "master_count": len(meta), "master_built_on": master.get("built_on"),
-           "items": sorted(items.values(), key=lambda x: x["drop_pct"]),
-           "purged": list(purged.values()), "diagnostics": {"reasons": reasons}}
-    return out
+            if items[t].get("had_base"):                # كان ثابتًا ولم يُكسر قاعه بعد: يبقى مع علامة «ضعفت»
+                items[t]["still_valid"] = False
+                items[t]["complete"] = False
+                items[t]["price"] = round(px, 4)
+            else:                                       # ارتد فوق -30% قبل أن يثبت: لم يعد مرشحًا
+                items.pop(t)
+    ordered = sorted(items.values(), key=lambda x: (not x.get("complete", False), x["drop_pct"]))
+    return {"updated_at": now.isoformat(), "session_date": today,
+            "master_count": len(meta), "master_built_on": master.get("built_on"),
+            "items": ordered, "purged": list(purged.values()), "diagnostics": {"reasons": reasons}}
 
 
 def main():
@@ -194,7 +206,7 @@ def main():
     out = run(master, load(OUT_FILE, {}), frames, now)
     with open(OUT_FILE, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)
-    print("panic items: %d | purged: %d | %.0fs" % (len(out["items"]), len(out["purged"]), time.time() - t0))
+    print("panic items: %d (complete %d) | purged: %d | %.0fs" % (len(out["items"]), sum(1 for x in out["items"] if x.get("complete")), len(out["purged"]), time.time() - t0))
 
 
 if __name__ == "__main__":

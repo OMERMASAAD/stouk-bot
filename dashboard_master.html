@@ -142,9 +142,9 @@ td:before{content:attr(data-l);color:var(--muted);font-size:12px;flex:0 0 auto}
 
 <div class="tabs"><button class="tab" data-tab="panic" onclick="showTab('panic')">⚡ قنص الذعر اللحظي <span id="tabPanicN"></span></button><button class="tab active" data-tab="swing" onclick="showTab('swing')">🐢 رادار الرجل الثانية</button></div>
 <div id="panicPage" class="page">
-<div class="note" style="margin:0 0 12px"><b>⚡ قنص الذعر (فريم 5 دقائق):</b> هبوط ≤ -30% من قمة اليوم · ثبات أفقي ≤ 5% لمدة ≥ 60 دقيقة قرب القاع · RSI يخرج من التشبع · OBV صاعد/انحراف إيجابي · MACD إيجابي. يُحدَّث كل 15 دقيقة تقريبًا في ساعات السوق الأمريكي، ويُشطب السهم تلقائيًا إذا كسر قاع الثبات بـ -3%.</div>
+<div class="note" style="margin:0 0 12px"><b>⚡ قنص الذعر (فريم 5 دقائق):</b> يظهر هنا <b>أي سهم هبط 30% أو أكثر من قمة اليوم</b>، وفي عمود «الشروط» حالة كل شرط: ✅ تحقق / ❌ لم يتحقق (ثبات أفقي ≤ 5% لمدة ≥ 60 دقيقة قرب القاع · RSI يخرج من التشبع · OBV صاعد أو انحراف إيجابي · MACD إيجابي). السهم الذي تتحقق كل شروطه يصبح <b>⚡ مكتمل</b> ويُعرض في أعلى الجدول. يُحدَّث كل 15 دقيقة تقريبًا، ويُشطب السهم الذي ثبت ثم كسر قاعه بـ -3%.</div>
 <div class="updated" id="panicUpdated">آخر تحديث: —</div>
-<div class="tablewrap"><table><thead><tr><th>السهم</th><th>السعر</th><th>نسبة الهبوط</th><th>زمن الثبات</th><th>البعد عن القاع</th><th>قاع الثبات</th><th>الهدف +25%</th><th>Float</th><th>RSI</th><th>OBV</th><th>MACD</th><th>الحالة</th></tr></thead><tbody id="panicRows"><tr><td colspan="12" class="empty">جارٍ التحميل...</td></tr></tbody></table></div>
+<div class="tablewrap"><table><thead><tr><th>السهم</th><th>السعر</th><th>نسبة الهبوط</th><th>زمن الثبات</th><th>البعد عن القاع</th><th>قاع الثبات</th><th>الهدف +25%</th><th>Float</th><th>الشروط</th><th>الحالة</th></tr></thead><tbody id="panicRows"><tr><td colspan="10" class="empty">جارٍ التحميل...</td></tr></tbody></table></div>
 <div id="panicPurged" style="margin-top:12px"></div>
 </div>
 
@@ -432,21 +432,25 @@ async function fetchPanic(light){
 }
 async function loadPanic(light){
   const r=await fetchPanic(light);
-  if(!r){document.getElementById('panicRows').innerHTML='<tr><td colspan="12" class="empty">لا توجد بيانات قنص بعد — ستظهر بعد أول تشغيل لـ «Intraday Panic Scan» (يحتاج master_low_float.json من المسح الشامل).</td></tr>';return}
+  if(!r){document.getElementById('panicRows').innerHTML='<tr><td colspan="10" class="empty">لا توجد بيانات قنص بعد — ستظهر بعد أول تشغيل لـ «Intraday Panic Scan» (يحتاج master_low_float.json من المسح الشامل).</td></tr>';return}
   P=r.d;renderPanic();
 }
 function renderPanic(){
   const items=P.items||[],purged=P.purged||[];
-  document.getElementById('tabPanicN').textContent=items.length?'('+items.length+')':'';
-  document.getElementById('panicUpdated').innerHTML='آخر تحديث: <b>'+esc(fmtTime(P.updated_at))+'</b> · جلسة '+esc(P.session_date||'—')+' · رموز الماستر: <b>'+esc(P.master_count??0)+'</b> · مشطوبة اليوم: <b>'+esc(purged.length)+'</b>';
+  const done=items.filter(x=>x.complete).length;
+  document.getElementById('tabPanicN').textContent=items.length?'('+done+'/'+items.length+')':'';
+  document.getElementById('panicUpdated').innerHTML='آخر تحديث: <b>'+esc(fmtTime(P.updated_at))+'</b> · جلسة '+esc(P.session_date||'—')+' · رموز الماستر: <b>'+esc(P.master_count??0)+'</b> · هابطة ≥30%: <b>'+esc(items.length)+'</b> · مكتملة الشروط: <b>'+esc(done)+'</b> · مشطوبة اليوم: <b>'+esc(purged.length)+'</b>';
+  const ck=(ok,t)=>'<div>'+(ok?'✅ ':'❌ ')+esc(t)+'</div>';
   document.getElementById('panicRows').innerHTML=items.length?items.map(x=>{
-    const fl=x.float_status==='unverified'||x.float_status==='unknown';
-    return '<tr><td data-l="السهم"><b>'+esc(x.ticker)+'</b></td><td data-l="السعر">'+money(x.price)+'</td><td data-l="الهبوط" class="no">'+pctFmt(x.drop_pct)+'</td>'+
+    const fl=x.float_status==='unverified'||x.float_status==='unknown',c=x.checks||{};
+    const status=x.complete?'<span class="ptag">⚡ مكتمل</span>':(x.still_valid===false?'<span class="ptag w">الشروط ضعفت</span>':'<span class="ptag w">⏳ قيد الاكتمال</span>');
+    return '<tr'+(x.complete?' style="background:#0f2a1b"':'')+'><td data-l="السهم"><b>'+esc(x.ticker)+'</b></td><td data-l="السعر">'+money(x.price)+'</td><td data-l="الهبوط" class="no">'+pctFmt(x.drop_pct)+'</td>'+
     '<td data-l="زمن الثبات">'+esc(x.hold_min)+' د</td><td data-l="البعد عن القاع" class="mid">+'+num(x.dist_from_low_pct)+'%</td><td data-l="قاع الثبات">'+money(x.base_low)+'</td>'+
     '<td data-l="الهدف" class="ok">'+money(x.target)+' (+'+esc(x.target_pct||25)+'%)</td>'+
-    '<td data-l="Float">'+fmtFloat(x.float)+(fl?' <span class="ptag w">⚠️ غير مؤكد</span>':'')+'</td><td data-l="RSI">'+num(x.rsi)+'</td><td data-l="OBV">'+esc(x.obv)+'</td><td data-l="MACD">'+esc(x.macd)+'</td>'+
-    '<td data-l="الحالة">'+(x.still_valid===false?'<span class="ptag w">الشروط ضعفت</span>':'<span class="ptag">⚡ فعّال</span>')+'</td></tr>'}).join('')
-   :'<tr><td colspan="12" class="empty">لا توجد أسهم مطابقة الآن. الرادار يفحص '+esc(P.master_count??0)+' سهمًا منخفض الفلوت كل 15 دقيقة.</td></tr>';
+    '<td data-l="Float">'+fmtFloat(x.float)+(fl?' <span class="ptag w">⚠️ غير مؤكد</span>':'')+'</td>'+
+    '<td data-l="الشروط">'+ck(c.base,'ثبات '+(x.hold_min??0)+'/'+(x.hold_needed||60)+' د'+(x.near_low===false?' (بعيد عن القاع)':''))+ck(c.rsi,'RSI '+(x.rsi==null?'—':num(x.rsi)))+ck(c.obv,'OBV '+(x.obv||'—'))+ck(c.macd,'MACD '+(x.macd||'—'))+'</td>'+
+    '<td data-l="الحالة">'+status+'</td></tr>'}).join('')
+   :'<tr><td colspan="10" class="empty">لا يوجد سهم هابط 30% أو أكثر الآن. الرادار يفحص '+esc(P.master_count??0)+' سهمًا منخفض الفلوت كل 15 دقيقة.</td></tr>';
   document.getElementById('panicPurged').innerHTML=purged.length?'<div class="note" style="margin:0 0 6px"><b>🧹 شُطبت اليوم (كسر قاع الثبات):</b></div>'+purged.map(x=>'<div class="pcard"><b>'+esc(x.ticker)+'</b> · '+money(x.price)+' تحت قاع '+money(x.base_low)+' · '+esc(fmtTime(x.purged_at))+'</div>').join(''):'';
 }
 function route(){const h=location.hash;if(h.startsWith('#stock=')){setTab('swing');const p=new URLSearchParams(h.slice(1));showStock(p.get('stock'),p.get('date'))}else if(TAB!=='panic')goHome(false)}
