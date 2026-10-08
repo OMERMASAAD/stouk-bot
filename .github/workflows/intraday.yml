@@ -2,17 +2,18 @@ name: Intraday Panic Scan
 on:
   workflow_dispatch:
   schedule:
-    # كل 15 دقيقة، أيام التداول، 08:00–23:59 UTC = من Pre-Market (4:00 ET) حتى After-Hours (حتى ~19:45 ET صيفًا)
-    # ملاحظة: 14-21 فقط تفوّت أول 30 دقيقة من الافتتاح (13:30 UTC صيفًا) وكل الـ Pre/After.
-    - cron: "*/15 8-23 * * 1-5"
+    # تشغيلان في الساعة (دقيقة 7 و37) بدل كل 15 دقيقة، لأن GitHub يتجاهل الجدولة المتكررة كثيرًا.
+    # كل تشغيل يمسح 4 مرات بفارق ~14 دقيقة داخل نفس الجلسة، فتبقى التغطية مستمرة.
+    - cron: "7 8-23 * * 1-5"
+    - cron: "37 8-23 * * 1-5"
 concurrency:
   group: intraday-panic-scan
-  cancel-in-progress: true          # إذا تأخر تشغيل يُلغى القديم ويكمل الأحدث
+  cancel-in-progress: false         # لا نقطع مسحًا يعمل؛ ينتظر التالي دوره
 
 jobs:
   panic:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 58
     permissions:
       contents: write
     steps:
@@ -22,17 +23,21 @@ jobs:
           python-version: "3.11"
           cache: pip
       - run: pip install -r requirements.txt
-      - name: Panic scan (5m)
-        run: python panic_scanner.py
-      - name: Commit panic data
+      - name: Panic scan loop (4 مرات × كل ~14 دقيقة)
         run: |
           git config user.name "stock-radar"
           git config user.email "actions@github.com"
-          git add panic_data.json
-          git diff --cached --quiet && exit 0
-          git commit -m "⚡ تحديث قنص الذعر"
-          for i in 1 2 3; do
-            git pull --rebase -X theirs origin main && git push && exit 0
-            sleep 3
+          for i in 1 2 3 4; do
+            echo "=== scan $i/4 ==="
+            python panic_scanner.py || echo "scan failed, continuing"
+            git add panic_data.json
+            if ! git diff --cached --quiet; then
+              git commit -m "⚡ تحديث قنص الذعر"
+              for j in 1 2 3; do
+                git pull --rebase -X theirs origin main && git push && break
+                sleep 3
+              done
+            fi
+            [ "$i" -lt 4 ] && sleep 840
           done
-          exit 1
+          exit 0
