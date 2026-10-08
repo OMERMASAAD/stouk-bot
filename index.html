@@ -137,7 +137,7 @@ td:before{content:attr(data-l);color:var(--muted);font-size:12px;flex:0 0 auto}
 <a class="btn" href="https://github.com/OMERMASAAD/stouk-bot/actions" target="_blank" rel="noopener">⚙️ تشغيل مسح جديد</a>
 </div>
 </header>
-<div class="updated" id="updated">آخر تحديث: —</div>
+<div class="updated" id="updated">آخر تحديث: — · <span id="panicSummary">قنص الذعر: جارٍ التحميل...</span></div>
 <div class="banner warn" id="demoNote" style="display:none;margin-bottom:14px">⚠️ <b>بيانات تجريبية للعرض فقط</b> — هذه النسخة تعرض بيانات تجريبية لتوضيح الواجهة، والبيانات الحقيقية تُحدَّث تلقائيًا من مسح GitHub Actions.</div>
 
 <div class="tabs"><button class="tab" data-tab="panic" onclick="showTab('panic')">⚡ قنص الذعر اللحظي <span id="tabPanicN"></span></button><button class="tab active" data-tab="swing" onclick="showTab('swing')">🐢 رادار الرجل الثانية</button></div>
@@ -432,13 +432,18 @@ async function fetchPanic(light){
 }
 async function loadPanic(light){
   const r=await fetchPanic(light);
-  if(!r){document.getElementById('panicRows').innerHTML='<tr><td colspan="10" class="empty">لا توجد بيانات قنص بعد — ستظهر بعد أول تشغيل لـ «Intraday Panic Scan» (يحتاج master_low_float.json من المسح الشامل).</td></tr>';return}
+  if(!r){
+    document.getElementById('panicSummary').textContent='قنص الذعر: تعذر تحميل البيانات';
+    document.getElementById('panicRows').innerHTML='<tr><td colspan="10" class="empty">تعذر تحميل نتائج قنص الذعر من GitHub. اضغط «تحديث البيانات» أو أعد فتح الصفحة.</td></tr>';
+    return;
+  }
   P=r.d;renderPanic();
 }
 function renderPanic(){
   const items=P.items||[],purged=P.purged||[];
   const done=items.filter(x=>x.complete).length;
   document.getElementById('tabPanicN').textContent=items.length?'('+done+'/'+items.length+')':'';
+  document.getElementById('panicSummary').innerHTML='⚡ قنص الذعر: <b>'+esc(items.length)+'</b> سهم مرصود · مكتمل الشروط: <b>'+esc(done)+'</b>';
   document.getElementById('panicUpdated').innerHTML='آخر تحديث: <b>'+esc(fmtTime(P.updated_at))+'</b> · جلسة '+esc(P.session_date||'—')+' · رموز الماستر: <b>'+esc(P.master_count??0)+'</b> · هابطة ≥30%: <b>'+esc(items.length)+'</b> · مكتملة الشروط: <b>'+esc(done)+'</b> · مشطوبة اليوم: <b>'+esc(purged.length)+'</b>';
   const ck=(ok,t)=>'<div>'+(ok?'✅ ':'❌ ')+esc(t)+'</div>';
   document.getElementById('panicRows').innerHTML=items.length?items.map(x=>{
@@ -571,6 +576,8 @@ function drawChart(x){
 }
 renderDiag();
 loadData();
+/* لا تنتظر فتح التبويب: حدّث عدّاد ونتائج قنص الذعر عند تحميل الداشبورد. */
+loadPanic(true);
 </script>
 </body>
 </html>

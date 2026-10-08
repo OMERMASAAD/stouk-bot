@@ -4,13 +4,12 @@ on:
   push:
     branches:
       - main
-    # تحديثات القنص كل 15 دقيقة لا تحتاج نشرًا (الداشبورد يقرأها من raw مباشرة)
+    # انشر panic_data.json أيضًا حتى تبقى نسخة GitHub Pages متاحة وحديثة
     paths-ignore:
-      - "panic_data.json"
       - "float_cache.json"
   # دفعات المسح تستخدم GITHUB_TOKEN ولا تُفعّل push workflows، لذلك ننشر بعد انتهاء المسح مباشرة
   workflow_run:
-    workflows: ["Stock Radar"]
+    workflows: ["Stock Radar", "Intraday Panic Scan"]
     types: [completed]
   # ونشر احتياطي دوري بعد إغلاق السوق
   schedule:

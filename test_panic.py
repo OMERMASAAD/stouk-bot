@@ -34,7 +34,9 @@ def t_pass():
 
 def t_short_base():
     df, now = make(post_low_bars=8)
-    assert ps.evaluate_panic(df, now)[1] in ("no_base", "indicators"), ps.evaluate_panic(df, now)
+    # السهم الهابط يظهر قبل اكتمال الثبات، وعمود الشروط يوضح النقص.
+    res, why = ps.evaluate_panic(df, now)
+    assert res and why == "ok" and res["checks"]["base"] is False, (res, why)
 
 def t_no_drop():
     df, now = make(crash_to=0.9)
