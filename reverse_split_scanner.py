@@ -60,7 +60,9 @@ def indicators(d):
 
 def split_event(d, now):
     s = pd.to_numeric(d["Stock Splits"], errors="coerce").fillna(0)
-    events = [(idx, float(v)) for idx, v in s.items() if float(v) > 1.0]
+    # Yahoo يعرض التقسيم العكسي 1-for-10 عادة كـ 0.1، وليس 10.0.
+    # نلتقط التقسيمات العكسية فقط (نسبة أقل من 1) ونستبعد التقسيم العادي.
+    events = [(idx, float(v)) for idx, v in s.items() if 0.0 < float(v) < 1.0]
     if not events:
         return None
     idx, ratio = events[-1]
@@ -71,7 +73,7 @@ def split_event(d, now):
     pos = d.index.get_loc(idx)
     if pos >= len(d) - 2:
         return None
-    return {"date": str(dt), "ratio": ratio, "pos": int(pos), "age_days": int(age)}
+    return {"date": str(dt), "ratio": ratio, "ratio_label": "1-for-" + str(round(1 / ratio)) if ratio else "—", "pos": int(pos), "age_days": int(age)}
 
 
 def fit_wedge(d, start):
@@ -139,7 +141,7 @@ def evaluate(ticker, d, now=None, news=None):
     entry = wedge["upper_now"] if wedge else current
     stop = base * .98
     target1 = max(entry, wedge["upper_now"] + (wedge["upper_now"] - wedge["lower_now"]) if wedge else entry * 1.1)
-    return {"ticker":ticker,"reverse_split":{"date":ev["date"],"ratio":ev["ratio"],"age_days":ev["age_days"],"opening_price":round(split_open,4),"split_day_high":round(split_high,4)},"price":round(current,4),"peak_after_split":round(peak,4),"peak_date":str(pd.Timestamp(post.index[peak_pos]).date()),"max_rally_pct":round(max_rally,2),"drop_pct":round(drop,2),"base_support":round(base,4),"stable_days":stable_days,"readiness_score":int(score),"stage":"جاهز فنيًا" if ready else ("شبه جاهز" if score>=55 else "قيد المتابعة"),"ready":ready,"conditions":{"drop_30":drop>=30,"rsi_oversold":oversold,"rsi_recovery":rsi_recovery,"below_ema20_30_50":under_ma,"below_vwap":under_vwap,"support_stable":stable,"macd_improving":tech["macd_hist"]>tech["macd_hist_prev"],"falling_wedge":bool(wedge and wedge["detected"]),"upper_break":bool(wedge and wedge["upper_break"])},"indicators":{k:round(v,5) for k,v in tech.items()},"wedge":wedge,"plan":{"entry":round(entry,4),"stop":round(stop,4),"target_1":round(target1,4),"target_main":round(split_high,4),"target_main_label":"قمة شمعة يوم التقسيم"},"chart":chart_rows(d),"news":news_summary}
+    return {"ticker":ticker,"reverse_split":{"date":ev["date"],"ratio":ev["ratio"],"ratio_label":ev["ratio_label"],"age_days":ev["age_days"],"opening_price":round(split_open,4),"split_day_high":round(split_high,4)},"price":round(current,4),"peak_after_split":round(peak,4),"peak_date":str(pd.Timestamp(post.index[peak_pos]).date()),"max_rally_pct":round(max_rally,2),"drop_pct":round(drop,2),"base_support":round(base,4),"stable_days":stable_days,"readiness_score":int(score),"stage":"جاهز فنيًا" if ready else ("شبه جاهز" if score>=55 else "قيد المتابعة"),"ready":ready,"conditions":{"drop_30":drop>=30,"rsi_oversold":oversold,"rsi_recovery":rsi_recovery,"below_ema20_30_50":under_ma,"below_vwap":under_vwap,"support_stable":stable,"macd_improving":tech["macd_hist"]>tech["macd_hist_prev"],"falling_wedge":bool(wedge and wedge["detected"]),"upper_break":bool(wedge and wedge["upper_break"])},"indicators":{k:round(v,5) for k,v in tech.items()},"wedge":wedge,"plan":{"entry":round(entry,4),"stop":round(stop,4),"target_1":round(target1,4),"target_main":round(split_high,4),"target_main_label":"قمة شمعة يوم التقسيم"},"chart":chart_rows(d),"news":news_summary}
 
 
 def load_tickers(path=MASTER_FILE):
