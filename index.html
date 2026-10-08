@@ -3,7 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>رادار القاع — الرجل الثانية</title>
+<title>راصد الأسهم — الرجل الثانية</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="rasid-stocks-icon.png">
+<link rel="apple-touch-icon" href="rasid-stocks-icon.png">
+<meta name="theme-color" content="#0b5b38">
 <style>
 :root{--bg:#07110d;--line:#214634;--text:#f1fff6;--muted:#8fa99a;--green:#20d47b;--red:#ff5264;--yellow:#ffc857;--orange:#ff8a3d}
 *{box-sizing:border-box}
@@ -536,7 +540,7 @@ function compactVol(v){if(v===null||v===undefined)return '—';v=Number(v);retur
 function panicVisibleItems(){
   const q=(document.getElementById('panicSearch')?.value||'').trim().toUpperCase();
   let a=(P?.items||[]).filter(x=>!q||String(x.ticker||'').toUpperCase().includes(q));
-  const activePanicFilter=window.__panicFilter||panicFilter;a=a.filter(x=>activePanicFilter==='all'||(panicFilter==='complete'&&x.complete)||(panicFilter==='near'&&panicScore(x)>=55&&!x.complete)||(panicFilter==='weak'&&panicScore(x)<55));
+  const activePanicFilter=window.__panicFilter||panicFilter;a=a.filter(x=>activePanicFilter==='all'||(activePanicFilter==='complete'&&x.complete)||(activePanicFilter==='near'&&panicScore(x)>=55&&!x.complete)||(activePanicFilter==='weak'&&panicScore(x)<55));
   return a.sort((a,b)=>panicSort==='drop'?a.drop_pct-b.drop_pct:panicSort==='hold'?(b.hold_min||0)-(a.hold_min||0):panicSort==='recent'?String(b.last_bar||'').localeCompare(String(a.last_bar||'')):panicScore(b)-panicScore(a));
 }
 function setPanicFilterMode(mode,el){panicFilter=mode;window.__panicFilter=mode;document.querySelectorAll('#panicPage [data-panic-filter]').forEach(b=>b.classList.toggle('active',b===el));closePanicDetail();renderPanic();document.getElementById('panicPage').scrollIntoView({behavior:'smooth',block:'start'})}
