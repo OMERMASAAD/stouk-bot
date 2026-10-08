@@ -171,7 +171,7 @@ td{display:flex;justify-content:space-between;align-items:center;gap:10px;border
 <div class="updated" id="panicUpdated">آخر تحديث: —</div>
 <div id="panicFilterState" class="note" style="margin:0 0 10px"></div><div class="panic-toolbar">
 <input class="search" id="panicSearch" placeholder="🔎 ابحث عن سهم مرصود..." oninput="renderPanic()">
-<div class="filters"><button class="panic-filter active" data-panic-filter="all" onclick="setPanicFilter(this)">الكل</button><button class="panic-filter" data-panic-filter="complete" onclick="setPanicFilter(this)">⚡ مكتمل</button><button class="panic-filter" data-panic-filter="near" onclick="setPanicFilter(this)">قريب من الاكتمال</button><button class="panic-filter" data-panic-filter="weak" onclick="setPanicFilter(this)">هبوط بلا تأكيد</button></div>
+<div class="filters"><button class="panic-filter active" data-panic-filter="all" onclick="setPanicFilterMode('all',this)">الكل</button><button class="panic-filter" data-panic-filter="complete" onclick="setPanicFilterMode('complete',this)">⚡ مكتمل</button><button class="panic-filter" data-panic-filter="near" onclick="setPanicFilterMode('near',this)">قريب من الاكتمال</button><button class="panic-filter" data-panic-filter="weak" onclick="setPanicFilterMode('weak',this)">هبوط بلا تأكيد</button></div>
 <select id="panicSortSelect" onchange="panicSort=this.value;renderPanic()"><option value="score">ترتيب: القوة</option><option value="drop">ترتيب: أكبر هبوط</option><option value="hold">ترتيب: مدة الثبات</option><option value="recent">ترتيب: الأحدث</option></select>
 </div>
 <div class="tablewrap"><table><thead><tr><th>السهم</th><th>السعر</th><th>نسبة الهبوط</th><th>القوة</th><th>RVOL</th><th>زمن الثبات</th><th>البعد عن القاع</th><th>قاع الثبات</th><th>الهدف +25%</th><th>Float</th><th>الشروط</th><th>الحالة</th></tr></thead><tbody id="panicRows"><tr><td colspan="12" class="empty">جارٍ التحميل...</td></tr></tbody></table></div>
@@ -196,12 +196,12 @@ td{display:flex;justify-content:space-between;align-items:center;gap:10px;border
 <div class="toolbar">
 <input class="search" id="search" placeholder="🔎 ابحث برمز السهم..." oninput="render()">
 <div class="filters" id="filters">
-<button class="filter active" data-filter="الكل" onclick="setFilter(this)">الكل</button>
-<button class="filter" data-filter="جاهز فنيًا" onclick="setFilter(this)">🟢 جاهز فنيًا</button>
-<button class="filter" data-filter="شبه جاهز" onclick="setFilter(this)">🟠 شبه جاهز</button>
-<button class="filter" data-filter="قيد المتابعة" onclick="setFilter(this)">🟡 قيد المتابعة</button>
-<button class="filter" data-filter="تحذيرات" onclick="setFilter(this)">🚨 تحذيرات</button>
-<button class="filter" data-filter="محفزات" onclick="setFilter(this)">📅 محفزات قادمة</button>
+<button class="filter active" data-filter="الكل" onclick="setSwingFilter('all',this)">الكل</button>
+<button class="filter" data-filter="جاهز فنيًا" onclick="setSwingFilter('ready',this)">🟢 جاهز فنيًا</button>
+<button class="filter" data-filter="شبه جاهز" onclick="setSwingFilter('semi',this)">🟠 شبه جاهز</button>
+<button class="filter" data-filter="قيد المتابعة" onclick="setSwingFilter('watch',this)">🟡 قيد المتابعة</button>
+<button class="filter" data-filter="تحذيرات" onclick="setSwingFilter('warning',this)">🚨 تحذيرات</button>
+<button class="filter" data-filter="محفزات" onclick="setSwingFilter('catalyst',this)">📅 محفزات قادمة</button>
 </div>
 </div>
 <div id="listState" class="note" style="margin:0 0 10px"></div>
@@ -224,7 +224,7 @@ td{display:flex;justify-content:space-between;align-items:center;gap:10px;border
 <div class="toast" id="toast"></div>
 
 <script>
-let D={signals:[],params:{},stats:{}},R={items:[],count:0},currentFilter='الكل',reverseSort='score',reverseFilter='all',reverseSelected=null;
+let D={signals:[],params:{},stats:{}},R={items:[],count:0},currentFilter='الكل',swingFilter='all',reverseSort='score',reverseFilter='all',reverseSelected=null;
 const ST={WATCH:'قيد المتابعة',SEMI:'شبه جاهز',READY:'جاهز فنيًا'};
 const ORDER={[ST.READY]:3,[ST.SEMI]:2,[ST.WATCH]:1};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -393,23 +393,13 @@ function renderRules(){
   ' <b>المراحل:</b> '+esc((bands[ST.WATCH]||[30,50]).join('–'))+' قيد المتابعة · '+esc((bands[ST.SEMI]||[55,75]).join('–'))+' شبه جاهز · '+esc((bands[ST.READY]||[80,100]).join('–'))+' جاهز فنيًا.'+
   ' <b>التحذيرات:</b> أي طرح/تخفيف أو تقسيم عكسي أو تحقيق SEC أو إنذار شطب أو إفلاس أو نتائج مخيبة خلال آخر '+esc(p.warning_window_days??5)+' أيام.';
 }
-function setFilter(el){
-  document.querySelectorAll('#filters .filter').forEach(x=>x.classList.remove('active'));
-  el.classList.add('active');currentFilter=el.dataset.filter;window.__mainFilter=currentFilter;render();
-}
-function openSwingList(f){window.__mainFilter=f;setTab('swing');goHome(false);const el=document.querySelector('#filters .filter[data-filter=\"'+f+'\"]');if(el)setFilter(el);document.getElementById('listPage').scrollIntoView({behavior:'smooth',block:'start'})}
+function swingMatches(x,mode){const score=Number(x.readiness_score??0),stage=stageOf(x);return mode==='all'||(mode==='ready'&&(stage===ST.READY||score>=80))||(mode==='semi'&&(stage===ST.SEMI||(score>=55&&score<80)))||(mode==='watch'&&(stage===ST.WATCH||score<55))||(mode==='warning'&&hasWarn(x))||(mode==='catalyst'&&hasCat(x))}
+function swingLabel(mode){return ({all:'الكل',ready:'جاهز فنيًا',semi:'شبه جاهز',watch:'قيد المتابعة',warning:'تحذيرات',catalyst:'محفزات قادمة'}[mode]||'الكل')}
+function setSwingFilter(mode,el){swingFilter=mode;currentFilter=swingLabel(mode);window.__swingFilter=mode;document.querySelectorAll('#filters .filter').forEach(b=>b.classList.toggle('active',b===el));render()}
+function setFilter(el){const map={'الكل':'all','جاهز فنيًا':'ready','شبه جاهز':'semi','قيد المتابعة':'watch','تحذيرات':'warning','محفزات':'catalyst'};setSwingFilter(map[el.dataset.filter]||'all',el)}
+function openSwingList(f){const map={'الكل':'all','جاهز فنيًا':'ready','شبه جاهز':'semi','قيد المتابعة':'watch','تحذيرات':'warning'};setTab('swing');goHome(false);swingFilter=map[f]||'all';currentFilter=f;window.__swingFilter=swingFilter;const el=document.querySelector('#filters .filter[data-filter="'+f+'"]');document.querySelectorAll('#filters .filter').forEach(b=>b.classList.toggle('active',b===el));render();document.getElementById('listPage').scrollIntoView({behavior:'smooth',block:'start'})}
 function quickFilter(f){openSwingList(f)}
-function filtered(){
-  const activeFilter=window.__mainFilter||currentFilter;
-  const q=document.getElementById('search').value.trim().toUpperCase();
-  return (D.signals||[]).filter(x=>{
-    const score=Number(x.readiness_score??0),stage=stageOf(x);
-    const okF=activeFilter==='الكل'
-      ||(activeFilter==='تحذيرات'?hasWarn(x)
-      :(activeFilter==='محفزات'?hasCat(x):(activeFilter==='جاهز فنيًا'?(stage===ST.READY||score>=80):(activeFilter==='شبه جاهز'?(stage===ST.SEMI||(score>=55&&score<80)):(stage===ST.WATCH||score<55)))));
-    return okF&&String(x.ticker||'').toUpperCase().includes(q);
-  }).sort((a,b)=>(ORDER[stageOf(b)]||0)-(ORDER[stageOf(a)]||0)||(b.readiness_score||0)-(a.readiness_score||0));
-}
+function filtered(){const activeFilter=window.__swingFilter||swingFilter;const q=document.getElementById('search').value.trim().toUpperCase();return (D.signals||[]).filter(x=>swingMatches(x,activeFilter)&&String(x.ticker||'').toUpperCase().includes(q)).sort((a,b)=>(ORDER[stageOf(b)]||0)-(ORDER[stageOf(a)]||0)||(b.readiness_score||0)-(a.readiness_score||0))}
 function oppScore(x){
   const f=x.signal_flags||{},i=x.indicators||{},t=x.technical||{},pattern=String(x.pattern_type||'');
   const patternPts=pattern.includes('مزدوج')?40:(pattern.includes('أعلى')?32:0);
@@ -452,7 +442,7 @@ function render(){
   document.getElementById('cWatch').textContent=cnt(ST.WATCH);
   document.getElementById('cWarn').textContent=s.filter(hasWarn).length;
   const a=filtered();
-  const state=document.getElementById('listState');if(state)state.innerHTML='<b>القائمة الحالية:</b> '+esc(window.__mainFilter||currentFilter)+' · <b>'+a.length+'</b> سهم من أصل '+s.length;
+  const state=document.getElementById('listState');if(state)state.innerHTML='<b>القائمة الحالية:</b> '+esc(swingLabel(window.__swingFilter||swingFilter))+' · <b>'+a.length+'</b> سهم من أصل '+s.length;
   document.getElementById('rows').innerHTML=a.length?a.map(x=>{
     const t=ind(x),i=x.indicators||{},score=Math.min(100,Number(x.readiness_score||0));
     const rsi=Number(i.rsi??t.rsi);
@@ -549,7 +539,8 @@ function panicVisibleItems(){
   const activePanicFilter=window.__panicFilter||panicFilter;a=a.filter(x=>activePanicFilter==='all'||(panicFilter==='complete'&&x.complete)||(panicFilter==='near'&&panicScore(x)>=55&&!x.complete)||(panicFilter==='weak'&&panicScore(x)<55));
   return a.sort((a,b)=>panicSort==='drop'?a.drop_pct-b.drop_pct:panicSort==='hold'?(b.hold_min||0)-(a.hold_min||0):panicSort==='recent'?String(b.last_bar||'').localeCompare(String(a.last_bar||'')):panicScore(b)-panicScore(a));
 }
-function setPanicFilter(el){panicFilter=el.dataset.panicFilter;window.__panicFilter=panicFilter;document.querySelectorAll('#panicPage [data-panic-filter]').forEach(b=>b.classList.toggle('active',b===el));closePanicDetail();renderPanic();document.getElementById('panicPage').scrollIntoView({behavior:'smooth',block:'start'})}
+function setPanicFilterMode(mode,el){panicFilter=mode;window.__panicFilter=mode;document.querySelectorAll('#panicPage [data-panic-filter]').forEach(b=>b.classList.toggle('active',b===el));closePanicDetail();renderPanic();document.getElementById('panicPage').scrollIntoView({behavior:'smooth',block:'start'})}
+function setPanicFilter(el){setPanicFilterMode(el.dataset.panicFilter,el)}
 function panicScoreHtml(x){const s=panicScore(x);return '<div class="panic-score"><b>'+s+'</b><div class="bar"><i style="width:'+Math.min(100,s)+'%"></i></div></div>'}
 function panicChart(x){
   const p=x.chart||[];if(p.length<2)return '<div class="empty">لا يتوفر الرسم اللحظي لهذا السهم بعد. سيظهر بعد المسح القادم.</div>';
