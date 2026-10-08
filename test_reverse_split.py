@@ -13,6 +13,7 @@ def build():
 
 
 def main():
+    assert rs.is_hammer(pd.Series({'Open':1.50,'High':1.55,'Low':1.10,'Close':1.48}))
     d=build(); now=pd.Timestamp('2026-10-30',tz='UTC').to_pydatetime()
     ev=rs.split_event(d,now); assert ev and ev['ratio']==0.1 and ev['ratio_label']=='1-for-10'
     x=rs.evaluate('TEST',d,now,{'warnings':[],'catalysts':[]}); assert x and x['drop_pct']>=30 and x['max_rally_pct']<=20

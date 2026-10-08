@@ -58,6 +58,20 @@ def indicators(d):
     return {"ema20": float(ema(c, 20).iloc[-1]), "ema30": float(ema(c, 30).iloc[-1]), "ema50": float(ema(c, 50).iloc[-1]), "vwap": float(vwap.iloc[-1]), "rsi": float(rsi(c).iloc[-1]), "rsi_prev": float(rsi(c).iloc[-2]), "macd": float(macd.iloc[-1]), "macd_signal": float(signal.iloc[-1]), "macd_hist": float((macd - signal).iloc[-1]), "macd_hist_prev": float((macd - signal).iloc[-2]), "rvol": float(v.iloc[-1] / v.shift(1).rolling(20).mean().iloc[-1]) if v.shift(1).rolling(20).mean().iloc[-1] else 0.0}
 
 
+def is_hammer(row):
+    """شمعة هامر: جسم صغير قرب أعلى المدى وذيل سفلي طويل."""
+    o, h, l, c = map(float, (row.Open, row.High, row.Low, row.Close))
+    body = abs(c - o); rng = h - l
+    if rng <= 0: return False
+    lower, upper = min(o, c) - l, h - max(o, c)
+    return bool(body / rng <= 0.38 and lower >= max(body * 2.0, rng * 0.45) and upper <= max(body * 1.25, rng * 0.18) and max(o, c) >= l + rng * 0.55)
+
+
+def hammer_state(d):
+    flags = [is_hammer(row) for _, row in d.tail(5).iterrows()]
+    return bool(flags[-1]), bool(any(flags)), int(len(flags) - 1 - max((i for i, v in enumerate(flags) if v), default=-1)) if any(flags) else None
+
+
 def split_event(d, now):
     s = pd.to_numeric(d["Stock Splits"], errors="coerce").fillna(0)
     # Yahoo يعرض التقسيم العكسي 1-for-10 عادة كـ 0.1، وليس 10.0.
@@ -102,7 +116,7 @@ def chart_rows(d):
     out=[]
     lows=d.Low.astype(float).tolist()
     for i,(idx,row) in enumerate(d.tail(90).iterrows()):
-        j=d.index.get_loc(idx); out.append({"date":str(pd.Timestamp(idx).date()),"open":round(float(row.Open),4),"high":round(float(row.High),4),"low":round(float(row.Low),4),"close":round(float(row.Close),4),"volume":int(row.Volume),"ema20":round(float(e20.iloc[j]),4),"ema30":round(float(e30.iloc[j]),4),"ema50":round(float(e50.iloc[j]),4),"vwap":round(float(vw.iloc[j]),4) if pd.notna(vw.iloc[j]) else None,"rsi":round(float(rr.iloc[j]),2) if pd.notna(rr.iloc[j]) else None,"macd":round(float(m.iloc[j]),5),"macd_signal":round(float(ms.iloc[j]),5),"macd_hist":round(float((m-ms).iloc[j]),5),"swing_low":bool(0<i<len(lows)-1 and lows[j]<=lows[j-1] and lows[j]<=lows[min(j+1,len(lows)-1)])})
+        j=d.index.get_loc(idx); out.append({"date":str(pd.Timestamp(idx).date()),"open":round(float(row.Open),4),"high":round(float(row.High),4),"low":round(float(row.Low),4),"close":round(float(row.Close),4),"volume":int(row.Volume),"ema20":round(float(e20.iloc[j]),4),"ema30":round(float(e30.iloc[j]),4),"ema50":round(float(e50.iloc[j]),4),"vwap":round(float(vw.iloc[j]),4) if pd.notna(vw.iloc[j]) else None,"rsi":round(float(rr.iloc[j]),2) if pd.notna(rr.iloc[j]) else None,"macd":round(float(m.iloc[j]),5),"macd_signal":round(float(ms.iloc[j]),5),"macd_hist":round(float((m-ms).iloc[j]),5),"hammer":is_hammer(row),"swing_low":bool(0<i<len(lows)-1 and lows[j]<=lows[j-1] and lows[j]<=lows[min(j+1,len(lows)-1)])})
     return out
 
 
@@ -113,7 +127,8 @@ def evaluate(ticker, d, now=None, news=None):
         return None
     p = ev["pos"]
     post = d.iloc[p:]
-    split_open, split_high = float(d.Open.iloc[p]), float(d.High.iloc[p])
+    split_row = d.iloc[p]; split_open, split_high = float(split_row.Open), float(split_row.High)
+    split_low, split_close, split_volume = float(split_row.Low), float(split_row.Close), int(split_row.Volume)
     peak = float(post.High.max())
     peak_pos = int(post.High.values.argmax())
     current = float(d.Close.iloc[-1])
@@ -133,15 +148,16 @@ def evaluate(ticker, d, now=None, news=None):
     stable = bool(len(tail) >= STABILITY_MIN and support_span <= 0.12 and float(tail.Close.iloc[-1]) >= base * .97)
     stable_days = int(min(STABILITY_MAX, len(tail))) if stable else 0
     wedge = fit_wedge(d, p)
+    hammer_today, hammer_recent, hammer_age = hammer_state(d)
     news_summary = summarize_news(news or {"warnings": [], "catalysts": []}, now=now)
     if news_summary.get("has_warning"):
         return None
-    score = (20 if drop >= 30 else 0) + (15 if oversold else 0) + (15 if stable else 0) + (10 if rsi_recovery else 0) + (10 if under_ma else 0) + (5 if under_vwap else 0) + (10 if wedge and wedge["detected"] else 0) + (10 if tech["macd_hist"] > tech["macd_hist_prev"] else 0) + (5 if max_rally <= 20 else 0)
+    score = min(100, (20 if drop >= 30 else 0) + (15 if oversold else 0) + (15 if stable else 0) + (10 if rsi_recovery else 0) + (10 if under_ma else 0) + (5 if under_vwap else 0) + (10 if wedge and wedge["detected"] else 0) + (10 if tech["macd_hist"] > tech["macd_hist_prev"] else 0) + (5 if max_rally <= 20 else 0) + (5 if hammer_recent else 0))
     ready = bool(wedge and wedge["upper_break"] and oversold and rsi_recovery and stable)
     entry = wedge["upper_now"] if wedge else current
     stop = base * .98
     target1 = max(entry, wedge["upper_now"] + (wedge["upper_now"] - wedge["lower_now"]) if wedge else entry * 1.1)
-    return {"ticker":ticker,"reverse_split":{"date":ev["date"],"ratio":ev["ratio"],"ratio_label":ev["ratio_label"],"age_days":ev["age_days"],"opening_price":round(split_open,4),"split_day_high":round(split_high,4)},"price":round(current,4),"peak_after_split":round(peak,4),"peak_date":str(pd.Timestamp(post.index[peak_pos]).date()),"max_rally_pct":round(max_rally,2),"drop_pct":round(drop,2),"base_support":round(base,4),"stable_days":stable_days,"readiness_score":int(score),"stage":"جاهز فنيًا" if ready else ("شبه جاهز" if score>=55 else "قيد المتابعة"),"ready":ready,"conditions":{"drop_30":drop>=30,"rsi_oversold":oversold,"rsi_recovery":rsi_recovery,"below_ema20_30_50":under_ma,"below_vwap":under_vwap,"support_stable":stable,"macd_improving":tech["macd_hist"]>tech["macd_hist_prev"],"falling_wedge":bool(wedge and wedge["detected"]),"upper_break":bool(wedge and wedge["upper_break"])},"indicators":{k:round(v,5) for k,v in tech.items()},"wedge":wedge,"plan":{"entry":round(entry,4),"stop":round(stop,4),"target_1":round(target1,4),"target_main":round(split_high,4),"target_main_label":"قمة شمعة يوم التقسيم"},"chart":chart_rows(d),"news":news_summary}
+    return {"ticker":ticker,"reverse_split":{"date":ev["date"],"ratio":ev["ratio"],"ratio_label":ev["ratio_label"],"age_days":ev["age_days"],"opening_price":round(split_open,4),"split_day_high":round(split_high,4),"split_day_low":round(split_low,4),"split_day_close":round(split_close,4),"split_day_volume":split_volume},"price":round(current,4),"peak_after_split":round(peak,4),"peak_date":str(pd.Timestamp(post.index[peak_pos]).date()),"max_rally_pct":round(max_rally,2),"drop_pct":round(drop,2),"base_support":round(base,4),"stable_days":stable_days,"hammer":{"detected_today":hammer_today,"detected_recent":hammer_recent,"bars_ago":hammer_age,"meaning":"احتمال اقتراب انعكاس، ويحتاج تأكيد كسر مقاومة/الوتد"},"readiness_score":int(score),"stage":"جاهز فنيًا" if ready else ("شبه جاهز" if score>=55 else "قيد المتابعة"),"ready":ready,"conditions":{"drop_30":drop>=30,"rsi_oversold":oversold,"rsi_recovery":rsi_recovery,"below_ema20_30_50":under_ma,"below_vwap":under_vwap,"support_stable":stable,"macd_improving":tech["macd_hist"]>tech["macd_hist_prev"],"falling_wedge":bool(wedge and wedge["detected"]),"upper_break":bool(wedge and wedge["upper_break"]),"hammer_recent":hammer_recent},"indicators":{k:round(v,5) for k,v in tech.items()},"wedge":wedge,"plan":{"entry":round(entry,4),"stop":round(stop,4),"target_1":round(target1,4),"target_main":round(split_high,4),"target_main_label":"قمة شمعة يوم التقسيم"},"chart":chart_rows(d),"news":news_summary}
 
 
 def load_tickers(path=MASTER_FILE):
