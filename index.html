@@ -124,6 +124,7 @@ tbody tr:hover{background:#10271c}
 .chart svg{width:100%;height:720px;display:block;background:#07110d;border-radius:10px}
 .chart-legend{display:flex;gap:12px;flex-wrap:wrap;margin:4px 4px 10px;color:var(--muted);font-size:11px}.chart-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-left:4px}
 .opps{margin:0 0 16px;background:linear-gradient(145deg,#0e2418,#08140e);border:1px solid var(--line);border-radius:17px;padding:16px}.opps h3{margin:0 0 5px}.opps-sub{color:var(--muted);font-size:12px;margin-bottom:11px}.opp-table{width:100%;min-width:760px;border-collapse:collapse}.opp-table th,.opp-table td{padding:9px 8px;border-bottom:1px solid #16301f;font-size:13px}.opp-table th{position:static;background:none;color:var(--muted);font-size:11px}.opp-table tr{cursor:pointer}.opp-table tr:hover{background:#10271c}.opp-rank{font-size:17px;font-weight:900;color:#ffc857}.opp-score{font-weight:900;color:#20d47b}.opp-meter{display:inline-block;width:70px;height:6px;background:#183326;border-radius:9px;overflow:hidden;vertical-align:middle;margin-right:5px}.opp-meter i{display:block;height:100%;background:linear-gradient(90deg,#ffc857,#20d47b)}
+.reverse-card{background:linear-gradient(145deg,#211b10,#11150d);border:1px solid #69552a;border-radius:17px;padding:16px;margin-bottom:16px}.reverse-card h3{margin:0 0 5px}.reverse-sub{color:var(--muted);font-size:12px;line-height:1.8}.reverse-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:13px}.reverse-kpi{background:#15170e;border:1px solid #554721;border-radius:11px;padding:10px}.reverse-kpi span{display:block;color:var(--muted);font-size:11px}.reverse-kpi b{display:block;margin-top:5px;font-size:18px}.reverse-table{width:100%;min-width:1200px;border-collapse:collapse}.reverse-table th,.reverse-table td{padding:10px 8px;border-bottom:1px solid #41391f;font-size:13px;white-space:nowrap}.reverse-table th{position:static;background:#17170d;color:#cdbb77;font-size:11px}.reverse-table tr{cursor:pointer}.reverse-table tr:hover{background:#292514}.reverse-badge{padding:4px 8px;border-radius:7px;background:#513f12;color:#ffd86b;font-size:11px}.reverse-badge.ready{background:#0d4d30;color:#6dffb3}.reverse-chart{margin-top:14px;background:#070b08;border:1px solid #554721;border-radius:14px;padding:10px;overflow:hidden}.reverse-chart svg{width:100%;height:650px;display:block}.reverse-detail{display:none}.reverse-detail.open{display:block}
 .note{color:var(--muted);font-size:12px;margin-top:12px;line-height:1.9}
 .note b{color:#d6f5e4}
 .rules{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:12px}
@@ -135,7 +136,7 @@ tbody tr:hover{background:#10271c}
 @media(max-width:700px){
 .app{padding:12px}.title{font-size:21px}.hero{grid-template-columns:1fr}.plan{grid-template-columns:1fr 1fr}
  .checks{grid-template-columns:1fr}.bigprice{font-size:32px}.chart svg{height:520px}
- .panic-kpis{grid-template-columns:repeat(2,1fr)}.panic-detail-grid{grid-template-columns:1fr}.panic-detail-title{font-size:21px}.panic-toolbar select{width:100%}
+ .panic-kpis{grid-template-columns:repeat(2,1fr)}.panic-detail-grid{grid-template-columns:1fr}.panic-detail-title{font-size:21px}.panic-toolbar select{width:100%}.reverse-kpis{grid-template-columns:repeat(2,1fr)}.reverse-chart svg{height:520px}
 .tablewrap{background:none;border:none;overflow:visible}
 table,thead,tbody,tr,td{display:block;min-width:0;width:100%}
 thead{display:none}
@@ -159,7 +160,7 @@ td:before{content:attr(data-l);color:var(--muted);font-size:12px;flex:0 0 auto}
 <div class="updated" id="updated">آخر تحديث: — · <span id="panicSummary">قنص الذعر: جارٍ التحميل...</span></div>
 <div class="banner warn" id="demoNote" style="display:none;margin-bottom:14px">⚠️ <b>بيانات تجريبية للعرض فقط</b> — هذه النسخة تعرض بيانات تجريبية لتوضيح الواجهة، والبيانات الحقيقية تُحدَّث تلقائيًا من مسح GitHub Actions.</div>
 
-<div class="tabs"><button class="tab" data-tab="panic" onclick="showTab('panic')">⚡ قنص الذعر اللحظي <span id="tabPanicN"></span></button><button class="tab active" data-tab="swing" onclick="showTab('swing')">🐢 رادار الرجل الثانية</button></div>
+<div class="tabs"><button class="tab" data-tab="panic" onclick="showTab('panic')">⚡ قنص الذعر اللحظي <span id="tabPanicN"></span></button><button class="tab active" data-tab="swing" onclick="showTab('swing')">🐢 رادار الرجل الثانية</button><button class="tab" data-tab="reverse" onclick="showTab('reverse')">🔁 رادار ما بعد التقسيم العكسي <span id="tabReverseN"></span></button></div>
 <div id="panicPage" class="page">
 <div class="note" style="margin:0 0 12px"><b>⚡ قنص الذعر (فريم 5 دقائق):</b> يظهر هنا <b>أي سهم هبط 30% أو أكثر من قمة اليوم</b>، وفي عمود «الشروط» حالة كل شرط: ✅ تحقق / ❌ لم يتحقق (ثبات أفقي ≤ 5% لمدة ≥ 60 دقيقة قرب القاع · RSI يخرج من التشبع · OBV صاعد أو انحراف إيجابي · MACD إيجابي). السهم الذي تتحقق كل شروطه يصبح <b>⚡ مكتمل</b> ويُعرض في أعلى الجدول. يُحدَّث كل 15 دقيقة تقريبًا، ويُشطب السهم الذي ثبت ثم كسر قاعه بـ -3%.</div>
 <div class="updated" id="panicUpdated">آخر تحديث: —</div>
@@ -171,6 +172,12 @@ td:before{content:attr(data-l);color:var(--muted);font-size:12px;flex:0 0 auto}
 <div class="tablewrap"><table><thead><tr><th>السهم</th><th>السعر</th><th>نسبة الهبوط</th><th>القوة</th><th>RVOL</th><th>زمن الثبات</th><th>البعد عن القاع</th><th>قاع الثبات</th><th>الهدف +25%</th><th>Float</th><th>الشروط</th><th>الحالة</th></tr></thead><tbody id="panicRows"><tr><td colspan="12" class="empty">جارٍ التحميل...</td></tr></tbody></table></div>
 <div id="panicDetail" class="panic-detail"></div>
 <div id="panicPurged" style="margin-top:12px"></div>
+</div>
+
+<div id="reversePage" class="page">
+<div class="reverse-card"><h3>🔁 رادار ما بعد التقسيم العكسي</h3><div class="reverse-sub">تحليل يومي مستقل للأسهم التي نفذت تقسيمًا عكسيًا خلال آخر 60 يومًا: صعود بعد التقسيم لا يتجاوز 20%، ثم هبوط 30% أو أكثر، تشبع RSI تحت 30، ثبات دعم 3–5 جلسات، وبداية تحسن RSI/MACD. يتم استبعاد الأخبار السلبية مثل الطروحات والتخفيف والأزمات. تأكيد 4 ساعات اختياري عند توفر البيانات.</div><div class="reverse-kpis"><div class="reverse-kpi"><span>الفرص المرصودة</span><b id="reverseCount">—</b></div><div class="reverse-kpi"><span>جاهز فنيًا</span><b class="ok" id="reverseReady">—</b></div><div class="reverse-kpi"><span>متوسط الهبوط</span><b class="no" id="reverseDrop">—</b></div><div class="reverse-kpi"><span>آخر تحديث</span><b id="reverseUpdated">—</b></div><div class="reverse-kpi"><span>الفريم الأساسي</span><b>يومي</b></div></div></div>
+<div class="toolbar"><input class="search" id="reverseSearch" placeholder="🔎 ابحث عن سهم بعد التقسيم العكسي..." oninput="renderReverse()"><button class="filter active" onclick="reverseSort='score';renderReverse()">ترتيب القوة</button><button class="filter" onclick="reverseSort='drop';renderReverse()">أكبر هبوط</button></div>
+<div class="tablewrap"><table class="reverse-table"><thead><tr><th>السهم</th><th>تاريخ التقسيم</th><th>السعر</th><th>الهبوط</th><th>الصعود بعد التقسيم</th><th>RSI</th><th>EMA20/30/50</th><th>الثبات</th><th>الوتد</th><th>الدخول</th><th>الهدف الرئيسي</th><th>الدرجة</th><th>الحالة</th></tr></thead><tbody id="reverseRows"><tr><td colspan="13" class="empty">جارٍ تحميل رادار التقسيم العكسي...</td></tr></tbody></table></div><div id="reverseDetail" class="reverse-detail"></div>
 </div>
 
 <div id="listPage" class="page active">
@@ -211,7 +218,7 @@ td:before{content:attr(data-l);color:var(--muted);font-size:12px;flex:0 0 auto}
 <div class="toast" id="toast"></div>
 
 <script>
-let D={signals:[],params:{},stats:{}},currentFilter='الكل';
+let D={signals:[],params:{},stats:{}},R={items:[],count:0},currentFilter='الكل',reverseSort='score',reverseSelected=null;
 const ST={WATCH:'قيد المتابعة',SEMI:'شبه جاهز',READY:'جاهز فنيًا'};
 const ORDER={[ST.READY]:3,[ST.SEMI]:2,[ST.WATCH]:1};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -256,6 +263,15 @@ async function fetchJson(url){
   if(!j||!Array.isArray(j.signals))throw new Error('صيغة البيانات غير صحيحة');
   return j;
 }
+async function fetchReverseJson(url){
+  const r=await fetch(url,{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);
+  const j=await r.json();if(!j||!Array.isArray(j.items))throw new Error('صيغة رادار التقسيم غير صحيحة');return j;
+}
+async function loadReverseData(){
+  const x=Date.now(),loads=[['pages',()=>fetchReverseJson('reverse_split_data.json?x='+x)],['raw',()=>fetchReverseJson('https://raw.githubusercontent.com/OMERMASAAD/stouk-bot/main/reverse_split_data.json?x='+x)]];
+  const a=(await Promise.all(loads.map(async([n,f])=>{try{return [n,await f()]}catch(e){console.warn('reverse',n,e);return null}}))).filter(Boolean).map(([name,d])=>({name,d,ts:Date.parse(d.updated_at||'')||0}));
+  if(a.length){a.sort((u,v)=>v.ts-u.ts);R=a[0].d;R._source=a[0].name}else R={items:[],count:0};renderReverse();return R;
+}
 async function fetchGithubApi(){
   const r=await fetch('https://api.github.com/repos/OMERMASAAD/stouk-bot/contents/data.json?ref=main&t='+Date.now(),{cache:'no-store',headers:{'Accept':'application/vnd.github+json'}});
   if(!r.ok)throw new Error('GitHub API HTTP '+r.status);
@@ -291,7 +307,7 @@ async function loadData(){
   D._source=pick.name;
   if(D.demo){const dn=document.getElementById('demoNote');if(dn)dn.style.display='block'}
   document.getElementById('updated').innerHTML='آخر تحديث: <b>'+esc(fmtTime(D.updated_at))+'</b> · الأسهم في الرادار: <b>'+esc(D.count??(D.signals||[]).length)+'</b> · محفزات قادمة: <b>'+esc((D.stats||{}).catalysts??0)+'</b> · المصدر: '+esc(pick.name)+' · بيانات الرادار من Yahoo Finance فقط';
-  renderRules();renderDiag();render();route();return true;
+  renderRules();renderDiag();render();loadReverseData();route();return true;
 }
 function toast(msg,err){
   const t=document.getElementById('toast');t.textContent=msg;t.className='toast'+(err?' err':'');t.style.display='block';
@@ -448,18 +464,48 @@ function render(){
   document.querySelectorAll('#rows tr[data-ticker]').forEach(r=>r.addEventListener('click',()=>openStock(r.dataset.ticker,r.dataset.date)));
 }
 
+function reverseScore(x){return Number(x.readiness_score||0)}
+function reverseChart(x){
+  const d=x.chart||[];if(d.length<3)return '<div class="empty">لا توجد شموع كافية للرسم.</div>';
+  const W=1200,H=620,L=58,R=20,T=24,B=34,topH=365,volTop=410,volH=65,all=d.flatMap(z=>[z.high,z.low]),min=Math.min(...all)*.97,max=Math.max(...all)*1.03,range=max-min||1,maxV=Math.max(...d.map(z=>z.volume||0))||1;
+  const sx=i=>L+i*(W-L-R)/Math.max(1,d.length-1),sy=v=>T+(max-v)*topH/range,vy=v=>volTop+volH-v/maxV*volH,cw=Math.max(4,(W-L-R)/d.length*.55);
+  let s='<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none"><rect x="'+L+'" y="'+T+'" width="'+(W-L-R)+'" height="'+topH+'" fill="#0b120d"/><rect x="'+L+'" y="'+volTop+'" width="'+(W-L-R)+'" height="'+volH+'" fill="#08100b"/>';
+  for(let k=0;k<6;k++){let y=T+k*topH/5,v=max-k*range/5;s+='<line x1="'+L+'" y1="'+y+'" x2="'+(W-R)+'" y2="'+y+'" stroke="#243b2c"/><text x="'+(L-7)+'" y="'+(y+4)+'" text-anchor="end" fill="#8fa99a" font-size="11">'+v.toFixed(2)+'</text>'}
+  d.forEach((z,i)=>{let X=sx(i),o=sy(z.open),c=sy(z.close),h=sy(z.high),l=sy(z.low),col=z.close>=z.open?'#20d47b':'#ff5264';s+='<rect x="'+(X-cw/2)+'" y="'+vy(z.volume||0)+'" width="'+cw+'" height="'+Math.max(1,volTop+volH-vy(z.volume||0))+'" fill="'+col+'" opacity=".5"/><line x1="'+X+'" y1="'+h+'" x2="'+X+'" y2="'+l+'" stroke="'+col+'"/><rect x="'+(X-cw/2)+'" y="'+Math.min(o,c)+'" width="'+cw+'" height="'+Math.max(2,Math.abs(c-o))+'" fill="'+col+'"/>'});
+  const w=x.wedge||{},u=Number(w.upper_now),lo=Number(w.lower_now),stop=Number(x.plan?.stop),target=Number(x.plan?.target_main);[[u,'#ffc857','كسر الوتد / دخول'],[lo,'#ff8a3d','حد الوتد السفلي'],[stop,'#ff5264','وقف الخسارة'],[target,'#6ee7ff','قمة يوم التقسيم']].forEach(a=>{if(Number.isFinite(a[0])&&a[0]>=min&&a[0]<=max){let y=sy(a[0]);s+='<line x1="'+L+'" y1="'+y+'" x2="'+(W-R)+'" y2="'+y+'" stroke="'+a[1]+'" stroke-width="1.7" stroke-dasharray="8 6"/><text x="'+(W-R-4)+'" y="'+(y-5)+'" text-anchor="end" fill="'+a[1]+'" font-size="12">'+a[2]+' '+a[0].toFixed(2)+'</text>'}});
+  if(w.detected&&Number.isFinite(u)&&Number.isFinite(lo)){let x0=sx(0),x1=sx(d.length-1),u0=u-Number(w.upper_slope||0)*(d.length-1),l0=lo-Number(w.lower_slope||0)*(d.length-1);s+='<line x1="'+x0+'" y1="'+sy(u0)+'" x2="'+x1+'" y2="'+sy(u)+'" stroke="#ffc857" stroke-width="3"/><line x1="'+x0+'" y1="'+sy(l0)+'" x2="'+x1+'" y2="'+sy(lo)+'" stroke="#ff8a3d" stroke-width="3"/>'}
+  s+='<text x="'+L+'" y="'+(volTop+14)+'" fill="#8fa99a" font-size="11">VOLUME</text><text x="'+L+'" y="'+(H-10)+'" fill="#8fa99a" font-size="11">'+esc(d[0].date)+'</text><text x="'+(W-R)+'" y="'+(H-10)+'" text-anchor="end" fill="#8fa99a" font-size="11">'+esc(d[d.length-1].date)+'</text></svg>';return s;
+}
+function renderReverse(){
+  const items=(R.items||[]).filter(x=>{const q=(document.getElementById('reverseSearch')?.value||'').toUpperCase();return !q||x.ticker.includes(q)}).sort((a,b)=>reverseSort==='drop'?(b.drop_pct||0)-(a.drop_pct||0):reverseScore(b)-reverseScore(a));
+  const ready=(R.items||[]).filter(x=>x.ready).length,drops=(R.items||[]).map(x=>x.drop_pct).filter(Number.isFinite);
+  ['reverseCount','reverseReady'].forEach((id,i)=>{const el=document.getElementById(id);if(el)el.textContent=i?ready:(R.count??items.length)});
+  const de=document.getElementById('reverseDrop');if(de)de.textContent=drops.length?(drops.reduce((a,b)=>a+b,0)/drops.length).toFixed(1)+'%':'—';
+  const up=document.getElementById('reverseUpdated');if(up)up.textContent=R.updated_at?fmtTime(R.updated_at):'—';
+  const tab=document.getElementById('tabReverseN');if(tab)tab.textContent=R.count?'('+R.count+')':'';
+  const el=document.getElementById('reverseRows');if(!el)return;
+  el.innerHTML=items.length?items.map(x=>{
+    const i=x.indicators||{},c=x.conditions||{},p=x.plan||{},rs=x.reverse_split||{};
+    return '<tr onclick="openReverse(\''+esc(x.ticker)+'\')"><td><b class="tk">'+esc(x.ticker)+'</b></td><td>'+esc(rs.date||'—')+' · '+esc(rs.ratio||'—')+'x</td><td>'+money(x.price)+'</td><td class="no">-'+num(x.drop_pct)+'%</td><td class="mid">+'+num(x.max_rally_pct)+'%</td><td class="'+(c.rsi_recovery?'ok':'no')+'">'+num(i.rsi)+'</td><td>'+money(i.ema20)+' / '+money(i.ema30)+' / '+money(i.ema50)+'</td><td>'+esc(x.stable_days)+' / 5</td><td>'+(c.falling_wedge?'✅ ':'❌ ')+(c.upper_break?'كسر علوي':'قيد التكوين')+'</td><td class="ok">'+money(p.entry)+'</td><td class="target">'+money(p.target_main)+'</td><td><b>'+esc(x.readiness_score)+'/100</b></td><td><span class="reverse-badge '+(x.ready?'ready':'')+'">'+esc(x.stage)+'</span></td></tr>';
+  }).join(''):'<tr><td colspan="13" class="empty">لا توجد أسهم مطابقة حتى الآن. سيتم تحديث الرادار مع كل مسح.</td></tr>';
+  if(reverseSelected)renderReverseDetail();
+}
+function openReverse(t){reverseSelected=t;renderReverseDetail();const el=document.getElementById('reverseDetail');el.classList.add('open');el.scrollIntoView({behavior:'smooth',block:'start'})}
+function renderReverseDetail(){const x=(R.items||[]).find(z=>z.ticker===reverseSelected),el=document.getElementById('reverseDetail');if(!x){el.classList.remove('open');return}const i=x.indicators||{},p=x.plan||{},c=x.conditions||{};el.innerHTML='<div class="reverse-card"><div class="detail-head"><div><div class="detail-title">'+esc(x.ticker)+' — '+esc(x.stage)+'</div><div class="detail-sub">تقسيم عكسي '+esc(x.reverse_split?.date)+' · الهبوط '+num(x.drop_pct)+'%</div></div><button class="btn" onclick="reverseSelected=null;document.getElementById(\'reverseDetail\').classList.remove(\'open\')">إغلاق</button></div><div class="reverse-sub">الدخول: <b class="ok">'+money(p.entry)+'</b> · الوقف: <b class="no">'+money(p.stop)+'</b> · الهدف الأول: <b class="target">'+money(p.target_1)+'</b> · الهدف الرئيسي: <b class="target">'+money(p.target_main)+'</b> ('+esc(p.target_main_label)+')<br>RSI '+num(i.rsi)+' · MACD Histogram '+num(i.macd_hist,4)+' · RVOL '+num(i.rvol,2)+'x · '+(c.upper_break?'✅ تم كسر الحد العلوي للوتد':'⏳ لم يتم كسر الحد العلوي بعد')+'</div><div class="reverse-chart">'+reverseChart(x)+'</div></div>'}
 function findStock(ticker,date){return (D.signals||[]).find(x=>x.ticker===ticker&&x.event_date===date)||(D.signals||[]).find(x=>x.ticker===ticker)}
 function openStock(ticker,date){location.hash='stock='+encodeURIComponent(ticker)+'&date='+encodeURIComponent(date||'');showStock(ticker,date)}
 
 /* ================= ⚡ قنص الذعر ================= */
 let TAB='swing',P=null,panicTimer=null,panicFilter='all',panicSort='score',panicSelected=null;
-function setTab(n){TAB=n;document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===n));if(n!=='panic')document.getElementById('panicPage').classList.remove('active')}
+function setTab(n){TAB=n;document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===n));['panicPage','reversePage'].forEach(id=>{const e=document.getElementById(id);if(e&&id!==n+'Page')e.classList.remove('active')})}
 function showTab(n){
   setTab(n);
   if(n==='panic'){
     ['listPage','detailPage'].forEach(i=>document.getElementById(i).classList.remove('active'));
     document.getElementById('panicPage').classList.add('active');loadPanic();
     clearInterval(panicTimer);panicTimer=setInterval(()=>{if(TAB==='panic'&&!document.hidden)loadPanic(true)},120000);
+  }else if(n==='reverse'){
+    ['listPage','detailPage'].forEach(i=>document.getElementById(i).classList.remove('active'));document.getElementById('reversePage').classList.add('active');loadReverseData();clearInterval(panicTimer);
   }else{clearInterval(panicTimer);goHome(false)}
 }
 async function fetchPanic(light){

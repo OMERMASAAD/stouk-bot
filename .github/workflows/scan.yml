@@ -8,6 +8,8 @@ on:
       - "news.py"
       - "float_lookup.py"
       - "master_scan.py"
+      - "reverse_split_scanner.py"
+      - "test_reverse_split.py"
   schedule:
     # فحص 4 مرات في أيام التداول + حفظ قائمة المتابعة.
     - cron: "0 12 * * 1-5"
@@ -35,16 +37,21 @@ jobs:
       # اختبار شامل للسكانر على بيانات اصطناعية (يمنع أخطاء مسارات الاستبعاد والكتابة)
       - run: python test_scanner.py
       - run: python test_panic.py
+      - run: python test_reverse_split.py
       - name: Scan (يبني أيضًا master_low_float.json مرة يوميًا)
         env:
           SEC_CONTACT: ${{ vars.SEC_CONTACT }}     # Settings ▸ Variables: بريدك (مطلوب من SEC)
           FORCE_MASTER: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
         run: python scanner.py
+      - name: Reverse split scan (تحليل يومي لآخر 60 يومًا)
+        env:
+          SEC_CONTACT: ${{ vars.SEC_CONTACT }}
+        run: python reverse_split_scanner.py
       - name: Commit dashboard data
         run: |
           git config user.name "stock-radar"
           git config user.email "actions@github.com"
-          git add data.json watchlist.json float_cache.json master_low_float.json
+          git add data.json watchlist.json float_cache.json master_low_float.json reverse_split_data.json
           git diff --cached --quiet && exit 0
           git commit -m "تحديث بيانات الرادار"
           for i in 1 2 3; do
