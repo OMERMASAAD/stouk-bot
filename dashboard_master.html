@@ -121,7 +121,9 @@ tbody tr:hover{background:#10271c}
 .banner.warn{background:#3a1218;border:1px solid #ff5264;color:#ffc9d0}
 .banner.cat{background:#0d2a24;border:1px solid #2b8d70;color:#bdf5e6}
 .chart{margin-top:14px;background:#06110b;border:1px solid var(--line);border-radius:15px;padding:10px;overflow:hidden}
-.chart svg{width:100%;height:360px;display:block}
+.chart svg{width:100%;height:720px;display:block;background:#07110d;border-radius:10px}
+.chart-legend{display:flex;gap:12px;flex-wrap:wrap;margin:4px 4px 10px;color:var(--muted);font-size:11px}.chart-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-left:4px}
+.opps{margin:0 0 16px;background:linear-gradient(145deg,#0e2418,#08140e);border:1px solid var(--line);border-radius:17px;padding:16px}.opps h3{margin:0 0 5px}.opps-sub{color:var(--muted);font-size:12px;margin-bottom:11px}.opp-table{width:100%;min-width:760px;border-collapse:collapse}.opp-table th,.opp-table td{padding:9px 8px;border-bottom:1px solid #16301f;font-size:13px}.opp-table th{position:static;background:none;color:var(--muted);font-size:11px}.opp-table tr{cursor:pointer}.opp-table tr:hover{background:#10271c}.opp-rank{font-size:17px;font-weight:900;color:#ffc857}.opp-score{font-weight:900;color:#20d47b}.opp-meter{display:inline-block;width:70px;height:6px;background:#183326;border-radius:9px;overflow:hidden;vertical-align:middle;margin-right:5px}.opp-meter i{display:block;height:100%;background:linear-gradient(90deg,#ffc857,#20d47b)}
 .note{color:var(--muted);font-size:12px;margin-top:12px;line-height:1.9}
 .note b{color:#d6f5e4}
 .rules{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:12px}
@@ -132,7 +134,7 @@ tbody tr:hover{background:#10271c}
 @media(max-width:1050px){.info-grid{grid-template-columns:repeat(2,1fr)}.cards{grid-template-columns:repeat(2,1fr)}.plan{grid-template-columns:repeat(2,1fr)}.rules{grid-template-columns:1fr}}
 @media(max-width:700px){
 .app{padding:12px}.title{font-size:21px}.hero{grid-template-columns:1fr}.plan{grid-template-columns:1fr 1fr}
- .checks{grid-template-columns:1fr}.bigprice{font-size:32px}.chart svg{height:280px}
+ .checks{grid-template-columns:1fr}.bigprice{font-size:32px}.chart svg{height:520px}
  .panic-kpis{grid-template-columns:repeat(2,1fr)}.panic-detail-grid{grid-template-columns:1fr}.panic-detail-title{font-size:21px}.panic-toolbar select{width:100%}
 .tablewrap{background:none;border:none;overflow:visible}
 table,thead,tbody,tr,td{display:block;min-width:0;width:100%}
@@ -178,6 +180,7 @@ td:before{content:attr(data-l);color:var(--muted);font-size:12px;flex:0 0 auto}
 <div class="stat s-watch" onclick="quickFilter('قيد المتابعة')"><div class="label">🟡 قيد المتابعة</div><div class="num" id="cWatch">0</div><div class="hint">الدرجة 30–50</div></div>
 <div class="stat s-warn" onclick="quickFilter('تحذيرات')"><div class="label">🚨 تحذيرات</div><div class="num" id="cWarn">0</div><div class="hint">تخفيف / أزمات (آخر 5 أيام)</div></div>
 </div>
+<div class="opps"><h3>⭐ أفضل الفرص الحالية</h3><div class="opps-sub">ترتيب تحليلي يجمع قوة نمط القاع المزدوج، القرب من الدعم، جاهزية السهم، وهدوء/تأكيد حجم التداول — ليس توصية شراء.</div><div style="overflow-x:auto"><table class="opp-table"><thead><tr><th>#</th><th>السهم</th><th>النمط</th><th>قوة القاع</th><th>RVOL</th><th>RSI</th><th>MACD</th><th>المرحلة</th></tr></thead><tbody id="opportunityRows"></tbody></table></div></div>
 <div class="toolbar">
 <input class="search" id="search" placeholder="🔎 ابحث برمز السهم..." oninput="render()">
 <div class="filters" id="filters">
@@ -384,6 +387,19 @@ function filtered(){
     return okF&&String(x.ticker||'').toUpperCase().includes(q);
   }).sort((a,b)=>(ORDER[stageOf(b)]||0)-(ORDER[stageOf(a)]||0)||(b.readiness_score||0)-(a.readiness_score||0));
 }
+function oppScore(x){
+  const f=x.signal_flags||{},i=x.indicators||{},t=x.technical||{},pattern=String(x.pattern_type||'');
+  const patternPts=pattern.includes('مزدوج')?40:(pattern.includes('أعلى')?32:0);
+  const near=Number(x.distance_from_base_pct??x.support?.distance_pct??99),nearPts=near<=10?20:(near<=15?14:(near<=20?6:0));
+  const rvol=Number(i.rvol??t.rvol??0),volPts=(rvol>0&&rvol<=0.8)?20:(rvol>=1&&rvol<=1.3?16:(rvol>0&&rvol<1.6?8:0));
+  const confirm=(f.rsi?5:0)+(f.macd?5:0)+(f.stable?5:0)+(f.ema20?5:0);
+  return Math.min(100,patternPts+nearPts+volPts+confirm);
+}
+function renderOpportunities(){
+  const el=document.getElementById('opportunityRows');if(!el)return;
+  const rows=(D.signals||[]).filter(x=>!hasWarn(x)).map(x=>({...x,_opp:oppScore(x)})).sort((a,b)=>b._opp-a._opp||(b.readiness_score||0)-(a.readiness_score||0)).slice(0,8);
+  el.innerHTML=rows.length?rows.map((x,n)=>{const i=x.indicators||{},t=x.technical||{},rv=i.rvol??t.rvol,macd=Number(i.macd_hist??t.macd_hist);return '<tr onclick="openStock(\''+esc(x.ticker)+'\',\''+esc(x.event_date||'')+'\')"><td class="opp-rank">'+(n+1)+'</td><td><b class="tk">'+esc(x.ticker)+'</b></td><td>'+esc(String(x.pattern_type||'غير واضح').replace(' (Double Bottom)','').replace(' (Higher Low)',''))+'</td><td><span class="opp-score">'+x._opp+'/100</span><span class="opp-meter"><i style="width:'+x._opp+'%"></i></span></td><td class="'+(Number(rv)<=.8?'ok':Number(rv)>=1?'mid':'muted')+'">'+esc(rv??'—')+'x</td><td class="'+(Number(i.rsi??t.rsi)<35?'ok':'')+'">'+esc(i.rsi??t.rsi??'—')+'</td><td class="'+(macd>=0?'ok':'no')+'">'+(Number.isFinite(macd)?macd.toFixed(4):'—')+'</td><td>'+badge(stageOf(x))+'</td></tr>'}).join(''):'<tr><td colspan="8" class="empty">لا توجد فرص كافية للترتيب حاليًا.</td></tr>';
+}
 function eventCell(x){
   let h='';
   if(x.stale)h+='<span class="ev warn">⏳ آخر تقييم محفوظ</span> ';
@@ -406,6 +422,7 @@ function ageCell(x){
 }
 function render(){
   const s=D.signals||[];
+  renderOpportunities();
   const cnt=st=>s.filter(x=>stageOf(x)===st).length;
   document.getElementById('cReady').textContent=cnt(ST.READY);
   document.getElementById('cSemi').textContent=cnt(ST.SEMI);
@@ -612,19 +629,22 @@ function showStock(ticker,date){
 function drawChart(x){
   const data=x.chart||[],el=document.getElementById('chart');
   if(!data.length){el.innerHTML='<div class="muted">لا توجد بيانات للرسم.</div>';return}
-  const p=x.plan||{},levels=x.chart_levels||{},pattern=x.pattern_detail||x.pattern||{},W=1240,H=540,L=70,R=26,T=24,priceH=365,volTop=405,volH=88;
-  const hi=data.map(d=>Number(d.high)),lo=data.map(d=>Number(d.low)),vol=data.map(d=>Number(d.volume||0));
-  const support=Number(levels.support??baseOf(x)),neckline=Number(levels.neckline||pattern.neckline||NaN),resistance=Number(levels.resistance||x.technical?.lower_high_level||NaN),priorHigh=Number(levels.prior_high||x.prior_high||NaN),stop=Number(p.stop_loss||p.stop||NaN),vwap=Number(x.indicators?.vwap||x.technical?.vwap||NaN),ema20=Number(x.indicators?.ema20||x.technical?.ema20||NaN);
-  const allLevels=[support,neckline,resistance,priorHigh,stop,vwap,ema20].filter(Number.isFinite),min=Math.min(...lo,...allLevels)*.97,max=Math.max(...hi,...allLevels)*1.03,range=max-min||1;
-  const sx=i=>L+i*(W-L-R)/Math.max(1,data.length),sy=v=>T+(max-v)*(priceH-T)/range,vy=v=>volTop+volH-(v/(Math.max(...vol)||1))*volH,candleW=Math.max(5,(W-L-R)/data.length*.58);
-  let svg='<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">';
-  for(let k=0;k<6;k++){const y=T+k*(priceH-T)/5,v=max-k*range/5;svg+='<line x1="'+L+'" y1="'+y+'" x2="'+(W-R)+'" y2="'+y+'" stroke="#183326"/><text x="'+(L-9)+'" y="'+(y+4)+'" text-anchor="end" fill="#8fa99a" font-size="11">'+v.toFixed(2)+'</text>'}
-  svg+='<line x1="'+L+'" y1="'+(volTop-12)+'" x2="'+(W-R)+'" y2="'+(volTop-12)+'" stroke="#214634"/><text x="'+L+'" y="'+(volTop+14)+'" fill="#8fa99a" font-size="11">حجم التداول</text>';
-  const lines=[[support,'#ffc857','الدعم / القاع'] ,[neckline,'#f97316','رقبة القاع المزدوج'],[resistance,'#a78bfa','المقاومة / Lower High'],[priorHigh,'#ef4444','قمة الصعود'],[stop,'#ff5264','الوقف'],[vwap,'#c084fc','VWAP'],[ema20,'#38bdf8','EMA20']];
-  lines.forEach(a=>{if(Number.isFinite(a[0])&&a[0]>=min&&a[0]<=max){const y=sy(a[0]);svg+='<line x1="'+L+'" y1="'+y+'" x2="'+(W-R)+'" y2="'+y+'" stroke="'+a[1]+'" stroke-width="1.7" stroke-dasharray="8 6"/><text x="'+(W-R-4)+'" y="'+(y-6)+'" text-anchor="end" fill="'+a[1]+'" font-size="12">'+a[2]+' '+a[0].toFixed(2)+'</text>'}});
-  data.forEach((d,i)=>{const xx=sx(i),yo=sy(Number(d.open)),yc=sy(Number(d.close)),yh=sy(Number(d.high)),yl=sy(Number(d.low)),c=Number(d.close)>=Number(d.open)?'#20d47b':'#ff5264';svg+='<rect x="'+(xx-candleW/2)+'" y="'+vy(Number(d.volume||0))+'" width="'+candleW+'" height="'+Math.max(1,volTop+volH-vy(Number(d.volume||0)))+'" fill="'+c+'" opacity=".35"/><line x1="'+xx+'" y1="'+yh+'" x2="'+xx+'" y2="'+yl+'" stroke="'+c+'"/><rect x="'+(xx-candleW/2)+'" y="'+Math.min(yo,yc)+'" width="'+candleW+'" height="'+Math.max(2,Math.abs(yc-yo))+'" fill="'+c+'" rx="1"/>'+(d.swing_low?'<circle cx="'+xx+'" cy="'+(yl+8)+'" r="4" fill="#ffc857" stroke="#07110d" stroke-width="2"/>':'')});
-  const label=pattern.type||x.pattern_type||'لا يوجد نمط قاع واضح بعد';svg+='<text x="'+L+'" y="'+(H-10)+'" fill="#8fa99a" font-size="11">'+esc(data[0].date)+'</text><text x="'+(W-R)+'" y="'+(H-10)+'" text-anchor="end" fill="#8fa99a" font-size="11">'+esc(data[data.length-1].date)+'</text><text x="'+(L+8)+'" y="18" fill="#f1fff6" font-size="14" font-weight="bold">'+esc(label)+'</text></svg>';
-  el.innerHTML='<div style="padding:5px 4px 4px;font-weight:800">📊 شارت الرجل الثانية — شموع يومية + حجم التداول + مناطق القاع والرقبة والمقاومة</div><div class="note" style="margin:0 4px 8px">النقاط الذهبية = قيعان محلية · الخط الأصفر = الدعم · البرتقالي = رقبة القاع المزدوج · البنفسجي = Lower High · الأزرق = EMA20 · البنفسجي الفاتح = VWAP</div>'+svg;
+  const p=x.plan||{},levels=x.chart_levels||{},pattern=x.pattern_detail||x.pattern||{},W=1240,H=760,L=74,R=28,plotW=W-L-R,priceTop=28,priceH=330,volTop=378,volH=72,macdTop=480,macdH=112,rsiTop=624,rsiH=100;
+  const close=data.map(d=>Number(d.close)),hi=data.map(d=>Number(d.high)),lo=data.map(d=>Number(d.low)),vol=data.map(d=>Number(d.volume||0));
+  const ema=(arr,n)=>{let out=[],k=2/(n+1),v=arr[0]||0;arr.forEach((z,i)=>{v=i?v+k*(z-v):z;out.push(v)});return out};
+  const e12=ema(close,12),e26=ema(close,26),ml=close.map((_,i)=>e12[i]-e26[i]),ms=ema(ml,9),mh=ml.map((v,i)=>v-ms[i]);
+  const rsi=data.map(d=>Number.isFinite(Number(d.rsi))?Number(d.rsi):null),support=Number(levels.support??baseOf(x)),neckline=Number(levels.neckline||pattern.neckline||NaN),resistance=Number(levels.resistance||x.technical?.lower_high_level||NaN),priorHigh=Number(levels.prior_high||x.prior_high||NaN),stop=Number(p.stop_loss||p.stop||NaN),vwap=Number(x.indicators?.vwap||x.technical?.vwap||NaN),ema20=Number(x.indicators?.ema20||x.technical?.ema20||NaN);
+  const allLevels=[support,neckline,resistance,priorHigh,stop,vwap,ema20].filter(Number.isFinite),min=Math.min(...lo,...allLevels)*.98,max=Math.max(...hi,...allLevels)*1.02,range=max-min||1,maxVol=Math.max(...vol)||1,maxMacd=Math.max(...ml.map((v,i)=>Math.abs(v)).concat(mh.map(v=>Math.abs(v))))||1;
+  const sx=i=>L+i*plotW/Math.max(1,data.length-1),sy=v=>priceTop+(max-v)*priceH/range,vy=v=>volTop+volH-v/maxVol*volH,my=v=>macdTop+macdH/2-v/maxMacd*(macdH/2-10),ry=v=>rsiTop+rsiH-(Math.max(0,Math.min(100,v))/100*rsiH),candleW=Math.max(4,plotW/data.length*.58),path=(arr,fn)=>arr.map((v,i)=>v===null||!Number.isFinite(v)?'':(i?'L':'M')+sx(i).toFixed(1)+' '+fn(v).toFixed(1)).filter(Boolean).join(' ');
+  let svg='<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none"><rect x="'+L+'" y="'+priceTop+'" width="'+plotW+'" height="'+priceH+'" fill="#08140e"/><rect x="'+L+'" y="'+volTop+'" width="'+plotW+'" height="'+volH+'" fill="#07110d"/><rect x="'+L+'" y="'+macdTop+'" width="'+plotW+'" height="'+macdH+'" fill="#08140e"/><rect x="'+L+'" y="'+rsiTop+'" width="'+plotW+'" height="'+rsiH+'" fill="#07110d"/>';
+  for(let k=0;k<6;k++){const y=priceTop+k*priceH/5,v=max-k*range/5;svg+='<line x1="'+L+'" y1="'+y+'" x2="'+(W-R)+'" y2="'+y+'" stroke="#183326"/><text x="'+(L-8)+'" y="'+(y+4)+'" text-anchor="end" fill="#8fa99a" font-size="11">'+v.toFixed(2)+'</text>'}
+  const lines=[[support,'#ffc857','الدعم'],[neckline,'#f97316','الرقبة'],[resistance,'#a78bfa','المقاومة'],[priorHigh,'#ef4444','القمة'],[stop,'#ff5264','الوقف'],[vwap,'#c084fc','VWAP'],[ema20,'#38bdf8','EMA20']];lines.forEach(a=>{if(Number.isFinite(a[0])&&a[0]>=min&&a[0]<=max){const y=sy(a[0]);svg+='<line x1="'+L+'" y1="'+y+'" x2="'+(W-R)+'" y2="'+y+'" stroke="'+a[1]+'" stroke-width="1.5" stroke-dasharray="7 6"/><text x="'+(W-R-4)+'" y="'+(y-5)+'" text-anchor="end" fill="'+a[1]+'" font-size="11">'+a[2]+' '+a[0].toFixed(2)+'</text>'}});
+  data.forEach((d,i)=>{const xx=sx(i),o=sy(Number(d.open)),c=sy(Number(d.close)),h=sy(Number(d.high)),l=sy(Number(d.low)),col=Number(d.close)>=Number(d.open)?'#20d47b':'#ff5264';svg+='<rect x="'+(xx-candleW/2)+'" y="'+vy(vol[i])+'" width="'+candleW+'" height="'+Math.max(1,volTop+volH-vy(vol[i]))+'" fill="'+col+'" opacity=".48"/><line x1="'+xx+'" y1="'+h+'" x2="'+xx+'" y2="'+l+'" stroke="'+col+'"/><rect x="'+(xx-candleW/2)+'" y="'+Math.min(o,c)+'" width="'+candleW+'" height="'+Math.max(2,Math.abs(c-o))+'" fill="'+col+'" rx="1"/>'+(d.swing_low?'<circle cx="'+xx+'" cy="'+(l+7)+'" r="4" fill="#ffc857"/>':'')});
+  svg+='<text x="'+(L+5)+'" y="'+(volTop+15)+'" fill="#8fa99a" font-size="11">VOLUME</text><text x="'+(L+5)+'" y="'+(macdTop+16)+'" fill="#8fa99a" font-size="11">MACD 12·26·9</text><line x1="'+L+'" y1="'+my(0)+'" x2="'+(W-R)+'" y2="'+my(0)+'" stroke="#50685a"/>';
+  mh.forEach((v,i)=>{const y=my(v),y0=my(0),col=v>=0?'#20d47b':'#ff5264';svg+='<rect x="'+(sx(i)-candleW/2)+'" y="'+Math.min(y,y0)+'" width="'+candleW+'" height="'+Math.max(1,Math.abs(y-y0))+'" fill="'+col+'" opacity=".7"/>'});svg+='<path d="'+path(ml,my)+'" fill="none" stroke="#38bdf8" stroke-width="1.5"/><path d="'+path(ms,my)+'" fill="none" stroke="#f59e0b" stroke-width="1.5"/>';
+  [30,50,70].forEach(v=>{const y=ry(v),col=v===50?'#50685a':'#7d3c4a';svg+='<line x1="'+L+'" y1="'+y+'" x2="'+(W-R)+'" y2="'+y+'" stroke="'+col+'" stroke-dasharray="5 5"/><text x="'+(L-8)+'" y="'+(y+4)+'" text-anchor="end" fill="#8fa99a" font-size="11">'+v+'</text>'});svg+='<text x="'+(L+5)+'" y="'+(rsiTop+15)+'" fill="#8fa99a" font-size="11">RSI 14</text><path d="'+path(rsi,ry)+'" fill="none" stroke="#c084fc" stroke-width="2"/>';
+  svg+='<text x="'+L+'" y="'+(H-10)+'" fill="#8fa99a" font-size="11">'+esc(data[0].date)+'</text><text x="'+(W-R)+'" y="'+(H-10)+'" text-anchor="end" fill="#8fa99a" font-size="11">'+esc(data[data.length-1].date)+'</text></svg>';
+  const label=pattern.type||x.pattern_type||'لا يوجد نمط قاع واضح بعد';el.innerHTML='<div style="padding:5px 4px 5px;font-weight:800">📈 شارت احترافي — '+esc(label)+'</div><div class="chart-legend"><span><i style="background:#20d47b"></i>صاعدة</span><span><i style="background:#ff5264"></i>هابطة</span><span><i style="background:#ffc857"></i>دعم / قيعان</span><span><i style="background:#38bdf8"></i>MACD</span><span><i style="background:#c084fc"></i>RSI</span></div>'+svg;
 }
 renderDiag();
 loadData();
