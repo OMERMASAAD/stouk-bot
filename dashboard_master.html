@@ -129,7 +129,7 @@ tbody tr:hover{background:#10271c}
 .chart-legend{display:flex;gap:12px;flex-wrap:wrap;margin:4px 4px 10px;color:var(--muted);font-size:11px}.chart-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-left:4px}
 .opps{margin:0 0 16px;background:linear-gradient(145deg,#0e2418,#08140e);border:1px solid var(--line);border-radius:17px;padding:16px}.opps h3{margin:0 0 5px}.opps-sub{color:var(--muted);font-size:12px;margin-bottom:11px}.opp-table{width:100%;min-width:760px;border-collapse:collapse}.opp-table th,.opp-table td{padding:9px 8px;border-bottom:1px solid #16301f;font-size:13px}.opp-table th{position:static;background:none;color:var(--muted);font-size:11px}.opp-table tr{cursor:pointer}.opp-table tr:hover{background:#10271c}.opp-rank{font-size:17px;font-weight:900;color:#ffc857}.opp-score{font-weight:900;color:#20d47b}.opp-meter{display:inline-block;width:70px;height:6px;background:#183326;border-radius:9px;overflow:hidden;vertical-align:middle;margin-right:5px}.opp-meter i{display:block;height:100%;background:linear-gradient(90deg,#ffc857,#20d47b)}
 .reverse-card{background:linear-gradient(145deg,#211b10,#11150d);border:1px solid #69552a;border-radius:17px;padding:16px;margin-bottom:16px}.reverse-card h3{margin:0 0 5px}.reverse-sub{color:var(--muted);font-size:12px;line-height:1.8}.reverse-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:13px}.reverse-kpi{background:#15170e;border:1px solid #554721;border-radius:11px;padding:10px}.reverse-kpi span{display:block;color:var(--muted);font-size:11px}.reverse-kpi b{display:block;margin-top:5px;font-size:18px}.reverse-kpi.actionable{cursor:pointer;transition:.18s}.reverse-kpi.actionable:hover{border-color:#e4b94c;transform:translateY(-2px);background:#25200e}.reverse-table{width:100%;min-width:1200px;border-collapse:collapse}.reverse-table th,.reverse-table td{padding:10px 8px;border-bottom:1px solid #41391f;font-size:13px;white-space:nowrap}.reverse-table th{position:static;background:#17170d;color:#cdbb77;font-size:11px}.reverse-table tr{cursor:pointer}.reverse-table tr:hover{background:#292514}.reverse-badge{padding:4px 8px;border-radius:7px;background:#513f12;color:#ffd86b;font-size:11px}.reverse-badge.ready{background:#0d4d30;color:#6dffb3}.reverse-chart{margin-top:14px;background:#070b08;border:1px solid #554721;border-radius:14px;padding:10px;overflow:hidden}.reverse-chart svg{width:100%;height:650px;display:block}.reverse-detail{display:none}.reverse-detail.open{display:block}
-.stat{cursor:pointer;user-select:none;transition:transform .18s,box-shadow .18s}.stat:hover,.stat:focus-visible{transform:translateY(-2px);box-shadow:0 8px 24px #0008;outline:2px solid #2b8d70;outline-offset:2px}.opp-table tr{cursor:pointer}
+.stat{cursor:pointer;user-select:none;transition:transform .18s,box-shadow .18s}.stat:hover,.stat:focus-visible{transform:translateY(-2px);box-shadow:0 8px 24px #0008;outline:2px solid #2b8d70;outline-offset:2px}.stat.active-list,.reverse-kpi.active-list{outline:2px solid #20d47b;outline-offset:2px;background:#163524}.panic-cards{margin:0 0 12px}.opp-table tr{cursor:pointer}
 .note{color:var(--muted);font-size:12px;margin-top:12px;line-height:1.9}
 .note b{color:#d6f5e4}
 .rules{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:12px}
@@ -171,8 +171,14 @@ td{display:flex;justify-content:space-between;align-items:center;gap:10px;border
 
 <div class="tabs"><button class="tab" data-tab="panic" onclick="showTab('panic')">⚡ قنص الذعر اللحظي <span id="tabPanicN"></span></button><button class="tab active" data-tab="swing" onclick="showTab('swing')">🐢 رادار الرجل الثانية</button><button class="tab" data-tab="reverse" onclick="showTab('reverse')">🔁 رادار ما بعد التقسيم العكسي <span id="tabReverseN"></span></button></div>
 <div id="panicPage" class="page">
-<div class="note" style="margin:0 0 12px"><b>⚡ قنص الذعر (فريم 5 دقائق):</b> يظهر هنا <b>أي سهم هبط 30% أو أكثر من قمة اليوم</b>، وفي عمود «الشروط» حالة كل شرط: ✅ تحقق / ❌ لم يتحقق (ثبات أفقي ≤ 5% لمدة ≥ 60 دقيقة قرب القاع · RSI يخرج من التشبع · OBV صاعد أو انحراف إيجابي · MACD إيجابي). السهم الذي تتحقق كل شروطه يصبح <b>⚡ مكتمل</b> ويُعرض في أعلى الجدول. يُحدَّث كل 15 دقيقة تقريبًا، ويُشطب السهم الذي ثبت ثم كسر قاعه بـ -3%.</div>
+<div class="note" style="margin:0 0 12px"><b>⚡ قنص الذعر (فريم 5 دقائق):</b> يظهر هنا <b>أي سهم هبط 30% أو أكثر من قمة اليوم</b>، وفي عمود «الشروط» حالة كل شرط: ✅ تحقق / ❌ لم يتحقق (ثبات أفقي ≤ 5% لمدة ≥ 60 دقيقة قرب القاع · RSI يخرج من التشبع · OBV صاعد أو انحراف إيجابي · MACD إيجابي). السهم الذي تتحقق كل شروطه يصبح <b>⚡ مكتمل</b> ويُعرض في أعلى الجدول. يُمسَح كل 15 دقيقة، ويُشطب السهم الذي ثبت ثم كسر قاعه بـ -3%.</div>
 <div class="updated" id="panicUpdated">آخر تحديث: —</div>
+<div class="cards panic-cards">
+<div class="stat s-ready" role="button" tabindex="0" data-panic-filter="complete" onclick="openPanicList('complete')"><div class="label">⚡ مكتمل</div><div class="num" id="pComplete">0</div><div class="hint">اضغط لعرض هذه القائمة فقط</div></div>
+<div class="stat s-semi" role="button" tabindex="0" data-panic-filter="near" onclick="openPanicList('near')"><div class="label">🟠 قريب من الاكتمال</div><div class="num" id="pNear">0</div><div class="hint">اضغط لعرض هذه القائمة فقط</div></div>
+<div class="stat s-watch" role="button" tabindex="0" data-panic-filter="weak" onclick="openPanicList('weak')"><div class="label">🟡 هبوط بلا تأكيد</div><div class="num" id="pWeak">0</div><div class="hint">اضغط لعرض هذه القائمة فقط</div></div>
+<div class="stat" role="button" tabindex="0" data-panic-filter="all" onclick="openPanicList('all')"><div class="label">الكل</div><div class="num" id="pAll">0</div><div class="hint">كل الأسهم المرصودة اليوم</div></div>
+</div>
 <div id="panicFilterState" class="note" style="margin:0 0 10px"></div><div class="panic-toolbar">
 <input class="search" id="panicSearch" placeholder="🔎 ابحث عن سهم مرصود..." oninput="renderPanic()">
 <div class="filters"><button class="panic-filter active" data-panic-filter="all" onclick="setPanicFilterMode('all',this)">الكل</button><button class="panic-filter" data-panic-filter="complete" onclick="setPanicFilterMode('complete',this)">⚡ مكتمل</button><button class="panic-filter" data-panic-filter="near" onclick="setPanicFilterMode('near',this)">قريب من الاكتمال</button><button class="panic-filter" data-panic-filter="weak" onclick="setPanicFilterMode('weak',this)">هبوط بلا تأكيد</button></div>
@@ -181,20 +187,29 @@ td{display:flex;justify-content:space-between;align-items:center;gap:10px;border
 <div class="tablewrap"><table><thead><tr><th>السهم</th><th>السعر</th><th>نسبة الهبوط</th><th>القوة</th><th>RVOL</th><th>زمن الثبات</th><th>البعد عن القاع</th><th>قاع الثبات</th><th>الهدف +25%</th><th>Float</th><th>الشروط</th><th>الحالة</th></tr></thead><tbody id="panicRows"><tr><td colspan="12" class="empty">جارٍ التحميل...</td></tr></tbody></table></div>
 <div id="panicDetail" class="panic-detail"></div>
 <div id="panicPurged" style="margin-top:12px"></div>
+<div class="section" id="panicScanPanel"><h3>📅 جدول المسح اليومي — كل 15 دقيقة</h3><div id="panicScanLog" class="muted">سيظهر سجل المسح بعد التحديث التالي.</div></div>
 </div>
 
 <div id="reversePage" class="page">
-<div class="reverse-card"><h3>🔁 رادار ما بعد التقسيم العكسي</h3><div class="reverse-sub">تحليل يومي مستقل للأسهم التي نفذت تقسيمًا عكسيًا خلال آخر 60 يومًا: صعود بعد التقسيم لا يتجاوز 20%، ثم هبوط 30% أو أكثر، تشبع RSI تحت 30، ثبات دعم 3–5 جلسات، وبداية تحسن RSI/MACD. يتم استبعاد الأخبار السلبية مثل الطروحات والتخفيف والأزمات. تأكيد 4 ساعات اختياري عند توفر البيانات.</div><div class="reverse-kpis"><div class="reverse-kpi actionable" onclick="openReverseList('all')"><span>الفرص المرصودة</span><b id="reverseCount">—</b><small>اضغط لعرض القائمة</small></div><div class="reverse-kpi actionable" onclick="openReverseList('ready')"><span>جاهز فنيًا</span><b class="ok" id="reverseReady">—</b><small>اضغط لعرض الجاهز</small></div><div class="reverse-kpi"><span>متوسط الهبوط</span><b class="no" id="reverseDrop">—</b></div><div class="reverse-kpi"><span>آخر تحديث</span><b id="reverseUpdated">—</b></div><div class="reverse-kpi"><span>الفريم الأساسي</span><b>يومي</b></div></div></div>
-<div class="toolbar"><input class="search" id="reverseSearch" placeholder="🔎 ابحث عن سهم بعد التقسيم العكسي..." oninput="renderReverse()"><button id="reverseSortScore" class="filter active" onclick="setReverseSort('score',this)">ترتيب القوة</button><button id="reverseSortDrop" class="filter" onclick="setReverseSort('drop',this)">أكبر هبوط</button></div>
+<div class="reverse-card"><h3>🔁 رادار ما بعد التقسيم العكسي</h3><div class="reverse-sub">تحليل يومي مستقل للأسهم التي نفذت تقسيمًا عكسيًا خلال آخر 60 يومًا: صعود بعد التقسيم لا يتجاوز 20%، ثم هبوط 30% أو أكثر، تشبع RSI تحت 30، ثبات دعم 3–5 جلسات، وبداية تحسن RSI/MACD. يتم استبعاد الأخبار السلبية مثل الطروحات والتخفيف والأزمات. تأكيد 4 ساعات اختياري عند توفر البيانات.</div><div class="reverse-kpis"><div class="reverse-kpi actionable" data-reverse-filter="all" onclick="openReverseList('all')"><span>الفرص المرصودة</span><b id="reverseCount">—</b><small>اضغط لعرض القائمة</small></div><div class="reverse-kpi actionable" data-reverse-filter="ready" onclick="openReverseList('ready')"><span>جاهز فنيًا</span><b class="ok" id="reverseReady">—</b><small>اضغط لعرض الجاهز</small></div><div class="reverse-kpi"><span>متوسط الهبوط</span><b class="no" id="reverseDrop">—</b></div><div class="reverse-kpi"><span>آخر تحديث</span><b id="reverseUpdated">—</b></div><div class="reverse-kpi"><span>الفريم الأساسي</span><b>يومي</b></div></div></div>
+<div id="reverseFilterState" class="note" style="margin:0 0 10px"></div>
+<div class="toolbar"><input class="search" id="reverseSearch" placeholder="🔎 ابحث عن سهم بعد التقسيم العكسي..." oninput="renderReverse()">
+<div class="filters" id="reverseFilters">
+<button class="filter active" data-reverse-filter="all" onclick="setReverseFilter('all',this)">الكل</button>
+<button class="filter" data-reverse-filter="ready" onclick="setReverseFilter('ready',this)">🟢 جاهز فنيًا</button>
+<button class="filter" data-reverse-filter="semi" onclick="setReverseFilter('semi',this)">🟠 شبه جاهز</button>
+<button class="filter" data-reverse-filter="watch" onclick="setReverseFilter('watch',this)">🟡 قيد المتابعة</button>
+</div>
+<button id="reverseSortScore" class="filter active" onclick="setReverseSort('score',this)">ترتيب القوة</button><button id="reverseSortDrop" class="filter" onclick="setReverseSort('drop',this)">أكبر هبوط</button></div>
 <div class="tablewrap"><table class="reverse-table"><thead><tr><th>السهم</th><th>تاريخ التقسيم</th><th>السعر</th><th>الهبوط</th><th>الصعود بعد التقسيم</th><th>RSI</th><th>EMA20/30/50</th><th>الثبات</th><th>الوتد</th><th>الدخول</th><th>الهدف الرئيسي</th><th>الدرجة</th><th>الحالة</th></tr></thead><tbody id="reverseRows"><tr><td colspan="13" class="empty">جارٍ تحميل رادار التقسيم العكسي...</td></tr></tbody></table></div><div id="reverseDetail" class="reverse-detail"></div>
 </div>
 
 <div id="listPage" class="page active">
 <div class="cards">
-<div class="stat s-ready" role="button" tabindex="0" onclick="openSwingList('جاهز فنيًا')"><div class="label">🟢 جاهز فنيًا</div><div class="num" id="cReady">0</div><div class="hint">اضغط لعرض الأسهم · الدرجة 80–100</div></div>
-<div class="stat s-semi" role="button" tabindex="0" onclick="openSwingList('شبه جاهز')"><div class="label">🟠 شبه جاهز</div><div class="num" id="cSemi">0</div><div class="hint">اضغط لعرض الأسهم · الدرجة 55–75</div></div>
-<div class="stat s-watch" role="button" tabindex="0" onclick="openSwingList('قيد المتابعة')"><div class="label">🟡 قيد المتابعة</div><div class="num" id="cWatch">0</div><div class="hint">اضغط لعرض الأسهم · الدرجة 30–50</div></div>
-<div class="stat s-warn" role="button" tabindex="0" onclick="openSwingList('تحذيرات')"><div class="label">🚨 تحذيرات</div><div class="num" id="cWarn">0</div><div class="hint">اضغط لعرض الأسهم · آخر 5 أيام</div></div>
+<div class="stat s-ready" role="button" tabindex="0" data-swing-filter="ready" onclick="openSwingList('ready')"><div class="label">🟢 جاهز فنيًا</div><div class="num" id="cReady">0</div><div class="hint">اضغط لعرض الأسهم · الدرجة 80–100</div></div>
+<div class="stat s-semi" role="button" tabindex="0" data-swing-filter="semi" onclick="openSwingList('semi')"><div class="label">🟠 شبه جاهز</div><div class="num" id="cSemi">0</div><div class="hint">اضغط لعرض الأسهم · الدرجة 55–75</div></div>
+<div class="stat s-watch" role="button" tabindex="0" data-swing-filter="watch" onclick="openSwingList('watch')"><div class="label">🟡 قيد المتابعة</div><div class="num" id="cWatch">0</div><div class="hint">اضغط لعرض الأسهم · الدرجة 30–50</div></div>
+<div class="stat s-warn" role="button" tabindex="0" data-swing-filter="warning" onclick="openSwingList('warning')"><div class="label">🚨 تحذيرات</div><div class="num" id="cWarn">0</div><div class="hint">اضغط لعرض الأسهم · آخر 5 أيام</div></div>
 </div>
 <div class="opps"><h3>⭐ أفضل الفرص الحالية</h3><div class="opps-sub">ترتيب تحليلي يجمع قوة نمط القاع المزدوج، القرب من الدعم، جاهزية السهم، وهدوء/تأكيد حجم التداول — ليس توصية شراء.</div><div style="overflow-x:auto"><table class="opp-table"><thead><tr><th>#</th><th>السهم</th><th>النمط</th><th>قوة القاع</th><th>RVOL</th><th>RSI</th><th>MACD</th><th>المرحلة</th></tr></thead><tbody id="opportunityRows"></tbody></table></div></div>
 <div class="toolbar">
@@ -397,13 +412,48 @@ function renderRules(){
   ' <b>المراحل:</b> '+esc((bands[ST.WATCH]||[30,50]).join('–'))+' قيد المتابعة · '+esc((bands[ST.SEMI]||[55,75]).join('–'))+' شبه جاهز · '+esc((bands[ST.READY]||[80,100]).join('–'))+' جاهز فنيًا.'+
   ' <b>التحذيرات:</b> أي طرح/تخفيف أو تقسيم عكسي أو تحقيق SEC أو إنذار شطب أو إفلاس أو نتائج مخيبة خلال آخر '+esc(p.warning_window_days??5)+' أيام.';
 }
-function swingMatches(x,mode){const score=Number(x.readiness_score??0),stage=stageOf(x);return mode==='all'||(mode==='ready'&&(stage===ST.READY||score>=80))||(mode==='semi'&&(stage===ST.SEMI||(score>=55&&score<80)))||(mode==='watch'&&(stage===ST.WATCH||score<55))||(mode==='warning'&&hasWarn(x))||(mode==='catalyst'&&hasCat(x))}
-function swingLabel(mode){return ({all:'الكل',ready:'جاهز فنيًا',semi:'شبه جاهز',watch:'قيد المتابعة',warning:'تحذيرات',catalyst:'محفزات قادمة'}[mode]||'الكل')}
-function setSwingFilter(mode,el){swingFilter=mode;currentFilter=swingLabel(mode);window.__swingFilter=mode;document.querySelectorAll('#filters .filter').forEach(b=>b.classList.toggle('active',b===el));render()}
-function setFilter(el){const map={'الكل':'all','جاهز فنيًا':'ready','شبه جاهز':'semi','قيد المتابعة':'watch','تحذيرات':'warning','محفزات':'catalyst'};setSwingFilter(map[el.dataset.filter]||'all',el)}
-function openSwingList(f){const map={'الكل':'all','جاهز فنيًا':'ready','شبه جاهز':'semi','قيد المتابعة':'watch','تحذيرات':'warning'};setTab('swing');goHome(false);swingFilter=map[f]||'all';currentFilter=f;window.__swingFilter=swingFilter;const el=document.querySelector('#filters .filter[data-filter="'+f+'"]');document.querySelectorAll('#filters .filter').forEach(b=>b.classList.toggle('active',b===el));render();document.getElementById('listPage').scrollIntoView({behavior:'smooth',block:'start'})}
+function swingModeOf(f){
+  const map={all:'all',ready:'ready',semi:'semi',watch:'watch',warning:'warning',catalyst:'catalyst','الكل':'all','جاهز فنيًا':'ready','شبه جاهز':'semi','قيد المتابعة':'watch','تحذيرات':'warning','محفزات':'catalyst','محفزات قادمة':'catalyst'};
+  return map[String(f==null?'':f).trim()]||'all';
+}
+function activeSwing(){return swingModeOf(window.__swingFilter||swingFilter||'all')}
+function swingMatches(x,mode){
+  mode=swingModeOf(mode);
+  if(mode==='all')return true;
+  if(mode==='warning')return hasWarn(x);
+  if(mode==='catalyst')return hasCat(x);
+  const stage=stageOf(x);
+  if(mode==='ready')return stage===ST.READY;
+  if(mode==='semi')return stage===ST.SEMI;
+  if(mode==='watch')return stage===ST.WATCH;
+  return false;
+}
+function swingLabel(mode){return ({all:'الكل',ready:'جاهز فنيًا',semi:'شبه جاهز',watch:'قيد المتابعة',warning:'تحذيرات',catalyst:'محفزات قادمة'}[swingModeOf(mode)]||'الكل')}
+function syncSwingButtons(mode){
+  mode=swingModeOf(mode);
+  swingFilter=mode;currentFilter=swingLabel(mode);window.__swingFilter=mode;
+  document.querySelectorAll('#filters .filter').forEach(b=>{
+    const key=swingModeOf(b.getAttribute('data-filter')||'');
+    b.classList.toggle('active',key===mode);
+  });
+  document.querySelectorAll('#listPage .stat[data-swing-filter]').forEach(b=>b.classList.toggle('active-list',b.getAttribute('data-swing-filter')===mode));
+}
+function setSwingFilter(mode,el){syncSwingButtons(mode);render();const table=document.querySelector('#listPage .tablewrap');if(table)table.scrollIntoView({behavior:'smooth',block:'start'})}
+function setFilter(el){setSwingFilter(swingModeOf(el&&el.dataset&&el.dataset.filter),el)}
+function openSwingList(f){
+  const mode=swingModeOf(f);
+  if(TAB!=='swing')showTab('swing');else goHome(false);
+  syncSwingButtons(mode);
+  render();
+  const table=document.querySelector('#listPage .tablewrap');
+  if(table)table.scrollIntoView({behavior:'smooth',block:'start'});
+}
 function quickFilter(f){openSwingList(f)}
-function filtered(){const activeFilter=window.__swingFilter||swingFilter;const q=document.getElementById('search').value.trim().toUpperCase();return (D.signals||[]).filter(x=>swingMatches(x,activeFilter)&&String(x.ticker||'').toUpperCase().includes(q)).sort((a,b)=>(ORDER[stageOf(b)]||0)-(ORDER[stageOf(a)]||0)||(b.readiness_score||0)-(a.readiness_score||0))}
+function filtered(){
+  const activeFilter=activeSwing();
+  const q=(document.getElementById('search')&&document.getElementById('search').value||'').trim().toUpperCase();
+  return (D.signals||[]).filter(x=>swingMatches(x,activeFilter)&&String(x.ticker||'').toUpperCase().includes(q)).sort((a,b)=>(ORDER[stageOf(b)]||0)-(ORDER[stageOf(a)]||0)||(b.readiness_score||0)-(a.readiness_score||0));
+}
 function oppScore(x){
   const f=x.signal_flags||{},i=x.indicators||{},t=x.technical||{},pattern=String(x.pattern_type||'');
   const patternPts=pattern.includes('مزدوج')?40:(pattern.includes('أعلى')?32:0);
@@ -446,7 +496,11 @@ function render(){
   document.getElementById('cWatch').textContent=cnt(ST.WATCH);
   document.getElementById('cWarn').textContent=s.filter(hasWarn).length;
   const a=filtered();
-  const state=document.getElementById('listState');if(state)state.innerHTML='<b>القائمة الحالية:</b> '+esc(swingLabel(window.__swingFilter||swingFilter))+' · <b>'+a.length+'</b> سهم من أصل '+s.length;
+  const mode=activeSwing();
+  const opps=document.querySelector('#listPage .opps');if(opps)opps.style.display=mode==='all'?'':'none';
+  const diag=document.getElementById('diagPanel');if(diag)diag.style.display=mode==='all'?'':'none';
+  document.querySelectorAll('#listPage .stat[data-swing-filter]').forEach(b=>b.classList.toggle('active-list',b.getAttribute('data-swing-filter')===mode));
+  const state=document.getElementById('listState');if(state)state.innerHTML='<b>القائمة الحالية:</b> '+esc(swingLabel(mode))+' · <b>'+a.length+'</b> سهم من أصل '+s.length+' — تُعرض أسهم هذه القائمة فقط.';
   document.getElementById('rows').innerHTML=a.length?a.map(x=>{
     const t=ind(x),i=x.indicators||{},score=Math.min(100,Number(x.readiness_score||0));
     const rsi=Number(i.rsi??t.rsi);
@@ -478,12 +532,17 @@ function reverseChart(x){
   if(w.detected&&Number.isFinite(u)&&Number.isFinite(lo)){let x0=sx(0),x1=sx(d.length-1),u0=u-Number(w.upper_slope||0)*(d.length-1),l0=lo-Number(w.lower_slope||0)*(d.length-1);s+='<line x1="'+x0+'" y1="'+sy(u0)+'" x2="'+x1+'" y2="'+sy(u)+'" stroke="#ffc857" stroke-width="3"/><line x1="'+x0+'" y1="'+sy(l0)+'" x2="'+x1+'" y2="'+sy(lo)+'" stroke="#ff8a3d" stroke-width="3"/>'}
   s+='<text x="'+L+'" y="'+(volTop+14)+'" fill="#8fa99a" font-size="11">VOLUME</text><text x="'+L+'" y="'+(H-10)+'" fill="#8fa99a" font-size="11">'+esc(d[0].date)+'</text><text x="'+(W-R)+'" y="'+(H-10)+'" text-anchor="end" fill="#8fa99a" font-size="11">'+esc(d[d.length-1].date)+'</text></svg>';return s;
 }
-function setReverseSort(mode,el){reverseSort=mode;window.__reverseSort=mode;document.querySelectorAll('#reversePage .toolbar .filter').forEach(b=>b.classList.toggle('active',b===el));renderReverse()}
-function openReverseList(mode='all'){reverseFilter=mode;window.__reverseFilter=mode;reverseSelected=null;document.getElementById('reverseDetail').classList.remove('open');document.querySelector('#reversePage > .reverse-card').style.display='';document.querySelector('#reversePage > .toolbar').style.display='';document.querySelector('#reversePage > .tablewrap').style.display='';renderReverse();document.getElementById('reversePage').scrollIntoView({behavior:'smooth',block:'start'})}
+function setReverseSort(mode,el){reverseSort=mode;window.__reverseSort=mode;['reverseSortScore','reverseSortDrop'].forEach(id=>{const b=document.getElementById(id);if(b)b.classList.toggle('active',b===el)});renderReverse()}
+function reverseModeOf(f){const map={all:'all',ready:'ready',semi:'semi',watch:'watch','الكل':'all','جاهز فنيًا':'ready','شبه جاهز':'semi','قيد المتابعة':'watch'};return map[String(f==null?'':f).trim()]||'all'}
+function reverseMatches(x,mode){mode=reverseModeOf(mode);if(mode==='all')return true;if(mode==='ready')return !!(x.ready||x.stage===ST.READY);if(mode==='semi')return x.stage===ST.SEMI;if(mode==='watch')return x.stage===ST.WATCH;return false}
+function setReverseFilter(mode,el){openReverseList(mode)}
+function openReverseList(mode='all'){mode=reverseModeOf(mode);reverseFilter=mode;window.__reverseFilter=mode;reverseSelected=null;if(TAB!=='reverse')showTab('reverse');document.getElementById('reverseDetail').classList.remove('open');document.querySelector('#reversePage > .reverse-card').style.display='';document.querySelector('#reversePage > .toolbar').style.display='';document.querySelector('#reversePage > .tablewrap').style.display='';document.querySelectorAll('#reversePage [data-reverse-filter]').forEach(b=>{b.classList.toggle('active',b.getAttribute('data-reverse-filter')===mode);b.classList.toggle('active-list',b.getAttribute('data-reverse-filter')===mode)});renderReverse();const table=document.querySelector('#reversePage > .tablewrap');if(table)table.scrollIntoView({behavior:'smooth',block:'start'})}
 function renderReverse(){
-  const activeReverseFilter=window.__reverseFilter||reverseFilter;const items=(R.items||[]).filter(x=>activeReverseFilter!=='ready'||x.ready).filter(x=>{const q=(document.getElementById('reverseSearch')?.value||'').toUpperCase();return !q||x.ticker.includes(q)}).sort((a,b)=>reverseSort==='drop'?(b.drop_pct||0)-(a.drop_pct||0):reverseScore(b)-reverseScore(a));
-  const ready=(R.items||[]).filter(x=>x.ready).length,drops=(R.items||[]).map(x=>x.drop_pct).filter(Number.isFinite);
-  ['reverseCount','reverseReady'].forEach((id,i)=>{const el=document.getElementById(id);if(el)el.textContent=i?(R.items||[]).filter(x=>x.ready).length:items.length});
+  const mode=reverseModeOf(window.__reverseFilter||reverseFilter);const all=R.items||[];const items=all.filter(x=>reverseMatches(x,mode)).filter(x=>{const q=(document.getElementById('reverseSearch')?.value||'').toUpperCase();return !q||String(x.ticker||'').toUpperCase().includes(q)}).sort((a,b)=>reverseSort==='drop'?(b.drop_pct||0)-(a.drop_pct||0):reverseScore(b)-reverseScore(a));
+  const ready=all.filter(x=>x.ready||x.stage===ST.READY).length,drops=all.map(x=>x.drop_pct).filter(Number.isFinite);
+  const rc=document.getElementById('reverseCount');if(rc)rc.textContent=all.length;const rr=document.getElementById('reverseReady');if(rr)rr.textContent=ready;
+  const rstate=document.getElementById('reverseFilterState');if(rstate)rstate.innerHTML='<b>القائمة الحالية:</b> '+esc({all:'الكل',ready:'جاهز فنيًا',semi:'شبه جاهز',watch:'قيد المتابعة'}[mode]||'الكل')+' · <b>'+items.length+'</b> سهم من أصل '+all.length+' — تُعرض أسهم هذه القائمة فقط.';
+  document.querySelectorAll('#reversePage [data-reverse-filter]').forEach(b=>b.classList.toggle('active',b.getAttribute('data-reverse-filter')===mode));
   const de=document.getElementById('reverseDrop');if(de)de.textContent=drops.length?(drops.reduce((a,b)=>a+b,0)/drops.length).toFixed(1)+'%':'—';
   const up=document.getElementById('reverseUpdated');if(up)up.textContent=R.updated_at?fmtTime(R.updated_at):'—';
   const tab=document.getElementById('tabReverseN');if(tab)tab.textContent=R.count?'('+R.count+')':'';
@@ -537,14 +596,16 @@ function panicScore(x){
   const c=x.checks||{};return (c.base?35:0)+(c.rsi?20:0)+(c.obv?20:0)+(c.macd?15:0)+(x.near_low?10:0);
 }
 function compactVol(v){if(v===null||v===undefined)return '—';v=Number(v);return v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(0)+'K':String(Math.round(v))}
+function panicModeOf(f){const map={all:'all',complete:'complete',near:'near',weak:'weak','الكل':'all','مكتمل':'complete','قريب من الاكتمال':'near','هبوط بلا تأكيد':'weak'};return map[String(f==null?'':f).trim()]||'all'}
+function panicMatches(x,mode){mode=panicModeOf(mode);if(mode==='all')return true;if(mode==='complete')return !!x.complete;if(mode==='near')return !x.complete&&panicScore(x)>=55;if(mode==='weak')return !x.complete&&panicScore(x)<55;return false}
 function panicVisibleItems(){
   const q=(document.getElementById('panicSearch')?.value||'').trim().toUpperCase();
-  let a=(P?.items||[]).filter(x=>!q||String(x.ticker||'').toUpperCase().includes(q));
-  const activePanicFilter=window.__panicFilter||panicFilter;a=a.filter(x=>activePanicFilter==='all'||(activePanicFilter==='complete'&&x.complete)||(activePanicFilter==='near'&&panicScore(x)>=55&&!x.complete)||(activePanicFilter==='weak'&&panicScore(x)<55));
-  return a.sort((a,b)=>panicSort==='drop'?a.drop_pct-b.drop_pct:panicSort==='hold'?(b.hold_min||0)-(a.hold_min||0):panicSort==='recent'?String(b.last_bar||'').localeCompare(String(a.last_bar||'')):panicScore(b)-panicScore(a));
+  const mode=panicModeOf(window.__panicFilter||panicFilter);
+  return (P&&P.items||[]).filter(x=>panicMatches(x,mode)&&(!q||String(x.ticker||'').toUpperCase().includes(q))).sort((a,b)=>panicSort==='drop'?a.drop_pct-b.drop_pct:panicSort==='hold'?(b.hold_min||0)-(a.hold_min||0):panicSort==='recent'?String(b.last_bar||'').localeCompare(String(a.last_bar||'')):panicScore(b)-panicScore(a));
 }
-function setPanicFilterMode(mode,el){panicFilter=mode;window.__panicFilter=mode;document.querySelectorAll('#panicPage [data-panic-filter]').forEach(b=>b.classList.toggle('active',b===el));closePanicDetail();renderPanic();document.getElementById('panicPage').scrollIntoView({behavior:'smooth',block:'start'})}
-function setPanicFilter(el){setPanicFilterMode(el.dataset.panicFilter,el)}
+function setPanicFilterMode(mode,el){mode=panicModeOf(mode);panicFilter=mode;window.__panicFilter=mode;document.querySelectorAll('#panicPage [data-panic-filter]').forEach(b=>{const on=b.getAttribute('data-panic-filter')===mode;b.classList.toggle('active',on);b.classList.toggle('active-list',on)});try{closePanicDetail()}catch(e){}renderPanic();const table=document.querySelector('#panicPage > .tablewrap');if(table)table.scrollIntoView({behavior:'smooth',block:'start'})}
+function setPanicFilter(el){setPanicFilterMode(el&&el.dataset?el.dataset.panicFilter:'all',el)}
+function openPanicList(mode){if(TAB!=='panic')showTab('panic');setPanicFilterMode(mode)}
 function panicScoreHtml(x){const s=panicScore(x);return '<div class="panic-score"><b>'+s+'</b><div class="bar"><i style="width:'+Math.min(100,s)+'%"></i></div></div>'}
 function panicChart(x){
   const p=x.chart||[];if(p.length<2)return '<div class="empty">لا يتوفر الرسم اللحظي لهذا السهم بعد. سيظهر بعد المسح القادم.</div>';
@@ -564,9 +625,22 @@ function renderPanicDetail(){
   '<div class="panic-detail-grid"><div class="panic-detail-box"><h4>تفصيل الشروط</h4>'+check(c.base,'الثبات قرب القاع',(x.hold_min??0)+' من '+(x.hold_needed||60)+' دقيقة'+(x.near_low?' · قريب من القاع':' · بعيد عن القاع'))+check(c.rsi,'RSI يخرج من التشبع','RSI الحالي '+(x.rsi??'—')+' · الأدنى '+(x.rsi_min??'—'))+check(c.obv,'OBV داعم',x.obv||'—')+check(c.macd,'MACD إيجابي',x.macd||'—')+'<div class="note">Float: '+fmtFloat(x.float)+' · السيولة بالدولار: '+compactVol(x.dollar_volume)+'</div></div><div class="panic-detail-box"><h4>الرسم اللحظي — آخر '+esc((x.chart||[]).length)+' شمعة 5 دقائق</h4><div class="panic-chart">'+panicChart(x)+'</div></div></div>'+
   '<div class="panic-detail-box" style="margin-top:12px"><h4>السجل الزمني للحالة</h4>'+(hist?'<div style="overflow-x:auto"><table class="panic-history"><thead><tr><th>الوقت</th><th>السعر</th><th>الهبوط</th><th>الثبات</th><th>القوة</th></tr></thead><tbody>'+hist+'</tbody></table></div>':'<div class="muted">سيظهر السجل بعد تنفيذ أكثر من مسح.</div>')+'</div>';
 }
+function renderPanicScanLog(){
+  const el=document.getElementById('panicScanLog');if(!el)return;
+  const log=(P&&P.scan_log)||[];
+  if(!log.length){el.innerHTML='آخر مسح: <b>'+esc(fmtTime(P&&P.updated_at))+'</b> — سيُملأ الجدول تلقائيًا مع كل مسح كل 15 دقيقة.';return;}
+  const rows=log.slice(-40).reverse();
+  el.innerHTML='<div class="tablewrap"><table class="nm"><thead><tr><th>الوقت</th><th>الحالة</th><th>التغطية</th><th>أسهم مرصودة</th><th>مكتمل</th></tr></thead><tbody>'+
+    rows.map(s=>'<tr><td>'+esc(fmtTime(s.at))+'</td><td>'+(s.ok?'✅ تم':'⚠️ تُخطّي')+'</td><td>'+esc(s.coverage_pct??'—')+'%</td><td>'+esc(s.items??'—')+'</td><td>'+esc(s.complete??'—')+'</td></tr>').join('')+'</tbody></table></div>';
+}
 function renderPanic(){
+  if(!P){const rows=document.getElementById('panicRows');if(rows)rows.innerHTML='<tr><td colspan="12" class="empty">جارٍ التحميل...</td></tr>';return;}
   const items=P.items||[],purged=P.purged||[];
   const done=items.filter(x=>x.complete).length;
+  const near=items.filter(x=>!x.complete&&panicScore(x)>=55).length;
+  const weak=items.filter(x=>!x.complete&&panicScore(x)<55).length;
+  const setTxt=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
+  setTxt('pComplete',done);setTxt('pNear',near);setTxt('pWeak',weak);setTxt('pAll',items.length);
   document.getElementById('tabPanicN').textContent=items.length?'('+done+'/'+items.length+')':'';
   document.getElementById('panicSummary').innerHTML='⚡ قنص الذعر: <b>'+esc(items.length)+'</b> سهم مرصود · مكتمل الشروط: <b>'+esc(done)+'</b>';
   document.getElementById('panicUpdated').innerHTML='آخر تحديث: <b>'+esc(fmtTime(P.updated_at))+'</b> · جلسة '+esc(P.session_date||'—')+' · رموز الماستر: <b>'+esc(P.master_count??0)+'</b> · هابطة ≥30%: <b>'+esc(items.length)+'</b> · مكتملة الشروط: <b>'+esc(done)+'</b> · مشطوبة اليوم: <b>'+esc(purged.length)+'</b>';
@@ -583,6 +657,9 @@ function renderPanic(){
     '<td data-l="الحالة">'+status+'</td></tr>'}).join('')
    :'<tr><td colspan="12" class="empty">لا توجد أسهم مطابقة للفلاتر الحالية. الرادار يفحص '+esc(P.master_count??0)+' سهمًا منخفض الفلوت.</td></tr>';
   document.getElementById('panicPurged').innerHTML=purged.length?'<div class="note" style="margin:0 0 6px"><b>🧹 شُطبت اليوم (كسر قاع الثبات):</b></div>'+purged.map(x=>'<div class="pcard"><b>'+esc(x.ticker)+'</b> · '+money(x.price)+' تحت قاع '+money(x.base_low)+' · '+esc(fmtTime(x.purged_at))+'</div>').join(''):'';
+  const mode=panicModeOf(window.__panicFilter||panicFilter);
+  document.querySelectorAll('#panicPage [data-panic-filter]').forEach(b=>{const on=b.getAttribute('data-panic-filter')===mode;if(b.classList.contains('stat')||b.classList.contains('panic-filter')){b.classList.toggle('active',on);b.classList.toggle('active-list',on&&b.classList.contains('stat'))}});
+  renderPanicScanLog();
   if(panicSelected)renderPanicDetail();
 }
 function route(){const h=location.hash;if(h.startsWith('#stock=')){setTab('swing');const p=new URLSearchParams(h.slice(1));showStock(p.get('stock'),p.get('date'))}else if(TAB!=='panic')goHome(false)}

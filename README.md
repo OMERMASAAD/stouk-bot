@@ -75,7 +75,7 @@ Yahoo لا يعيد `floatShares` عند التشغيل من GitHub Actions، ل
 5. إذا ظهر الرادار فارغًا، افتح لوحة **🔍 تشخيص المسح** لترى عدد المرشحين في كل مرحلة وسبب استبعاد كل سهم.
 
 ## 8) التشغيل
-- **GitHub Actions:** مسح تلقائي 4 مرات في أيام التداول (`scan.yml`)، ويدويًا من تبويب Actions، ثم يُحدَّث `data.json`/`watchlist.json` تلقائيًا وينشر `pages.yml` الداشبورد.
+- **GitHub Actions:** مسح يومي 4 مرات في أيام التداول (`scan.yml`) لرادار الرجل الثانية والتقسيم العكسي، ومسح **قنص الذعر كل 15 دقيقة** أثناء الجلسة (`intraday.yml` — مسح واحد قصير لكل تشغيل حتى لا تتعطل الجدولة). يدويًا من تبويب Actions، ثم تُحدَّث الملفات وينشر `pages.yml` الداشبورد.
 - **محليًا:** `pip install -r requirements.txt` ثم `python scanner.py`، وختبر القواعد: `python test_strategy.py`.
 - **تشخيص سريع:** `python scanner.py --tickers VSA,TPET --dry-run` (فحص رموز محددة بلا كتابة ملفات).
 
