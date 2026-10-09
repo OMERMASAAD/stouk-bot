@@ -1,22 +1,22 @@
 {
- "updated_at": "2026-10-09T15:27:58.354720+00:00",
+ "updated_at": "2026-10-09T15:42:15.704884+00:00",
  "session_date": "2026-10-09",
  "master_count": 290,
  "master_built_on": "2026-10-08",
  "items": [
   {
-   "price": 0.3552,
+   "price": 0.3689,
    "day_high": 0.8536,
    "day_low": 0.3416,
-   "drop_pct": -58.4,
-   "hold_min": 5,
+   "drop_pct": -56.8,
+   "hold_min": 10,
    "hold_needed": 60,
-   "base_low": 0.3515,
-   "near_low": true,
-   "dist_from_low_pct": 4.0,
-   "target": 0.444,
+   "base_low": 0.3611,
+   "near_low": false,
+   "dist_from_low_pct": 8.0,
+   "target": 0.4611,
    "target_pct": 25.0,
-   "rsi": 15.3,
+   "rsi": 21.7,
    "rsi_min": 15.3,
    "obv": "ضعيف",
    "macd": "سلبي",
@@ -27,13 +27,13 @@
     "macd": false
    },
    "complete": false,
-   "strength_score": 10,
+   "strength_score": 0,
    "strength_label": "يحتاج متابعة",
-   "volume_last": 269472,
-   "volume_avg": 248245,
-   "rvol": 1.09,
-   "dollar_volume": 95716.45,
-   "last_bar": "2026-10-09T11:25:00-04:00",
+   "volume_last": 70166,
+   "volume_avg": 287295,
+   "rvol": 0.24,
+   "dollar_volume": 25884.24,
+   "last_bar": "2026-10-09T11:40:00-04:00",
    "ticker": "DKI",
    "float": 2097587,
    "float_status": "bound",
@@ -70,33 +70,24 @@
       "macd": false
      },
      "rvol": 1.09
+    },
+    {
+     "last_bar": "2026-10-09T11:40:00-04:00",
+     "price": 0.3689,
+     "drop_pct": -56.8,
+     "hold_min": 10,
+     "strength_score": 0,
+     "complete": false,
+     "checks": {
+      "base": false,
+      "rsi": false,
+      "obv": false,
+      "macd": false
+     },
+     "rvol": 0.24
     }
    ],
    "chart": [
-    {
-     "time": "2026-10-09T05:30:00-04:00",
-     "open": 0.7231,
-     "high": 0.7398,
-     "low": 0.7231,
-     "close": 0.7398,
-     "volume": 0
-    },
-    {
-     "time": "2026-10-09T05:35:00-04:00",
-     "open": 0.7383,
-     "high": 0.75,
-     "low": 0.7383,
-     "close": 0.7499,
-     "volume": 0
-    },
-    {
-     "time": "2026-10-09T05:40:00-04:00",
-     "open": 0.7457,
-     "high": 0.7457,
-     "low": 0.7301,
-     "close": 0.7301,
-     "volume": 0
-    },
     {
      "time": "2026-10-09T05:45:00-04:00",
      "open": 0.7232,
@@ -645,42 +636,66 @@
      "time": "2026-10-09T11:25:00-04:00",
      "open": 0.3593,
      "high": 0.3621,
-     "low": 0.3515,
-     "close": 0.3552,
-     "volume": 269472
+     "low": 0.344,
+     "close": 0.3551,
+     "volume": 663903
+    },
+    {
+     "time": "2026-10-09T11:30:00-04:00",
+     "open": 0.3551,
+     "high": 0.3698,
+     "low": 0.3511,
+     "close": 0.3689,
+     "volume": 274545
+    },
+    {
+     "time": "2026-10-09T11:35:00-04:00",
+     "open": 0.3689,
+     "high": 0.378,
+     "low": 0.3611,
+     "close": 0.3698,
+     "volume": 271494
+    },
+    {
+     "time": "2026-10-09T11:40:00-04:00",
+     "open": 0.3698,
+     "high": 0.3734,
+     "low": 0.366,
+     "close": 0.3689,
+     "volume": 70166
     }
    ]
   },
   {
-   "price": 4.87,
+   "price": 4.855,
    "day_high": 8.3,
    "day_low": 3.8804,
-   "drop_pct": -41.3,
-   "hold_min": 5,
+   "drop_pct": -41.5,
+   "hold_min": 15,
    "hold_needed": 60,
-   "base_low": 4.62,
+   "base_low": 4.78,
    "near_low": false,
-   "dist_from_low_pct": 25.5,
-   "target": 6.0875,
+   "dist_from_low_pct": 25.1,
+   "target": 6.0688,
    "target_pct": 25.0,
-   "rsi": 46.4,
+   "rsi": 46.3,
    "rsi_min": 43.1,
-   "obv": "ضعيف",
+   "obv": "صاعد",
    "macd": "سلبي",
    "checks": {
     "base": false,
     "rsi": false,
-    "obv": false,
+    "obv": true,
     "macd": false
    },
    "complete": false,
-   "strength_score": 0,
+   "strength_score": 20,
    "strength_label": "يحتاج متابعة",
-   "volume_last": 157867,
-   "volume_avg": 419980,
-   "rvol": 0.38,
-   "dollar_volume": 768812.27,
-   "last_bar": "2026-10-09T11:25:00-04:00",
+   "volume_last": 29858,
+   "volume_avg": 287942,
+   "rvol": 0.1,
+   "dollar_volume": 144960.59,
+   "last_bar": "2026-10-09T11:40:00-04:00",
    "ticker": "VIVK",
    "float": 598793,
    "float_status": "bound",
@@ -717,33 +732,24 @@
       "macd": false
      },
      "rvol": 0.38
+    },
+    {
+     "last_bar": "2026-10-09T11:40:00-04:00",
+     "price": 4.855,
+     "drop_pct": -41.5,
+     "hold_min": 15,
+     "strength_score": 20,
+     "complete": false,
+     "checks": {
+      "base": false,
+      "rsi": false,
+      "obv": true,
+      "macd": false
+     },
+     "rvol": 0.1
     }
    ],
    "chart": [
-    {
-     "time": "2026-10-08T09:40:00-04:00",
-     "open": 4.3,
-     "high": 4.3,
-     "low": 4.2201,
-     "close": 4.3,
-     "volume": 1771
-    },
-    {
-     "time": "2026-10-08T10:00:00-04:00",
-     "open": 4.285,
-     "high": 4.285,
-     "low": 4.285,
-     "close": 4.285,
-     "volume": 574
-    },
-    {
-     "time": "2026-10-08T10:05:00-04:00",
-     "open": 4.2136,
-     "high": 4.2136,
-     "low": 4.2136,
-     "close": 4.2136,
-     "volume": 716
-    },
     {
      "time": "2026-10-08T10:10:00-04:00",
      "open": 4.3038,
@@ -1291,26 +1297,50 @@
     {
      "time": "2026-10-09T11:25:00-04:00",
      "open": 4.745,
-     "high": 4.9,
+     "high": 4.9499,
      "low": 4.62,
-     "close": 4.87,
-     "volume": 157867
+     "close": 4.871,
+     "volume": 267421
+    },
+    {
+     "time": "2026-10-09T11:30:00-04:00",
+     "open": 4.8999,
+     "high": 4.91,
+     "low": 4.81,
+     "close": 4.82,
+     "volume": 79886
+    },
+    {
+     "time": "2026-10-09T11:35:00-04:00",
+     "open": 4.8114,
+     "high": 4.92,
+     "low": 4.78,
+     "close": 4.89,
+     "volume": 126493
+    },
+    {
+     "time": "2026-10-09T11:40:00-04:00",
+     "open": 4.89,
+     "high": 4.93,
+     "low": 4.85,
+     "close": 4.855,
+     "volume": 29858
     }
    ]
   },
   {
-   "price": 1.1203,
+   "price": 1.105,
    "day_high": 1.75,
    "day_low": 0.911,
-   "drop_pct": -36.0,
-   "hold_min": 8,
+   "drop_pct": -36.9,
+   "hold_min": 20,
    "hold_needed": 60,
-   "base_low": 1.1,
+   "base_low": 1.09,
    "near_low": false,
-   "dist_from_low_pct": 23.0,
-   "target": 1.4004,
+   "dist_from_low_pct": 21.3,
+   "target": 1.3813,
    "target_pct": 25.0,
-   "rsi": 51.2,
+   "rsi": 49.9,
    "rsi_min": 29.5,
    "obv": "صاعد",
    "macd": "هيستوجرام أخضر",
@@ -1323,11 +1353,11 @@
    "complete": false,
    "strength_score": 55,
    "strength_label": "قريب من الاكتمال",
-   "volume_last": 0,
-   "volume_avg": 407335,
-   "rvol": 0.0,
-   "dollar_volume": 0.0,
-   "last_bar": "2026-10-09T11:28:00-04:00",
+   "volume_last": 42566,
+   "volume_avg": 347816,
+   "rvol": 0.12,
+   "dollar_volume": 47035.43,
+   "last_bar": "2026-10-09T11:40:00-04:00",
    "ticker": "MI",
    "float": 611390,
    "float_status": "bound",
@@ -1364,25 +1394,24 @@
       "macd": true
      },
      "rvol": 0.0
+    },
+    {
+     "last_bar": "2026-10-09T11:40:00-04:00",
+     "price": 1.105,
+     "drop_pct": -36.9,
+     "hold_min": 20,
+     "strength_score": 55,
+     "complete": false,
+     "checks": {
+      "base": false,
+      "rsi": true,
+      "obv": true,
+      "macd": true
+     },
+     "rvol": 0.12
     }
    ],
    "chart": [
-    {
-     "time": "2026-10-09T05:20:00-04:00",
-     "open": 1.4897,
-     "high": 1.49,
-     "low": 1.42,
-     "close": 1.4697,
-     "volume": 0
-    },
-    {
-     "time": "2026-10-09T05:25:00-04:00",
-     "open": 1.46,
-     "high": 1.54,
-     "low": 1.44,
-     "close": 1.49,
-     "volume": 0
-    },
     {
      "time": "2026-10-09T05:30:00-04:00",
      "open": 1.49,
@@ -1532,7 +1561,7 @@
      "open": 1.365,
      "high": 1.37,
      "low": 1.32,
-     "close": 1.32,
+     "close": 1.3298,
      "volume": 0
     },
     {
@@ -1561,7 +1590,7 @@
     },
     {
      "time": "2026-10-09T07:20:00-04:00",
-     "open": 1.3,
+     "open": 1.28,
      "high": 1.32,
      "low": 1.25,
      "close": 1.2791,
@@ -1757,7 +1786,7 @@
      "high": 1.27,
      "low": 1.1,
      "close": 1.155,
-     "volume": 2499926
+     "volume": 2499927
     },
     {
      "time": "2026-10-09T09:40:00-04:00",
@@ -1769,11 +1798,11 @@
     },
     {
      "time": "2026-10-09T09:45:00-04:00",
-     "open": 1.165,
+     "open": 1.15,
      "high": 1.17,
      "low": 1.11,
      "close": 1.11,
-     "volume": 620771
+     "volume": 620774
     },
     {
      "time": "2026-10-09T09:50:00-04:00",
@@ -1893,7 +1922,7 @@
      "high": 1.1,
      "low": 1.02,
      "close": 1.07,
-     "volume": 237151
+     "volume": 237163
     },
     {
      "time": "2026-10-09T11:05:00-04:00",
@@ -1909,15 +1938,15 @@
      "high": 1.15,
      "low": 1.05,
      "close": 1.0901,
-     "volume": 482527
+     "volume": 551476
     },
     {
      "time": "2026-10-09T11:15:00-04:00",
-     "open": 1.095,
+     "open": 1.0991,
      "high": 1.18,
      "low": 1.09,
      "close": 1.1689,
-     "volume": 779377
+     "volume": 779387
     },
     {
      "time": "2026-10-09T11:20:00-04:00",
@@ -1929,19 +1958,35 @@
     },
     {
      "time": "2026-10-09T11:25:00-04:00",
-     "open": 1.1201,
+     "open": 1.12,
      "high": 1.1301,
-     "low": 1.1,
-     "close": 1.125,
-     "volume": 161459
+     "low": 1.09,
+     "close": 1.0901,
+     "volume": 147690
     },
     {
-     "time": "2026-10-09T11:28:00-04:00",
-     "open": 1.1203,
-     "high": 1.1203,
-     "low": 1.1203,
-     "close": 1.1203,
-     "volume": 0
+     "time": "2026-10-09T11:30:00-04:00",
+     "open": 1.1,
+     "high": 1.12,
+     "low": 1.09,
+     "close": 1.1001,
+     "volume": 100211
+    },
+    {
+     "time": "2026-10-09T11:35:00-04:00",
+     "open": 1.11,
+     "high": 1.13,
+     "low": 1.09,
+     "close": 1.1012,
+     "volume": 160190
+    },
+    {
+     "time": "2026-10-09T11:40:00-04:00",
+     "open": 1.1099,
+     "high": 1.12,
+     "low": 1.1,
+     "close": 1.105,
+     "volume": 42566
     }
    ]
   }
@@ -1949,10 +1994,10 @@
  "purged": [],
  "diagnostics": {
   "reasons": {
-   "no_drop": 205,
+   "no_drop": 212,
    "ok": 3,
-   "no_data": 69,
-   "stale": 13
+   "no_data": 59,
+   "stale": 16
   }
  }
 }
