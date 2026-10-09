@@ -46,6 +46,17 @@ def t_stale():
     df, now = make()
     assert ps.evaluate_panic(df, now + pd.Timedelta(hours=3))[1] == "stale"
 
+def t_scan_log():
+    now = datetime.now(timezone.utc)
+    prev = {"items": [{"ticker": "AAA", "complete": False}], "purged": [], "scan_log": []}
+    beat = ps.heartbeat(now, ok=True, coverage_pct=80, frames=10, master=12, items=1, complete=0)
+    out = ps.stamp({"items": prev["items"], "purged": []}, beat, prev)
+    assert out["scan_log"][-1]["ok"] is True and out["last_scan"]["items"] == 1
+    skipped = ps.heartbeat(now + pd.Timedelta(minutes=15), ok=False, skipped="low_coverage", items=1)
+    out2 = ps.stamp(out, skipped, out)
+    assert out2["scan_log"][-1]["skipped"] == "low_coverage" and len(out2["scan_log"]) == 2
+
+
 def t_purge():
     df, now = make()
     master = {"tickers": [{"ticker": "AAA", "float": 3e6, "float_status": "exact"}], "built_on": "x"}
@@ -60,7 +71,7 @@ def t_purge():
 
 if __name__ == "__main__":
     bad = 0
-    for f in (t_pass, t_short_base, t_no_drop, t_stale, t_purge):
+    for f in (t_pass, t_short_base, t_no_drop, t_stale, t_purge, t_scan_log):
         try: f(); print("✅", f.__name__)
         except Exception as e: bad += 1; print("❌", f.__name__, repr(e)[:300])
     raise SystemExit(1 if bad else 0)

@@ -2,42 +2,46 @@ name: Intraday Panic Scan
 on:
   workflow_dispatch:
   schedule:
-    # تشغيلان في الساعة (دقيقة 7 و37) بدل كل 15 دقيقة، لأن GitHub يتجاهل الجدولة المتكررة كثيرًا.
-    # كل تشغيل يمسح 4 مرات بفارق ~14 دقيقة داخل نفس الجلسة، فتبقى التغطية مستمرة.
-    - cron: "7 8-23 * * 1-5"
-    - cron: "37 8-23 * * 1-5"
+    # مسح واحد كل 15 دقيقة خلال ما قبل الافتتاح + الجلسة (4:00–17:45 بتوقيت نيويورك).
+    # لا نستخدم حلقة sleep داخل الوظيفة: الوظائف الطويلة (~50 د) كانت تمنع GitHub
+    # من إطلاق الجدولة التالية، فيتوقف الجدول من الصباح حتى ساعات.
+    - cron: "*/15 8-21 * * 1-5"
+  workflow_run:
+    workflows: ["Stock Radar"]
+    types: [completed]
 concurrency:
   group: intraday-panic-scan
-  cancel-in-progress: false         # لا نقطع مسحًا يعمل؛ ينتظر التالي دوره
+  cancel-in-progress: true
 
 jobs:
   panic:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
-    timeout-minutes: 58
+    timeout-minutes: 20
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: pip
       - run: pip install -r requirements.txt
-      - name: Panic scan loop (4 مرات × كل ~14 دقيقة)
+      - name: Panic scan
         run: |
           git config user.name "stock-radar"
           git config user.email "actions@github.com"
-          for i in 1 2 3 4; do
-            echo "=== scan $i/4 ==="
-            python panic_scanner.py || echo "scan failed, continuing"
-            git add panic_data.json
-            if ! git diff --cached --quiet; then
-              git commit -m "⚡ تحديث قنص الذعر"
-              for j in 1 2 3; do
-                git pull --rebase -X theirs origin main && git push && break
-                sleep 3
-              done
-            fi
-            [ "$i" -lt 4 ] && sleep 840
+          python panic_scanner.py
+          git add panic_data.json
+          if git diff --cached --quiet; then
+            echo "no changes"
+            exit 0
+          fi
+          git commit -m "⚡ تحديث قنص الذعر"
+          for j in 1 2 3; do
+            git pull --rebase -X theirs origin main && git push && exit 0
+            sleep 3
           done
-          exit 0
+          exit 1

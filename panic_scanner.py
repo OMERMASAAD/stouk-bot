@@ -229,22 +229,61 @@ def run(master, prev, frames, now):
             "items": ordered, "purged": list(purged.values()), "diagnostics": {"reasons": reasons}}
 
 
+def heartbeat(now, *, ok, coverage_pct=None, frames=0, master=0, items=0, complete=0, skipped=None):
+    row = {
+        "at": now.isoformat(), "ok": bool(ok), "coverage_pct": coverage_pct,
+        "frames": int(frames), "master": int(master),
+        "items": int(items), "complete": int(complete),
+    }
+    if skipped:
+        row["skipped"] = skipped
+    return row
+
+
+def stamp(payload, beat, prev=None):
+    """أبقِ سجل المسح اليومي حتى لو لم تتغير الأسهم — هذا ما تقرأه الواجهة كل 15 دقيقة."""
+    log = list((prev or payload or {}).get("scan_log") or [])
+    if not log or log[-1].get("at") != beat.get("at"):
+        log.append(beat)
+    payload["scan_log"] = log[-96:]
+    payload["last_scan"] = beat
+    payload["updated_at"] = beat["at"]
+    return payload
+
+
+def save(path, data):
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=1)
+
+
 def main():
     t0, now = time.time(), datetime.now(timezone.utc)
     master = load(MASTER_FILE, {})
-    if not master.get("tickers"):
+    prev = load(OUT_FILE, {})
+    n_master = len(master.get("tickers") or [])
+    if not n_master:
         print("::warning title=No master::master_low_float.json غير موجود — شغّل Stock Radar أولًا")
+        beat = heartbeat(now, ok=False, skipped="no_master")
+        save(OUT_FILE, stamp(prev or {"items": [], "purged": []}, beat, prev))
         return
     frames = download([m["ticker"] for m in master["tickers"]])
-    cov = len(frames) / max(1, len(master["tickers"]))
-    print("5m coverage: %.0f%% (%d/%d)" % (cov * 100, len(frames), len(master["tickers"])))
+    cov = len(frames) / max(1, n_master)
+    print("5m coverage: %.0f%% (%d/%d)" % (cov * 100, len(frames), n_master))
     if cov < 0.3:
-        print("::warning title=Panic scan skipped::تغطية بيانات 5m ضعيفة — لم يتم لمس panic_data.json")
+        print("::warning title=Panic scan skipped::تغطية بيانات 5m ضعيفة — يُحدَّث سجل المسح فقط")
+        beat = heartbeat(now, ok=False, coverage_pct=round(cov * 100, 1), frames=len(frames),
+                         master=n_master, items=len(prev.get("items") or []),
+                         complete=sum(1 for x in prev.get("items") or [] if x.get("complete")),
+                         skipped="low_coverage")
+        save(OUT_FILE, stamp(prev or {"items": [], "purged": []}, beat, prev))
         return
-    out = run(master, load(OUT_FILE, {}), frames, now)
-    with open(OUT_FILE, "w", encoding="utf-8") as f:
-        json.dump(out, f, ensure_ascii=False, indent=1)
-    print("panic items: %d (complete %d) | purged: %d | %.0fs" % (len(out["items"]), sum(1 for x in out["items"] if x.get("complete")), len(out["purged"]), time.time() - t0))
+    out = run(master, prev, frames, now)
+    complete = sum(1 for x in out["items"] if x.get("complete"))
+    beat = heartbeat(now, ok=True, coverage_pct=round(cov * 100, 1), frames=len(frames),
+                     master=n_master, items=len(out["items"]), complete=complete)
+    save(OUT_FILE, stamp(out, beat, prev))
+    print("panic items: %d (complete %d) | purged: %d | %.0fs" % (
+        len(out["items"]), complete, len(out["purged"]), time.time() - t0))
 
 
 if __name__ == "__main__":
