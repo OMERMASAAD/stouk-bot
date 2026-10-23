@@ -1,45 +1,45 @@
 {
- "updated_at": "2026-10-23T23:09:48.436691+00:00",
+ "updated_at": "2026-10-23T23:28:45.136301+00:00",
  "session_date": "2026-10-23",
  "master_count": 248,
  "master_built_on": "2026-10-23",
  "items": [
   {
-   "price": 1.41,
+   "price": 1.4115,
    "day_high": 5.8664,
    "day_low": 1.355,
-   "drop_pct": -76.0,
-   "hold_min": 55,
+   "drop_pct": -75.9,
+   "hold_min": 75,
    "hold_needed": 60,
    "base_low": 1.3899,
    "near_low": true,
-   "dist_from_low_pct": 4.1,
-   "target": 1.7625,
+   "dist_from_low_pct": 4.2,
+   "target": 1.7644,
    "target_pct": 25.0,
-   "rsi": 45.2,
+   "rsi": 46.0,
    "rsi_min": 27.4,
    "obv": "ضعيف",
    "macd": "هيستوجرام أخضر",
    "checks": {
-    "base": false,
+    "base": true,
     "rsi": true,
     "obv": false,
     "macd": true
    },
    "complete": false,
-   "strength_score": 45,
-   "strength_label": "يحتاج متابعة",
+   "strength_score": 80,
+   "strength_label": "مكتمل وقوي",
    "volume_last": 0,
    "volume_avg": 0,
    "rvol": null,
    "dollar_volume": 0.0,
-   "last_bar": "2026-10-23T19:05:00-04:00",
+   "last_bar": "2026-10-23T19:25:00-04:00",
    "ticker": "AARD",
    "float": 21884846,
    "float_status": "unverified",
    "detected_at": "2026-10-23T12:53:43.118306+00:00",
    "still_valid": true,
-   "had_base": false,
+   "had_base": true,
    "history": [
     {
      "last_bar": "2026-10-23T08:50:00-04:00",
@@ -130,41 +130,24 @@
       "macd": true
      },
      "rvol": null
+    },
+    {
+     "last_bar": "2026-10-23T19:25:00-04:00",
+     "price": 1.4115,
+     "drop_pct": -75.9,
+     "hold_min": 75,
+     "strength_score": 80,
+     "complete": false,
+     "checks": {
+      "base": true,
+      "rsi": true,
+      "obv": false,
+      "macd": true
+     },
+     "rvol": null
     }
    ],
    "chart": [
-    {
-     "time": "2026-10-23T13:10:00-04:00",
-     "open": 1.73,
-     "high": 1.73,
-     "low": 1.69,
-     "close": 1.69,
-     "volume": 49433
-    },
-    {
-     "time": "2026-10-23T13:15:00-04:00",
-     "open": 1.6901,
-     "high": 1.7,
-     "low": 1.67,
-     "close": 1.68,
-     "volume": 41808
-    },
-    {
-     "time": "2026-10-23T13:20:00-04:00",
-     "open": 1.685,
-     "high": 1.73,
-     "low": 1.685,
-     "close": 1.715,
-     "volume": 49811
-    },
-    {
-     "time": "2026-10-23T13:25:00-04:00",
-     "open": 1.7196,
-     "high": 1.7196,
-     "low": 1.6734,
-     "close": 1.6852,
-     "volume": 37237
-    },
     {
      "time": "2026-10-23T13:30:00-04:00",
      "open": 1.685,
@@ -708,6 +691,38 @@
      "low": 1.4,
      "close": 1.41,
      "volume": 0
+    },
+    {
+     "time": "2026-10-23T19:10:00-04:00",
+     "open": 1.4185,
+     "high": 1.4399,
+     "low": 1.4103,
+     "close": 1.4399,
+     "volume": 0
+    },
+    {
+     "time": "2026-10-23T19:15:00-04:00",
+     "open": 1.43,
+     "high": 1.43,
+     "low": 1.4185,
+     "close": 1.42,
+     "volume": 0
+    },
+    {
+     "time": "2026-10-23T19:20:00-04:00",
+     "open": 1.42,
+     "high": 1.42,
+     "low": 1.42,
+     "close": 1.42,
+     "volume": 0
+    },
+    {
+     "time": "2026-10-23T19:25:00-04:00",
+     "open": 1.4201,
+     "high": 1.4201,
+     "low": 1.41,
+     "close": 1.4115,
+     "volume": 0
     }
    ]
   },
@@ -716,7 +731,7 @@
    "day_high": 4.27,
    "day_low": 1.6,
    "drop_pct": -61.1,
-   "hold_min": 11,
+   "hold_min": 30,
    "hold_needed": 60,
    "base_low": 1.66,
    "near_low": true,
@@ -726,21 +741,21 @@
    "rsi": 45.6,
    "rsi_min": 35.7,
    "obv": "ضعيف",
-   "macd": "هيستوجرام أخضر",
+   "macd": "سلبي",
    "checks": {
     "base": false,
     "rsi": false,
     "obv": false,
-    "macd": true
+    "macd": false
    },
    "complete": false,
-   "strength_score": 25,
+   "strength_score": 10,
    "strength_label": "يحتاج متابعة",
    "volume_last": 0,
    "volume_avg": 0,
    "rvol": null,
    "dollar_volume": 0.0,
-   "last_bar": "2026-10-23T19:06:24-04:00",
+   "last_bar": "2026-10-23T19:25:00-04:00",
    "ticker": "FGL",
    "float": 75558,
    "float_status": "bound",
@@ -822,17 +837,24 @@
       "macd": true
      },
      "rvol": null
+    },
+    {
+     "last_bar": "2026-10-23T19:25:00-04:00",
+     "price": 1.66,
+     "drop_pct": -61.1,
+     "hold_min": 30,
+     "strength_score": 10,
+     "complete": false,
+     "checks": {
+      "base": false,
+      "rsi": false,
+      "obv": false,
+      "macd": false
+     },
+     "rvol": null
     }
    ],
    "chart": [
-    {
-     "time": "2026-10-23T12:45:00-04:00",
-     "open": 1.765,
-     "high": 1.775,
-     "low": 1.76,
-     "close": 1.76,
-     "volume": 4918
-    },
     {
      "time": "2026-10-23T12:50:00-04:00",
      "open": 1.8,
@@ -1394,9 +1416,17 @@
      "volume": 0
     },
     {
-     "time": "2026-10-23T19:06:24-04:00",
+     "time": "2026-10-23T19:05:00-04:00",
      "open": 1.66,
      "high": 1.66,
+     "low": 1.66,
+     "close": 1.66,
+     "volume": 0
+    },
+    {
+     "time": "2026-10-23T19:25:00-04:00",
+     "open": 1.68,
+     "high": 1.68,
      "low": 1.66,
      "close": 1.66,
      "volume": 0
@@ -1404,19 +1434,19 @@
    ]
   },
   {
-   "price": 2.13,
+   "price": 2.07,
    "day_high": 3.72,
    "day_low": 1.9701,
-   "drop_pct": -42.7,
-   "hold_min": 20,
+   "drop_pct": -44.4,
+   "hold_min": 25,
    "hold_needed": 60,
-   "base_low": 2.13,
+   "base_low": 2.07,
    "near_low": false,
-   "dist_from_low_pct": 8.1,
-   "target": 2.6625,
+   "dist_from_low_pct": 5.1,
+   "target": 2.5875,
    "target_pct": 25.0,
-   "rsi": 44.7,
-   "rsi_min": 44.7,
+   "rsi": 38.2,
+   "rsi_min": 38.2,
    "obv": "ضعيف",
    "macd": "سلبي",
    "checks": {
@@ -1432,7 +1462,7 @@
    "volume_avg": 0,
    "rvol": null,
    "dollar_volume": 0.0,
-   "last_bar": "2026-10-23T19:05:00-04:00",
+   "last_bar": "2026-10-23T19:20:00-04:00",
    "ticker": "YMAT",
    "float": 4010103,
    "float_status": "bound",
@@ -1499,25 +1529,24 @@
       "macd": false
      },
      "rvol": null
+    },
+    {
+     "last_bar": "2026-10-23T19:20:00-04:00",
+     "price": 2.07,
+     "drop_pct": -44.4,
+     "hold_min": 25,
+     "strength_score": 0,
+     "complete": false,
+     "checks": {
+      "base": false,
+      "rsi": false,
+      "obv": false,
+      "macd": false
+     },
+     "rvol": null
     }
    ],
    "chart": [
-    {
-     "time": "2026-10-23T13:10:00-04:00",
-     "open": 2.595,
-     "high": 2.62,
-     "low": 2.59,
-     "close": 2.59,
-     "volume": 34573
-    },
-    {
-     "time": "2026-10-23T13:15:00-04:00",
-     "open": 2.59,
-     "high": 2.59,
-     "low": 2.55,
-     "close": 2.575,
-     "volume": 41388
-    },
     {
      "time": "2026-10-23T13:20:00-04:00",
      "open": 2.5798,
@@ -2077,39 +2106,55 @@
      "low": 2.13,
      "close": 2.13,
      "volume": 0
+    },
+    {
+     "time": "2026-10-23T19:15:00-04:00",
+     "open": 2.13,
+     "high": 2.15,
+     "low": 2.1246,
+     "close": 2.1246,
+     "volume": 0
+    },
+    {
+     "time": "2026-10-23T19:20:00-04:00",
+     "open": 2.101,
+     "high": 2.11,
+     "low": 2.07,
+     "close": 2.07,
+     "volume": 0
     }
    ]
   },
   {
-   "price": 1.31,
+   "price": 1.34,
    "day_high": 2.24,
    "day_low": 1.06,
-   "drop_pct": -41.5,
-   "hold_min": 30,
+   "drop_pct": -40.2,
+   "hold_min": 25,
    "hold_needed": 60,
-   "base_low": 1.27,
+   "base_low": 1.28,
    "near_low": false,
-   "dist_from_low_pct": 23.6,
-   "target": 1.6375,
+   "dist_from_low_pct": 26.4,
+   "target": 1.675,
    "target_pct": 25.0,
-   "rsi": 56.3,
-   "rsi_min": 23.4,
+   "rsi": 60.1,
+   "rsi_min": 35.9,
    "obv": "ضعيف",
    "macd": "هيستوجرام أخضر",
    "checks": {
     "base": false,
-    "rsi": true,
+    "rsi": false,
     "obv": false,
     "macd": true
    },
    "complete": false,
-   "strength_score": 35,
+   "strength_score": 15,
    "strength_label": "يحتاج متابعة",
    "volume_last": 0,
    "volume_avg": 0,
    "rvol": null,
    "dollar_volume": 0.0,
-   "last_bar": "2026-10-23T19:05:00-04:00",
+   "last_bar": "2026-10-23T19:25:00-04:00",
    "ticker": "NCPL",
    "float": 7847899,
    "float_status": "unverified",
@@ -2191,41 +2236,24 @@
       "macd": true
      },
      "rvol": null
+    },
+    {
+     "last_bar": "2026-10-23T19:25:00-04:00",
+     "price": 1.34,
+     "drop_pct": -40.2,
+     "hold_min": 25,
+     "strength_score": 15,
+     "complete": false,
+     "checks": {
+      "base": false,
+      "rsi": false,
+      "obv": false,
+      "macd": true
+     },
+     "rvol": null
     }
    ],
    "chart": [
-    {
-     "time": "2026-10-23T13:10:00-04:00",
-     "open": 1.45,
-     "high": 1.45,
-     "low": 1.44,
-     "close": 1.4401,
-     "volume": 17893
-    },
-    {
-     "time": "2026-10-23T13:15:00-04:00",
-     "open": 1.4491,
-     "high": 1.45,
-     "low": 1.44,
-     "close": 1.4425,
-     "volume": 17814
-    },
-    {
-     "time": "2026-10-23T13:20:00-04:00",
-     "open": 1.4499,
-     "high": 1.47,
-     "low": 1.39,
-     "close": 1.395,
-     "volume": 160974
-    },
-    {
-     "time": "2026-10-23T13:25:00-04:00",
-     "open": 1.395,
-     "high": 1.42,
-     "low": 1.395,
-     "close": 1.4188,
-     "volume": 43400
-    },
     {
      "time": "2026-10-23T13:30:00-04:00",
      "open": 1.415,
@@ -2767,27 +2795,59 @@
      "open": 1.29,
      "high": 1.31,
      "low": 1.29,
-     "close": 1.31,
+     "close": 1.2998,
+     "volume": 0
+    },
+    {
+     "time": "2026-10-23T19:10:00-04:00",
+     "open": 1.2901,
+     "high": 1.2902,
+     "low": 1.29,
+     "close": 1.29,
+     "volume": 0
+    },
+    {
+     "time": "2026-10-23T19:15:00-04:00",
+     "open": 1.2998,
+     "high": 1.3,
+     "low": 1.28,
+     "close": 1.29,
+     "volume": 0
+    },
+    {
+     "time": "2026-10-23T19:20:00-04:00",
+     "open": 1.29,
+     "high": 1.3095,
+     "low": 1.28,
+     "close": 1.3,
+     "volume": 0
+    },
+    {
+     "time": "2026-10-23T19:25:00-04:00",
+     "open": 1.31,
+     "high": 1.34,
+     "low": 1.31,
+     "close": 1.34,
      "volume": 0
     }
    ]
   },
   {
-   "price": 2.94,
+   "price": 2.92,
    "day_high": 4.685,
    "day_low": 1.8504,
-   "drop_pct": -37.2,
-   "hold_min": 35,
+   "drop_pct": -37.7,
+   "hold_min": 55,
    "hold_needed": 60,
-   "base_low": 2.92,
+   "base_low": 2.91,
    "near_low": false,
-   "dist_from_low_pct": 58.9,
-   "target": 3.675,
+   "dist_from_low_pct": 57.8,
+   "target": 3.65,
    "target_pct": 25.0,
-   "rsi": 39.4,
+   "rsi": 39.5,
    "rsi_min": 36.8,
    "obv": "ضعيف",
-   "macd": "تقاطع",
+   "macd": "هيستوجرام أخضر",
    "checks": {
     "base": false,
     "rsi": false,
@@ -2801,7 +2861,7 @@
    "volume_avg": 0,
    "rvol": null,
    "dollar_volume": 0.0,
-   "last_bar": "2026-10-23T19:05:00-04:00",
+   "last_bar": "2026-10-23T19:25:00-04:00",
    "ticker": "CLRO",
    "float": 2675412,
    "float_status": "bound",
@@ -2823,41 +2883,24 @@
       "macd": true
      },
      "rvol": null
+    },
+    {
+     "last_bar": "2026-10-23T19:25:00-04:00",
+     "price": 2.92,
+     "drop_pct": -37.7,
+     "hold_min": 55,
+     "strength_score": 15,
+     "complete": false,
+     "checks": {
+      "base": false,
+      "rsi": false,
+      "obv": false,
+      "macd": true
+     },
+     "rvol": null
     }
    ],
    "chart": [
-    {
-     "time": "2026-10-23T13:10:00-04:00",
-     "open": 3.06,
-     "high": 3.07,
-     "low": 3.0,
-     "close": 3.05,
-     "volume": 107552
-    },
-    {
-     "time": "2026-10-23T13:15:00-04:00",
-     "open": 3.05,
-     "high": 3.145,
-     "low": 3.04,
-     "close": 3.14,
-     "volume": 63404
-    },
-    {
-     "time": "2026-10-23T13:20:00-04:00",
-     "open": 3.1459,
-     "high": 3.18,
-     "low": 3.09,
-     "close": 3.18,
-     "volume": 99364
-    },
-    {
-     "time": "2026-10-23T13:25:00-04:00",
-     "open": 3.1749,
-     "high": 3.1749,
-     "low": 3.04,
-     "close": 3.04,
-     "volume": 101255
-    },
     {
      "time": "2026-10-23T13:30:00-04:00",
      "open": 3.07,
@@ -3401,6 +3444,38 @@
      "low": 2.92,
      "close": 2.94,
      "volume": 0
+    },
+    {
+     "time": "2026-10-23T19:10:00-04:00",
+     "open": 2.96,
+     "high": 2.96,
+     "low": 2.92,
+     "close": 2.9298,
+     "volume": 0
+    },
+    {
+     "time": "2026-10-23T19:15:00-04:00",
+     "open": 2.9202,
+     "high": 2.9222,
+     "low": 2.91,
+     "close": 2.9101,
+     "volume": 0
+    },
+    {
+     "time": "2026-10-23T19:20:00-04:00",
+     "open": 2.9115,
+     "high": 2.96,
+     "low": 2.91,
+     "close": 2.9493,
+     "volume": 0
+    },
+    {
+     "time": "2026-10-23T19:25:00-04:00",
+     "open": 2.92,
+     "high": 2.94,
+     "low": 2.92,
+     "close": 2.92,
+     "volume": 0
     }
    ]
   },
@@ -3409,17 +3484,17 @@
    "day_high": 1.87,
    "day_low": 1.09,
    "drop_pct": -36.9,
-   "hold_min": 10,
+   "hold_min": 32,
    "hold_needed": 60,
    "base_low": 1.15,
    "near_low": false,
    "dist_from_low_pct": 8.3,
    "target": 1.475,
    "target_pct": 25.0,
-   "rsi": 50.2,
+   "rsi": 50.8,
    "rsi_min": 40.6,
    "obv": "ضعيف",
-   "macd": "تقاطع",
+   "macd": "هيستوجرام أخضر",
    "checks": {
     "base": false,
     "rsi": false,
@@ -3433,7 +3508,7 @@
    "volume_avg": 0,
    "rvol": null,
    "dollar_volume": 0.0,
-   "last_bar": "2026-10-23T19:05:00-04:00",
+   "last_bar": "2026-10-23T19:27:41-04:00",
    "ticker": "POM",
    "float": 9267655,
    "float_status": "unverified",
@@ -3515,41 +3590,24 @@
       "macd": true
      },
      "rvol": null
+    },
+    {
+     "last_bar": "2026-10-23T19:27:41-04:00",
+     "price": 1.18,
+     "drop_pct": -36.9,
+     "hold_min": 32,
+     "strength_score": 15,
+     "complete": false,
+     "checks": {
+      "base": false,
+      "rsi": false,
+      "obv": false,
+      "macd": true
+     },
+     "rvol": null
     }
    ],
    "chart": [
-    {
-     "time": "2026-10-23T13:05:00-04:00",
-     "open": 1.27,
-     "high": 1.29,
-     "low": 1.27,
-     "close": 1.28,
-     "volume": 4102
-    },
-    {
-     "time": "2026-10-23T13:10:00-04:00",
-     "open": 1.291,
-     "high": 1.315,
-     "low": 1.29,
-     "close": 1.315,
-     "volume": 2214
-    },
-    {
-     "time": "2026-10-23T13:15:00-04:00",
-     "open": 1.2701,
-     "high": 1.285,
-     "low": 1.27,
-     "close": 1.285,
-     "volume": 1636
-    },
-    {
-     "time": "2026-10-23T13:20:00-04:00",
-     "open": 1.2707,
-     "high": 1.2999,
-     "low": 1.27,
-     "close": 1.275,
-     "volume": 5939
-    },
     {
      "time": "2026-10-23T13:25:00-04:00",
      "open": 1.275,
@@ -4093,652 +4151,37 @@
      "low": 1.15,
      "close": 1.18,
      "volume": 0
-    }
-   ]
-  },
-  {
-   "price": 3.4,
-   "day_high": 4.9301,
-   "day_low": 2.37,
-   "drop_pct": -31.0,
-   "hold_min": 125,
-   "hold_needed": 60,
-   "base_low": 3.31,
-   "near_low": false,
-   "dist_from_low_pct": 43.5,
-   "target": 4.25,
-   "target_pct": 25.0,
-   "rsi": 53.6,
-   "rsi_min": 48.2,
-   "obv": "صاعد",
-   "macd": "سلبي",
-   "checks": {
-    "base": false,
-    "rsi": false,
-    "obv": true,
-    "macd": false
-   },
-   "complete": false,
-   "strength_score": 20,
-   "strength_label": "يحتاج متابعة",
-   "volume_last": 0,
-   "volume_avg": 1983,
-   "rvol": 0.0,
-   "dollar_volume": 0.0,
-   "last_bar": "2026-10-23T18:20:00-04:00",
-   "ticker": "HCAI",
-   "float": 545663,
-   "float_status": "bound",
-   "detected_at": "2026-10-23T20:38:00.720951+00:00",
-   "still_valid": true,
-   "had_base": false,
-   "history": [
-    {
-     "last_bar": "2026-10-23T16:00:00-04:00",
-     "price": 3.42,
-     "drop_pct": -30.6,
-     "hold_min": 5,
-     "strength_score": 35,
-     "complete": false,
-     "checks": {
-      "base": false,
-      "rsi": false,
-      "obv": true,
-      "macd": true
-     },
-     "rvol": 0.0
     },
     {
-     "last_bar": "2026-10-23T18:20:00-04:00",
-     "price": 3.4,
-     "drop_pct": -31.0,
-     "hold_min": 125,
-     "strength_score": 20,
-     "complete": false,
-     "checks": {
-      "base": false,
-      "rsi": false,
-      "obv": true,
-      "macd": false
-     },
-     "rvol": 0.0
-    }
-   ],
-   "chart": [
-    {
-     "time": "2026-10-22T19:30:00-04:00",
-     "open": 3.4,
-     "high": 3.4,
-     "low": 3.4,
-     "close": 3.4,
+     "time": "2026-10-23T19:10:00-04:00",
+     "open": 1.1608,
+     "high": 1.1998,
+     "low": 1.16,
+     "close": 1.1678,
      "volume": 0
     },
     {
-     "time": "2026-10-22T19:45:00-04:00",
-     "open": 3.38,
-     "high": 3.4,
-     "low": 3.366,
-     "close": 3.398,
+     "time": "2026-10-23T19:15:00-04:00",
+     "open": 1.1798,
+     "high": 1.1798,
+     "low": 1.15,
+     "close": 1.15,
      "volume": 0
     },
     {
-     "time": "2026-10-23T09:00:00-04:00",
-     "open": 3.64,
-     "high": 3.64,
-     "low": 3.64,
-     "close": 3.64,
+     "time": "2026-10-23T19:20:00-04:00",
+     "open": 1.1699,
+     "high": 1.17,
+     "low": 1.16,
+     "close": 1.16,
      "volume": 0
     },
     {
-     "time": "2026-10-23T09:05:00-04:00",
-     "open": 3.51,
-     "high": 4.9301,
-     "low": 3.51,
-     "close": 4.1985,
-     "volume": 0
-    },
-    {
-     "time": "2026-10-23T09:10:00-04:00",
-     "open": 4.1703,
-     "high": 4.18,
-     "low": 2.5899,
-     "close": 2.9592,
-     "volume": 0
-    },
-    {
-     "time": "2026-10-23T09:15:00-04:00",
-     "open": 2.8217,
-     "high": 2.91,
-     "low": 2.69,
-     "close": 2.7881,
-     "volume": 0
-    },
-    {
-     "time": "2026-10-23T09:20:00-04:00",
-     "open": 2.843,
-     "high": 3.014,
-     "low": 2.76,
-     "close": 2.8405,
-     "volume": 0
-    },
-    {
-     "time": "2026-10-23T09:25:00-04:00",
-     "open": 2.9133,
-     "high": 2.9133,
-     "low": 2.7,
-     "close": 2.7,
-     "volume": 0
-    },
-    {
-     "time": "2026-10-23T09:30:00-04:00",
-     "open": 2.8,
-     "high": 2.97,
-     "low": 2.69,
-     "close": 2.8002,
-     "volume": 476653
-    },
-    {
-     "time": "2026-10-23T09:35:00-04:00",
-     "open": 2.8499,
-     "high": 2.8499,
-     "low": 2.6902,
-     "close": 2.7,
-     "volume": 18741
-    },
-    {
-     "time": "2026-10-23T09:40:00-04:00",
-     "open": 2.67,
-     "high": 2.745,
-     "low": 2.64,
-     "close": 2.745,
-     "volume": 5007
-    },
-    {
-     "time": "2026-10-23T09:45:00-04:00",
-     "open": 2.6501,
-     "high": 2.68,
-     "low": 2.6401,
-     "close": 2.6401,
-     "volume": 8629
-    },
-    {
-     "time": "2026-10-23T09:50:00-04:00",
-     "open": 2.65,
-     "high": 2.69,
-     "low": 2.65,
-     "close": 2.65,
-     "volume": 3508
-    },
-    {
-     "time": "2026-10-23T09:55:00-04:00",
-     "open": 2.59,
-     "high": 2.59,
-     "low": 2.37,
-     "close": 2.3943,
-     "volume": 9884
-    },
-    {
-     "time": "2026-10-23T10:00:00-04:00",
-     "open": 2.45,
-     "high": 2.67,
-     "low": 2.45,
-     "close": 2.67,
-     "volume": 3479
-    },
-    {
-     "time": "2026-10-23T10:05:00-04:00",
-     "open": 2.6182,
-     "high": 2.69,
-     "low": 2.61,
-     "close": 2.69,
-     "volume": 2481
-    },
-    {
-     "time": "2026-10-23T10:10:00-04:00",
-     "open": 2.6207,
-     "high": 2.7,
-     "low": 2.61,
-     "close": 2.61,
-     "volume": 1696
-    },
-    {
-     "time": "2026-10-23T10:15:00-04:00",
-     "open": 2.66,
-     "high": 2.91,
-     "low": 2.66,
-     "close": 2.8,
-     "volume": 6643
-    },
-    {
-     "time": "2026-10-23T10:20:00-04:00",
-     "open": 2.8994,
-     "high": 2.8994,
-     "low": 2.8994,
-     "close": 2.8994,
-     "volume": 374
-    },
-    {
-     "time": "2026-10-23T10:25:00-04:00",
-     "open": 2.805,
-     "high": 2.805,
-     "low": 2.805,
-     "close": 2.805,
-     "volume": 1062
-    },
-    {
-     "time": "2026-10-23T10:30:00-04:00",
-     "open": 2.805,
-     "high": 2.805,
-     "low": 2.805,
-     "close": 2.805,
-     "volume": 565
-    },
-    {
-     "time": "2026-10-23T10:35:00-04:00",
-     "open": 2.9,
-     "high": 2.9,
-     "low": 2.89,
-     "close": 2.9,
-     "volume": 3535
-    },
-    {
-     "time": "2026-10-23T10:40:00-04:00",
-     "open": 2.95,
-     "high": 3.0794,
-     "low": 2.86,
-     "close": 3.0794,
-     "volume": 4499
-    },
-    {
-     "time": "2026-10-23T10:45:00-04:00",
-     "open": 3.1,
-     "high": 3.1624,
-     "low": 3.08,
-     "close": 3.1,
-     "volume": 7883
-    },
-    {
-     "time": "2026-10-23T10:50:00-04:00",
-     "open": 3.099,
-     "high": 3.099,
-     "low": 3.099,
-     "close": 3.099,
-     "volume": 2615
-    },
-    {
-     "time": "2026-10-23T10:55:00-04:00",
-     "open": 3.0465,
-     "high": 3.29,
-     "low": 3.0465,
-     "close": 3.17,
-     "volume": 11841
-    },
-    {
-     "time": "2026-10-23T11:00:00-04:00",
-     "open": 3.295,
-     "high": 3.4999,
-     "low": 3.2388,
-     "close": 3.42,
-     "volume": 8688
-    },
-    {
-     "time": "2026-10-23T11:05:00-04:00",
-     "open": 3.42,
-     "high": 3.58,
-     "low": 3.13,
-     "close": 3.39,
-     "volume": 19451
-    },
-    {
-     "time": "2026-10-23T11:10:00-04:00",
-     "open": 3.39,
-     "high": 3.39,
-     "low": 3.38,
-     "close": 3.3801,
-     "volume": 748
-    },
-    {
-     "time": "2026-10-23T11:15:00-04:00",
-     "open": 3.68,
-     "high": 3.68,
-     "low": 3.3901,
-     "close": 3.4008,
-     "volume": 1052
-    },
-    {
-     "time": "2026-10-23T11:20:00-04:00",
-     "open": 3.39,
-     "high": 3.39,
-     "low": 3.34,
-     "close": 3.34,
-     "volume": 2794
-    },
-    {
-     "time": "2026-10-23T11:35:00-04:00",
-     "open": 3.25,
-     "high": 3.25,
-     "low": 3.18,
-     "close": 3.1801,
-     "volume": 1232
-    },
-    {
-     "time": "2026-10-23T11:40:00-04:00",
-     "open": 3.18,
-     "high": 3.18,
-     "low": 3.18,
-     "close": 3.18,
-     "volume": 699
-    },
-    {
-     "time": "2026-10-23T11:45:00-04:00",
-     "open": 3.24,
-     "high": 3.27,
-     "low": 3.13,
-     "close": 3.13,
-     "volume": 4001
-    },
-    {
-     "time": "2026-10-23T11:50:00-04:00",
-     "open": 3.31,
-     "high": 3.34,
-     "low": 3.3,
-     "close": 3.3,
-     "volume": 2534
-    },
-    {
-     "time": "2026-10-23T12:15:00-04:00",
-     "open": 3.2499,
-     "high": 3.2499,
-     "low": 3.24,
-     "close": 3.24,
-     "volume": 3964
-    },
-    {
-     "time": "2026-10-23T12:20:00-04:00",
-     "open": 3.46,
-     "high": 3.47,
-     "low": 3.46,
-     "close": 3.47,
-     "volume": 731
-    },
-    {
-     "time": "2026-10-23T12:35:00-04:00",
-     "open": 3.2213,
-     "high": 3.2213,
-     "low": 3.2213,
-     "close": 3.2213,
-     "volume": 451
-    },
-    {
-     "time": "2026-10-23T13:00:00-04:00",
-     "open": 3.1963,
-     "high": 3.1963,
-     "low": 3.1963,
-     "close": 3.1963,
-     "volume": 427
-    },
-    {
-     "time": "2026-10-23T13:10:00-04:00",
-     "open": 3.16,
-     "high": 3.16,
-     "low": 3.16,
-     "close": 3.16,
-     "volume": 126
-    },
-    {
-     "time": "2026-10-23T13:15:00-04:00",
-     "open": 3.25,
-     "high": 3.25,
-     "low": 3.17,
-     "close": 3.17,
-     "volume": 1148
-    },
-    {
-     "time": "2026-10-23T13:20:00-04:00",
-     "open": 3.1405,
-     "high": 3.145,
-     "low": 3.1405,
-     "close": 3.145,
-     "volume": 1532
-    },
-    {
-     "time": "2026-10-23T13:25:00-04:00",
-     "open": 3.145,
-     "high": 3.145,
-     "low": 3.145,
-     "close": 3.145,
-     "volume": 126
-    },
-    {
-     "time": "2026-10-23T13:30:00-04:00",
-     "open": 3.145,
-     "high": 3.145,
-     "low": 3.145,
-     "close": 3.145,
-     "volume": 133
-    },
-    {
-     "time": "2026-10-23T13:35:00-04:00",
-     "open": 3.155,
-     "high": 3.155,
-     "low": 3.155,
-     "close": 3.155,
-     "volume": 2148
-    },
-    {
-     "time": "2026-10-23T13:40:00-04:00",
-     "open": 3.17,
-     "high": 3.17,
-     "low": 3.17,
-     "close": 3.17,
-     "volume": 141
-    },
-    {
-     "time": "2026-10-23T13:45:00-04:00",
-     "open": 3.17,
-     "high": 3.17,
-     "low": 3.17,
-     "close": 3.17,
-     "volume": 155
-    },
-    {
-     "time": "2026-10-23T13:50:00-04:00",
-     "open": 3.17,
-     "high": 3.17,
-     "low": 3.17,
-     "close": 3.17,
-     "volume": 303
-    },
-    {
-     "time": "2026-10-23T13:55:00-04:00",
-     "open": 3.17,
-     "high": 3.17,
-     "low": 3.17,
-     "close": 3.17,
-     "volume": 106
-    },
-    {
-     "time": "2026-10-23T14:00:00-04:00",
-     "open": 3.17,
-     "high": 3.17,
-     "low": 3.17,
-     "close": 3.17,
-     "volume": 119
-    },
-    {
-     "time": "2026-10-23T14:05:00-04:00",
-     "open": 3.17,
-     "high": 3.17,
-     "low": 3.16,
-     "close": 3.16,
-     "volume": 442
-    },
-    {
-     "time": "2026-10-23T14:10:00-04:00",
-     "open": 3.23,
-     "high": 3.23,
-     "low": 3.18,
-     "close": 3.18,
-     "volume": 361
-    },
-    {
-     "time": "2026-10-23T14:20:00-04:00",
-     "open": 3.17,
-     "high": 3.3,
-     "low": 3.17,
-     "close": 3.23,
-     "volume": 7312
-    },
-    {
-     "time": "2026-10-23T14:25:00-04:00",
-     "open": 3.255,
-     "high": 3.45,
-     "low": 3.255,
-     "close": 3.45,
-     "volume": 3410
-    },
-    {
-     "time": "2026-10-23T14:30:00-04:00",
-     "open": 3.49,
-     "high": 3.6,
-     "low": 3.49,
-     "close": 3.499,
-     "volume": 4649
-    },
-    {
-     "time": "2026-10-23T14:35:00-04:00",
-     "open": 3.475,
-     "high": 3.5,
-     "low": 3.24,
-     "close": 3.4,
-     "volume": 3343
-    },
-    {
-     "time": "2026-10-23T14:45:00-04:00",
-     "open": 3.375,
-     "high": 3.375,
-     "low": 3.36,
-     "close": 3.36,
-     "volume": 1312
-    },
-    {
-     "time": "2026-10-23T14:55:00-04:00",
-     "open": 3.2801,
-     "high": 3.36,
-     "low": 3.2801,
-     "close": 3.335,
-     "volume": 780
-    },
-    {
-     "time": "2026-10-23T15:00:00-04:00",
-     "open": 3.295,
-     "high": 3.335,
-     "low": 3.295,
-     "close": 3.335,
-     "volume": 1221
-    },
-    {
-     "time": "2026-10-23T15:05:00-04:00",
-     "open": 3.495,
-     "high": 3.495,
-     "low": 3.325,
-     "close": 3.325,
-     "volume": 223
-    },
-    {
-     "time": "2026-10-23T15:10:00-04:00",
-     "open": 3.35,
-     "high": 3.445,
-     "low": 3.33,
-     "close": 3.445,
-     "volume": 1468
-    },
-    {
-     "time": "2026-10-23T15:15:00-04:00",
-     "open": 3.45,
-     "high": 3.45,
-     "low": 3.45,
-     "close": 3.45,
-     "volume": 172
-    },
-    {
-     "time": "2026-10-23T15:20:00-04:00",
-     "open": 3.45,
-     "high": 3.45,
-     "low": 3.32,
-     "close": 3.32,
-     "volume": 893
-    },
-    {
-     "time": "2026-10-23T15:30:00-04:00",
-     "open": 3.35,
-     "high": 3.35,
-     "low": 3.35,
-     "close": 3.35,
-     "volume": 3723
-    },
-    {
-     "time": "2026-10-23T15:40:00-04:00",
-     "open": 3.26,
-     "high": 3.31,
-     "low": 3.2588,
-     "close": 3.2588,
-     "volume": 4899
-    },
-    {
-     "time": "2026-10-23T15:45:00-04:00",
-     "open": 3.29,
-     "high": 3.36,
-     "low": 3.29,
-     "close": 3.36,
-     "volume": 2744
-    },
-    {
-     "time": "2026-10-23T15:55:00-04:00",
-     "open": 3.46,
-     "high": 3.48,
-     "low": 3.4,
-     "close": 3.48,
-     "volume": 3518
-    },
-    {
-     "time": "2026-10-23T16:00:00-04:00",
-     "open": 3.48,
-     "high": 3.48,
-     "low": 3.2954,
-     "close": 3.42,
-     "volume": 0
-    },
-    {
-     "time": "2026-10-23T16:20:00-04:00",
-     "open": 3.33,
-     "high": 3.33,
-     "low": 3.33,
-     "close": 3.33,
-     "volume": 0
-    },
-    {
-     "time": "2026-10-23T16:55:00-04:00",
-     "open": 3.4494,
-     "high": 3.4494,
-     "low": 3.4494,
-     "close": 3.4494,
-     "volume": 0
-    },
-    {
-     "time": "2026-10-23T18:15:00-04:00",
-     "open": 3.31,
-     "high": 3.31,
-     "low": 3.31,
-     "close": 3.31,
-     "volume": 0
-    },
-    {
-     "time": "2026-10-23T18:20:00-04:00",
-     "open": 3.4,
-     "high": 3.4,
-     "low": 3.4,
-     "close": 3.4,
+     "time": "2026-10-23T19:27:41-04:00",
+     "open": 1.18,
+     "high": 1.18,
+     "low": 1.18,
+     "close": 1.18,
      "volume": 0
     }
    ]
@@ -4769,7 +4212,7 @@
    "strength_score": 10,
    "strength_label": "يحتاج متابعة",
    "volume_last": 0,
-   "volume_avg": 1982,
+   "volume_avg": 40866,
    "rvol": 0.0,
    "dollar_volume": 0.0,
    "last_bar": "2026-10-23T18:30:00-04:00",
@@ -5291,7 +4734,7 @@
      "high": 0.549,
      "low": 0.5204,
      "close": 0.5204,
-     "volume": 3219
+     "volume": 780894
     },
     {
      "time": "2026-10-23T16:05:00-04:00",
@@ -5379,9 +4822,9 @@
  "purged": [],
  "diagnostics": {
   "reasons": {
-   "stale": 165,
-   "no_drop": 73,
-   "ok": 8,
+   "stale": 176,
+   "no_drop": 63,
+   "ok": 7,
    "no_data": 2
   }
  },
@@ -6114,15 +5557,24 @@
    "master": 248,
    "items": 8,
    "complete": 0
+  },
+  {
+   "at": "2026-10-23T23:28:45.136301+00:00",
+   "ok": true,
+   "coverage_pct": 100.0,
+   "frames": 248,
+   "master": 248,
+   "items": 7,
+   "complete": 0
   }
  ],
  "last_scan": {
-  "at": "2026-10-23T23:09:48.436691+00:00",
+  "at": "2026-10-23T23:28:45.136301+00:00",
   "ok": true,
   "coverage_pct": 100.0,
   "frames": 248,
   "master": 248,
-  "items": 8,
+  "items": 7,
   "complete": 0
  }
 }
