@@ -1,22 +1,22 @@
 {
- "updated_at": "2026-10-26T23:49:17.314551+00:00",
+ "updated_at": "2026-10-26T23:49:54.609750+00:00",
  "session_date": "2026-10-26",
  "master_count": 247,
  "master_built_on": "2026-10-26",
  "items": [
   {
-   "price": 0.883,
+   "price": 0.89,
    "day_high": 2.41,
    "day_low": 0.7484,
-   "drop_pct": -63.4,
+   "drop_pct": -63.1,
    "hold_min": 65,
    "hold_needed": 60,
    "base_low": 0.8703,
    "near_low": false,
-   "dist_from_low_pct": 18.0,
-   "target": 1.1038,
+   "dist_from_low_pct": 18.9,
+   "target": 1.1125,
    "target_pct": 25.0,
-   "rsi": 42.0,
+   "rsi": 43.5,
    "rsi_min": 35.1,
    "obv": "ضعيف",
    "macd": "هيستوجرام أخضر",
@@ -33,7 +33,7 @@
    "volume_avg": 0,
    "rvol": null,
    "dollar_volume": 0.0,
-   "last_bar": "2026-10-26T19:45:40-04:00",
+   "last_bar": "2026-10-26T19:45:00-04:00",
    "ticker": "SPRC",
    "float": 580973,
    "float_status": "bound",
@@ -105,6 +105,21 @@
      "last_bar": "2026-10-26T19:45:40-04:00",
      "price": 0.883,
      "drop_pct": -63.4,
+     "hold_min": 65,
+     "strength_score": 15,
+     "complete": false,
+     "checks": {
+      "base": false,
+      "rsi": false,
+      "obv": false,
+      "macd": true
+     },
+     "rvol": null
+    },
+    {
+     "last_bar": "2026-10-26T19:45:00-04:00",
+     "price": 0.89,
+     "drop_pct": -63.1,
      "hold_min": 65,
      "strength_score": 15,
      "complete": false,
@@ -687,11 +702,11 @@
      "volume": 0
     },
     {
-     "time": "2026-10-26T19:45:40-04:00",
+     "time": "2026-10-26T19:45:00-04:00",
      "open": 0.883,
-     "high": 0.883,
+     "high": 0.89,
      "low": 0.883,
-     "close": 0.883,
+     "close": 0.89,
      "volume": 0
     }
    ]
@@ -4829,10 +4844,19 @@
    "master": 247,
    "items": 6,
    "complete": 0
+  },
+  {
+   "at": "2026-10-26T23:49:54.609750+00:00",
+   "ok": true,
+   "coverage_pct": 100.0,
+   "frames": 247,
+   "master": 247,
+   "items": 6,
+   "complete": 0
   }
  ],
  "last_scan": {
-  "at": "2026-10-26T23:49:17.314551+00:00",
+  "at": "2026-10-26T23:49:54.609750+00:00",
   "ok": true,
   "coverage_pct": 100.0,
   "frames": 247,
