@@ -1,12 +1,12 @@
 {
-  "updated_at": "2026-10-27T23:40:28.812945+00:00",
+  "updated_at": "2026-10-28T02:46:09.973187+00:00",
   "strategy": "Bottom Radar — Second Leg Setup",
   "count": 9,
   "diagnostics": {
     "symbols_total": 6947,
     "data_coverage_pct": 92.7,
-    "price_pass": 1256,
-    "prior_rally_pass": 330,
+    "price_pass": 1260,
+    "prior_rally_pass": 334,
     "days_since_peak_pass": 67,
     "float_available": 67,
     "float_exact": 0,
@@ -17,8 +17,8 @@
       "sec_edgar": 5
     },
     "float_status": {
-      "too_big": 22,
       "bound": 33,
+      "too_big": 22,
       "unverified": 12
     },
     "sec_status": {
@@ -212,7 +212,7 @@
   },
   "signals": [
     {
-      "price": 2.735,
+      "price": 2.74,
       "float": "≤ 1.4M",
       "float_exact": false,
       "float_source": "yahoo_outstanding",
@@ -221,7 +221,7 @@
       "readiness_score": 55,
       "days_since_peak": 20,
       "base_support": 1.63,
-      "distance_from_base_pct": 67.79,
+      "distance_from_base_pct": 68.1,
       "has_upcoming_catalyst": false,
       "catalyst_detail": "",
       "has_warning": false,
@@ -235,13 +235,13 @@
         "bars": 3
       },
       "indicators": {
-        "rsi": 52.61,
+        "rsi": 52.68,
         "rsi_prev": 54.17,
-        "ema9": 2.6703,
-        "ema20": 2.5337,
+        "ema9": 2.6713,
+        "ema20": 2.5342,
         "vwap": 3.2236,
         "rvol": 0.02,
-        "macd_hist": 0.0995
+        "macd_hist": 0.09981
       },
       "checklist": [
         {
@@ -249,7 +249,7 @@
           "rule": "قريب من منطقة القاع (أقل من 15%)",
           "points": 20,
           "status": false,
-          "note": "البعد الحالي عن القاع 67.8% — تجاوز 20% فلا يُوصف السهم بأنه قريب من القاع"
+          "note": "البعد الحالي عن القاع 68.1% — تجاوز 20% فلا يُوصف السهم بأنه قريب من القاع"
         },
         {
           "key": "pattern",
@@ -313,7 +313,7 @@
       "prior_rally_pct": 185.89,
       "surge_pct": 185.89,
       "max_drawdown_pct": 66.74,
-      "drawdown_pct": 41.31,
+      "drawdown_pct": 41.2,
       "float_shares": 1436344,
       "support": {
         "level": 1.63,
@@ -321,31 +321,31 @@
         "stable_sessions": 11,
         "stable_bars": 12,
         "near_support": false,
-        "distance_pct": 67.79,
+        "distance_pct": 68.1,
         "tests": 6,
         "false_breakdown": false,
         "holding": true
       },
       "technical": {
-        "rsi": 52.61,
+        "rsi": 52.68,
         "rsi_prev": 54.17,
         "rsi_oversold_recent": true,
         "rsi_turning_up": false,
-        "ema9": 2.6703,
-        "ema20": 2.5337,
-        "ema50": 2.7473,
+        "ema9": 2.6713,
+        "ema20": 2.5342,
+        "ema50": 2.7475,
         "ema20_reclaim": true,
         "ema20_rising": true,
         "ema50_reclaim": false,
-        "macd": 0.07281,
-        "macd_signal": -0.02668,
-        "macd_hist": 0.0995,
+        "macd": 0.07321,
+        "macd_signal": -0.0266,
+        "macd_hist": 0.09981,
         "macd_hist_prev": 0.11741,
         "macd_cross": false,
         "macd_improving": false,
         "rvol": 0.02,
         "volume_ratio": 0.02,
-        "body_pct": 4.7,
+        "body_pct": 4.53,
         "volume_confirm": false,
         "positive_confirmations": 1,
         "vwap": 3.2236,
@@ -396,14 +396,14 @@
         "prior_high": 4.66
       },
       "plan": {
-        "entry_price": 2.735,
-        "entry": 2.735,
+        "entry_price": 2.74,
+        "entry": 2.74,
         "entry_low": 1.55,
-        "entry_high": 2.735,
+        "entry_high": 2.74,
         "stop_loss": 1.519,
         "stop": 1.519,
         "stop_basis": "القاع (Base Support) −2%",
-        "stop_pct": -44.5,
+        "stop_pct": -44.6,
         "target_1": 3.21,
         "target_2": 4.66,
         "tp1_basis": "آخر Lower High",
@@ -414,11 +414,11 @@
         "targets_detail": [
           {
             "price": 3.21,
-            "gain_pct": 17.4
+            "gain_pct": 17.2
           },
           {
             "price": 4.66,
-            "gain_pct": 70.4
+            "gain_pct": 70.1
           }
         ],
         "final_100_target": 4.66,
@@ -435,7 +435,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "BKYI",
-      "computed_at": "2026-10-27T23:40:28.812945+00:00",
+      "computed_at": "2026-10-28T02:46:09.973187+00:00",
       "float_status": "bound",
       "technical_4h": {
         "rsi": 54.57,
@@ -778,15 +778,15 @@
           "open": 2.87,
           "high": 2.87,
           "low": 2.59,
-          "close": 2.735,
-          "volume": 281809,
-          "rsi": 52.63
+          "close": 2.74,
+          "volume": 282900,
+          "rsi": 52.69
         }
       ],
       "discovered_at": "2026-10-07T14:09:16.033430+00:00"
     },
     {
-      "price": 1.195,
+      "price": 1.2,
       "float": "غير مؤكد · أسهم مُصدَرة 26.4M",
       "float_exact": false,
       "float_source": "yahoo_outstanding",
@@ -795,7 +795,7 @@
       "readiness_score": 55,
       "days_since_peak": 9,
       "base_support": 1.21,
-      "distance_from_base_pct": -1.24,
+      "distance_from_base_pct": -0.83,
       "has_upcoming_catalyst": false,
       "catalyst_detail": "",
       "has_warning": false,
@@ -809,13 +809,13 @@
         "bars": 2
       },
       "indicators": {
-        "rsi": 28.23,
+        "rsi": 28.68,
         "rsi_prev": 24.93,
-        "ema9": 1.2866,
-        "ema20": 1.4308,
-        "vwap": 1.185,
+        "ema9": 1.2876,
+        "ema20": 1.4313,
+        "vwap": 1.1867,
         "rvol": 0.04,
-        "macd_hist": -0.0085
+        "macd_hist": -0.00818
       },
       "checklist": [
         {
@@ -823,7 +823,7 @@
           "rule": "قريب من منطقة القاع (أقل من 15%)",
           "points": 20,
           "status": true,
-          "note": "البعد الحالي عن القاع -1.2%"
+          "note": "البعد الحالي عن القاع -0.8%"
         },
         {
           "key": "pattern",
@@ -887,7 +887,7 @@
       "prior_rally_pct": 242.98,
       "surge_pct": 242.98,
       "max_drawdown_pct": 72.53,
-      "drawdown_pct": 71.2,
+      "drawdown_pct": 71.08,
       "float_shares": 26422945,
       "support": {
         "level": 1.21,
@@ -895,34 +895,34 @@
         "stable_sessions": 0,
         "stable_bars": 1,
         "near_support": true,
-        "distance_pct": -1.24,
+        "distance_pct": -0.83,
         "tests": 7,
         "false_breakdown": false,
         "holding": true
       },
       "technical": {
-        "rsi": 28.23,
+        "rsi": 28.68,
         "rsi_prev": 24.93,
         "rsi_oversold_recent": true,
         "rsi_turning_up": true,
-        "ema9": 1.2866,
-        "ema20": 1.4308,
-        "ema50": 1.9146,
+        "ema9": 1.2876,
+        "ema20": 1.4313,
+        "ema50": 1.9148,
         "ema20_reclaim": false,
         "ema20_rising": false,
         "ema50_reclaim": false,
-        "macd": -0.17586,
-        "macd_signal": -0.16736,
-        "macd_hist": -0.0085,
+        "macd": -0.17546,
+        "macd_signal": -0.16728,
+        "macd_hist": -0.00818,
         "macd_hist_prev": -0.01114,
         "macd_cross": false,
         "macd_improving": true,
         "rvol": 0.04,
         "volume_ratio": 0.04,
-        "body_pct": 4.82,
+        "body_pct": 5.26,
         "volume_confirm": false,
         "positive_confirmations": 2,
-        "vwap": 1.185,
+        "vwap": 1.1867,
         "vwap_reclaim": true,
         "volume_ok": true,
         "volume_mode": "dry",
@@ -970,14 +970,14 @@
         "prior_high": 4.15
       },
       "plan": {
-        "entry_price": 1.195,
-        "entry": 1.195,
+        "entry_price": 1.2,
+        "entry": 1.2,
         "entry_low": 1.14,
-        "entry_high": 1.195,
+        "entry_high": 1.2,
         "stop_loss": 1.1172,
         "stop": 1.1172,
         "stop_basis": "القاع (Base Support) −2%",
-        "stop_pct": -6.5,
+        "stop_pct": -6.9,
         "target_1": 1.28,
         "target_2": 4.15,
         "tp1_basis": "آخر Lower High",
@@ -988,11 +988,11 @@
         "targets_detail": [
           {
             "price": 1.28,
-            "gain_pct": 7.1
+            "gain_pct": 6.7
           },
           {
             "price": 4.15,
-            "gain_pct": 247.3
+            "gain_pct": 245.8
           }
         ],
         "final_100_target": 4.15,
@@ -1009,7 +1009,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "TC",
-      "computed_at": "2026-10-27T23:40:28.812945+00:00",
+      "computed_at": "2026-10-28T02:46:09.973187+00:00",
       "float_status": "unverified",
       "float_unverified": true,
       "technical_4h": {
@@ -1353,9 +1353,9 @@
           "open": 1.14,
           "high": 1.22,
           "low": 1.14,
-          "close": 1.195,
-          "volume": 91493,
-          "rsi": 24.4
+          "close": 1.2,
+          "volume": 91500,
+          "rsi": 24.92
         }
       ],
       "discovered_at": "2026-10-15T16:33:29.563221+00:00"
@@ -1494,7 +1494,7 @@
         "macd_improving": false,
         "rvol": 0.05,
         "volume_ratio": 0.05,
-        "body_pct": 7.42,
+        "body_pct": 8.62,
         "volume_confirm": false,
         "positive_confirmations": 2,
         "vwap": 2.2431,
@@ -1584,7 +1584,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "YMAT",
-      "computed_at": "2026-10-27T23:40:28.812945+00:00",
+      "computed_at": "2026-10-28T02:46:09.973187+00:00",
       "float_status": "bound",
       "technical_4h": {
         "rsi": 54.24,
@@ -1924,15 +1924,589 @@
         },
         {
           "date": "2026-10-27",
-          "open": 2.29,
+          "open": 2.32,
           "high": 2.32,
-          "low": 2.11,
+          "low": 2.1,
           "close": 2.12,
-          "volume": 653691,
+          "volume": 661300,
           "rsi": 56.16
         }
       ],
       "discovered_at": "2026-10-16T19:25:59.010362+00:00"
+    },
+    {
+      "price": 1.19,
+      "float": "≤ 3.4M",
+      "float_exact": false,
+      "float_source": "sec_edgar",
+      "shares_outstanding": 3425978,
+      "stage": "قيد المتابعة",
+      "readiness_score": 50,
+      "days_since_peak": 15,
+      "base_support": 0.8,
+      "distance_from_base_pct": 48.75,
+      "has_upcoming_catalyst": false,
+      "catalyst_detail": "",
+      "has_warning": false,
+      "warning_detail": "",
+      "pattern_type": "قاع مزدوج (Double Bottom)",
+      "pattern_detail": {
+        "type": "قاع مزدوج (Double Bottom)",
+        "detail": "قاعان عند 1.32 و1.38 (فارق أقل من 5%)",
+        "level": 1.38,
+        "neckline": 1.65,
+        "bars": 3
+      },
+      "indicators": {
+        "rsi": 45.24,
+        "rsi_prev": 45.24,
+        "ema9": 1.2167,
+        "ema20": 1.2709,
+        "vwap": 1.1724,
+        "rvol": 0.0,
+        "macd_hist": -0.02076
+      },
+      "checklist": [
+        {
+          "key": "near_base",
+          "rule": "قريب من منطقة القاع (أقل من 15%)",
+          "points": 20,
+          "status": false,
+          "note": "البعد الحالي عن القاع 48.8% — تجاوز 20% فلا يُوصف السهم بأنه قريب من القاع"
+        },
+        {
+          "key": "pattern",
+          "rule": "قاع مزدوج (Double Bottom)",
+          "points": 15,
+          "status": true
+        },
+        {
+          "key": "stable",
+          "rule": "ثبات الدعم لـ 5 جلسات",
+          "points": 15,
+          "status": true
+        },
+        {
+          "key": "rsi",
+          "rule": "RSI يتحسن من التشبع البيعي",
+          "points": 10,
+          "status": false
+        },
+        {
+          "key": "volume",
+          "rule": "جفاف البيع وهدوء الفوليوم (RVOL <= 0.8x)",
+          "points": 10,
+          "status": true
+        },
+        {
+          "key": "ema20",
+          "rule": "استعادة EMA20 (الإغلاق فوق المتوسط)",
+          "points": 10,
+          "status": false
+        },
+        {
+          "key": "vwap",
+          "rule": "السعر فوق VWAP",
+          "points": 5,
+          "status": true
+        },
+        {
+          "key": "macd",
+          "rule": "تحسن MACD Histogram",
+          "points": 5,
+          "status": true
+        },
+        {
+          "key": "catalyst",
+          "rule": "محفز مستقبلي قادم",
+          "points": 10,
+          "status": false
+        }
+      ],
+      "missing_conditions": [
+        "السعر بعيد عن منطقة القاع (أكثر من 15%)",
+        "RSI لم يبدأ التحسن من منطقة التشبع البيعي بعد",
+        "السعر لم يستعد EMA20 بعد",
+        "لا يوجد محفز مستقبلي معروف خلال 7–30 يومًا"
+      ],
+      "event_date": "2026-10-06",
+      "event_price": 1.5,
+      "prior_base": 0.8,
+      "prior_high": 1.86,
+      "prior_rally_pct": 132.5,
+      "surge_pct": 132.5,
+      "max_drawdown_pct": 51.61,
+      "drawdown_pct": 36.02,
+      "float_shares": 3425978,
+      "support": {
+        "level": 0.8,
+        "trough_low": 0.9,
+        "stable_sessions": 4,
+        "stable_bars": 5,
+        "near_support": false,
+        "distance_pct": 48.75,
+        "tests": 0,
+        "false_breakdown": false,
+        "holding": true
+      },
+      "technical": {
+        "rsi": 45.24,
+        "rsi_prev": 45.24,
+        "rsi_oversold_recent": false,
+        "rsi_turning_up": false,
+        "ema9": 1.2167,
+        "ema20": 1.2709,
+        "ema50": 1.2942,
+        "ema20_reclaim": false,
+        "ema20_rising": false,
+        "ema50_reclaim": false,
+        "macd": -0.04688,
+        "macd_signal": -0.02612,
+        "macd_hist": -0.02076,
+        "macd_hist_prev": -0.025,
+        "macd_cross": false,
+        "macd_improving": true,
+        "rvol": 0.0,
+        "volume_ratio": 0.0,
+        "body_pct": 0.0,
+        "volume_confirm": false,
+        "positive_confirmations": 1,
+        "vwap": 1.1724,
+        "vwap_reclaim": true,
+        "volume_ok": true,
+        "volume_mode": "dry",
+        "rsi_recovery_signal": false,
+        "rsi_min_since_peak": 43.26,
+        "rsi_min_intraday": 37.64,
+        "higher_low": false,
+        "no_new_low": true,
+        "stable_bars": 5,
+        "lower_high_level": 1.37
+      },
+      "signal_flags": {
+        "near_base": false,
+        "pattern": true,
+        "stable": true,
+        "rsi": false,
+        "volume": true,
+        "ema20": false,
+        "vwap": true,
+        "macd": true,
+        "catalyst": false
+      },
+      "points": {
+        "near_base": 0,
+        "pattern": 15,
+        "stable": 15,
+        "rsi": 0,
+        "volume": 10,
+        "ema20": 0,
+        "vwap": 5,
+        "macd": 5,
+        "catalyst": 0
+      },
+      "pattern": {
+        "type": "قاع مزدوج (Double Bottom)",
+        "detail": "قاعان عند 1.32 و1.38 (فارق أقل من 5%)",
+        "level": 1.38,
+        "neckline": 1.65,
+        "bars": 3
+      },
+      "chart_levels": {
+        "support": 0.8,
+        "neckline": 1.65,
+        "resistance": 1.37,
+        "prior_high": 1.86
+      },
+      "plan": {
+        "entry_price": 1.19,
+        "entry": 1.19,
+        "entry_low": 0.9,
+        "entry_high": 1.19,
+        "stop_loss": 0.784,
+        "stop": 0.784,
+        "stop_basis": "أدنى قاع تشكّل بعد القمة −2%",
+        "stop_pct": -34.1,
+        "target_1": 1.37,
+        "target_2": 1.86,
+        "tp1_basis": "آخر Lower High",
+        "targets": [
+          1.37,
+          1.86
+        ],
+        "targets_detail": [
+          {
+            "price": 1.37,
+            "gain_pct": 15.1
+          },
+          {
+            "price": 1.86,
+            "gain_pct": 56.3
+          }
+        ],
+        "final_100_target": 1.86,
+        "ready": false
+      },
+      "status": "قيد المتابعة",
+      "ready": false,
+      "semi_ready": false,
+      "news": {
+        "warnings": [],
+        "catalysts": [],
+        "temp_excluded": false,
+        "headlines_count": 0,
+        "earnings_dates_count": 0
+      },
+      "ticker": "DUKRW",
+      "computed_at": "2026-10-28T02:46:09.973187+00:00",
+      "float_status": "bound",
+      "technical_4h": {
+        "rsi": 46.68,
+        "rsi_prev": 40.14,
+        "rsi_oversold_recent": false,
+        "rsi_turning_up": true,
+        "ema9": 1.2019,
+        "ema20": 1.2841,
+        "ema50": 1.3244,
+        "ema20_reclaim": false,
+        "ema20_rising": false,
+        "ema50_reclaim": false,
+        "macd": -0.06654,
+        "macd_signal": -0.02514,
+        "macd_hist": -0.0414,
+        "macd_hist_prev": -0.04842,
+        "macd_cross": false,
+        "macd_improving": true,
+        "rvol": 0.32,
+        "volume_ratio": 0.32,
+        "body_pct": 0.88,
+        "volume_confirm": false,
+        "positive_confirmations": 2
+      },
+      "technical_1h": {
+        "rsi": 45.01,
+        "rsi_prev": 35.83,
+        "rsi_oversold_recent": false,
+        "rsi_turning_up": true,
+        "ema9": 1.1787,
+        "ema20": 1.2792,
+        "ema50": 1.3876,
+        "ema20_reclaim": false,
+        "ema20_rising": false,
+        "ema50_reclaim": false,
+        "macd": -0.1019,
+        "macd_signal": -0.07692,
+        "macd_hist": -0.02498,
+        "macd_hist_prev": -0.03308,
+        "macd_cross": false,
+        "macd_improving": true,
+        "rvol": 0.58,
+        "volume_ratio": 0.58,
+        "body_pct": 0.88,
+        "volume_confirm": false,
+        "positive_confirmations": 2
+      },
+      "chart": [
+        {
+          "date": "2026-09-16",
+          "open": 1.4,
+          "high": 1.65,
+          "low": 1.3,
+          "close": 1.39,
+          "volume": 8000,
+          "rsi": null
+        },
+        {
+          "date": "2026-09-17",
+          "open": 1.41,
+          "high": 1.41,
+          "low": 1.4,
+          "close": 1.4,
+          "volume": 1800,
+          "rsi": null,
+          "swing_low": false
+        },
+        {
+          "date": "2026-09-18",
+          "open": 1.38,
+          "high": 1.39,
+          "low": 0.8,
+          "close": 1.39,
+          "volume": 2500,
+          "rsi": null,
+          "swing_low": true
+        },
+        {
+          "date": "2026-09-21",
+          "open": 1.39,
+          "high": 1.39,
+          "low": 1.39,
+          "close": 1.39,
+          "volume": 0,
+          "rsi": null,
+          "swing_low": false
+        },
+        {
+          "date": "2026-09-22",
+          "open": 1.32,
+          "high": 1.32,
+          "low": 1.1,
+          "close": 1.1,
+          "volume": 1600,
+          "rsi": null,
+          "swing_low": true
+        },
+        {
+          "date": "2026-09-23",
+          "open": 1.3,
+          "high": 1.3,
+          "low": 1.18,
+          "close": 1.3,
+          "volume": 3300,
+          "rsi": null,
+          "swing_low": false
+        },
+        {
+          "date": "2026-09-24",
+          "open": 1.68,
+          "high": 1.68,
+          "low": 1.21,
+          "close": 1.21,
+          "volume": 2400,
+          "rsi": null,
+          "swing_low": false
+        },
+        {
+          "date": "2026-09-25",
+          "open": 1.0,
+          "high": 1.35,
+          "low": 1.0,
+          "close": 1.35,
+          "volume": 600,
+          "rsi": null,
+          "swing_low": true
+        },
+        {
+          "date": "2026-09-28",
+          "open": 1.35,
+          "high": 1.35,
+          "low": 1.35,
+          "close": 1.35,
+          "volume": 0,
+          "rsi": null,
+          "swing_low": false
+        },
+        {
+          "date": "2026-09-29",
+          "open": 1.35,
+          "high": 1.35,
+          "low": 1.23,
+          "close": 1.34,
+          "volume": 12800,
+          "rsi": null,
+          "swing_low": true
+        },
+        {
+          "date": "2026-09-30",
+          "open": 1.61,
+          "high": 1.75,
+          "low": 1.39,
+          "close": 1.49,
+          "volume": 9000,
+          "rsi": null,
+          "swing_low": false
+        },
+        {
+          "date": "2026-10-01",
+          "open": 1.37,
+          "high": 1.86,
+          "low": 1.37,
+          "close": 1.63,
+          "volume": 17300,
+          "rsi": null,
+          "swing_low": false
+        },
+        {
+          "date": "2026-10-02",
+          "open": 1.6,
+          "high": 1.85,
+          "low": 1.35,
+          "close": 1.35,
+          "volume": 4500,
+          "rsi": null,
+          "swing_low": true
+        },
+        {
+          "date": "2026-10-05",
+          "open": 1.37,
+          "high": 1.75,
+          "low": 1.37,
+          "close": 1.55,
+          "volume": 12300,
+          "rsi": null,
+          "swing_low": false
+        },
+        {
+          "date": "2026-10-06",
+          "open": 1.6,
+          "high": 1.86,
+          "low": 1.47,
+          "close": 1.5,
+          "volume": 23600,
+          "rsi": 53.5,
+          "swing_low": false
+        },
+        {
+          "date": "2026-10-07",
+          "open": 1.5,
+          "high": 1.5,
+          "low": 1.5,
+          "close": 1.5,
+          "volume": 0,
+          "rsi": 53.5,
+          "swing_low": false
+        },
+        {
+          "date": "2026-10-08",
+          "open": 1.34,
+          "high": 1.34,
+          "low": 1.34,
+          "close": 1.34,
+          "volume": 600,
+          "rsi": 47.85,
+          "swing_low": true
+        },
+        {
+          "date": "2026-10-09",
+          "open": 1.48,
+          "high": 1.75,
+          "low": 1.36,
+          "close": 1.36,
+          "volume": 9500,
+          "rsi": 48.58,
+          "swing_low": false
+        },
+        {
+          "date": "2026-10-12",
+          "open": 1.36,
+          "high": 1.36,
+          "low": 1.07,
+          "close": 1.25,
+          "volume": 4500,
+          "rsi": 44.85,
+          "swing_low": true
+        },
+        {
+          "date": "2026-10-13",
+          "open": 1.14,
+          "high": 1.4,
+          "low": 1.13,
+          "close": 1.4,
+          "volume": 1700,
+          "rsi": 50.44,
+          "swing_low": false
+        },
+        {
+          "date": "2026-10-14",
+          "open": 1.23,
+          "high": 1.3,
+          "low": 1.12,
+          "close": 1.3,
+          "volume": 6400,
+          "rsi": 47.02,
+          "swing_low": true
+        },
+        {
+          "date": "2026-10-15",
+          "open": 1.44,
+          "high": 1.64,
+          "low": 1.34,
+          "close": 1.4,
+          "volume": 20700,
+          "rsi": 50.62,
+          "swing_low": false
+        },
+        {
+          "date": "2026-10-16",
+          "open": 1.38,
+          "high": 1.38,
+          "low": 1.16,
+          "close": 1.19,
+          "volume": 4500,
+          "rsi": 43.87,
+          "swing_low": true
+        },
+        {
+          "date": "2026-10-19",
+          "open": 1.19,
+          "high": 1.19,
+          "low": 1.19,
+          "close": 1.19,
+          "volume": 0,
+          "rsi": 43.87,
+          "swing_low": false
+        },
+        {
+          "date": "2026-10-20",
+          "open": 1.24,
+          "high": 1.37,
+          "low": 1.2,
+          "close": 1.2,
+          "volume": 1900,
+          "rsi": 44.28,
+          "swing_low": false
+        },
+        {
+          "date": "2026-10-21",
+          "open": 0.9,
+          "high": 1.24,
+          "low": 0.9,
+          "close": 1.24,
+          "volume": 600,
+          "rsi": 45.98,
+          "swing_low": true
+        },
+        {
+          "date": "2026-10-22",
+          "open": 1.15,
+          "high": 1.15,
+          "low": 1.15,
+          "close": 1.15,
+          "volume": 200,
+          "rsi": 42.82,
+          "swing_low": false
+        },
+        {
+          "date": "2026-10-23",
+          "open": 1.15,
+          "high": 1.15,
+          "low": 1.15,
+          "close": 1.15,
+          "volume": 0,
+          "rsi": 42.82,
+          "swing_low": false
+        },
+        {
+          "date": "2026-10-26",
+          "open": 1.14,
+          "high": 1.2,
+          "low": 1.14,
+          "close": 1.19,
+          "volume": 7400,
+          "rsi": 44.78,
+          "swing_low": true
+        },
+        {
+          "date": "2026-10-27",
+          "open": 1.19,
+          "high": 1.19,
+          "low": 1.19,
+          "close": 1.19,
+          "volume": 0,
+          "rsi": 44.78
+        }
+      ],
+      "discovered_at": "2026-10-21T23:09:47.803395+00:00"
     },
     {
       "price": 2.32,
@@ -2069,7 +2643,7 @@
         "macd_improving": true,
         "rvol": 0.67,
         "volume_ratio": 0.67,
-        "body_pct": 5.33,
+        "body_pct": 5.31,
         "volume_confirm": false,
         "positive_confirmations": 2,
         "vwap": 2.3263,
@@ -2159,7 +2733,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "RYOJ",
-      "computed_at": "2026-10-27T23:40:28.812945+00:00",
+      "computed_at": "2026-10-28T02:46:09.973187+00:00",
       "float_status": "unverified",
       "float_unverified": true,
       "technical_4h": {
@@ -2202,8 +2776,8 @@
         "macd_hist_prev": 0.00241,
         "macd_cross": false,
         "macd_improving": true,
-        "rvol": 1.25,
-        "volume_ratio": 1.25,
+        "rvol": 1.24,
+        "volume_ratio": 1.24,
         "body_pct": 2.93,
         "volume_confirm": true,
         "positive_confirmations": 2
@@ -2500,11 +3074,11 @@
         },
         {
           "date": "2026-10-27",
-          "open": 2.2025,
+          "open": 2.203,
           "high": 2.505,
           "low": 2.17,
           "close": 2.32,
-          "volume": 82138,
+          "volume": 82300,
           "rsi": 33.73
         }
       ],
@@ -2538,7 +3112,7 @@
         "rsi_prev": 42.28,
         "ema9": 1.7285,
         "ema20": 1.8251,
-        "vwap": 1.6179,
+        "vwap": 1.618,
         "rvol": 0.13,
         "macd_hist": 0.07449
       },
@@ -2647,7 +3221,7 @@
         "body_pct": 1.22,
         "volume_confirm": false,
         "positive_confirmations": 0,
-        "vwap": 1.6179,
+        "vwap": 1.618,
         "vwap_reclaim": true,
         "volume_ok": true,
         "volume_mode": "dry",
@@ -2734,7 +3308,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "SMJF",
-      "computed_at": "2026-10-27T23:40:28.812945+00:00",
+      "computed_at": "2026-10-28T02:46:09.973187+00:00",
       "float_status": "unverified",
       "float_unverified": true,
       "technical_4h": {
@@ -2777,8 +3351,8 @@
         "macd_hist_prev": -0.01135,
         "macd_cross": false,
         "macd_improving": true,
-        "rvol": 0.8,
-        "volume_ratio": 0.8,
+        "rvol": 0.92,
+        "volume_ratio": 0.92,
         "body_pct": 0.61,
         "volume_confirm": false,
         "positive_confirmations": 2
@@ -3076,10 +3650,10 @@
         {
           "date": "2026-10-27",
           "open": 1.64,
-          "high": 1.68,
-          "low": 1.6,
+          "high": 1.71,
+          "low": 1.59,
           "close": 1.62,
-          "volume": 103988,
+          "volume": 104000,
           "rsi": 52.88
         }
       ],
@@ -3309,7 +3883,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "LHSW",
-      "computed_at": "2026-10-27T23:40:28.812945+00:00",
+      "computed_at": "2026-10-28T02:46:09.973187+00:00",
       "float_status": "unverified",
       "float_unverified": true,
       "technical_4h": {
@@ -3651,589 +4225,14 @@
         {
           "date": "2026-10-27",
           "open": 3.75,
-          "high": 4.5199,
+          "high": 4.52,
           "low": 3.3,
           "close": 4.15,
-          "volume": 94583,
+          "volume": 94600,
           "rsi": 47.87
         }
       ],
       "discovered_at": "2026-10-27T17:41:48.408528+00:00"
-    },
-    {
-      "price": 1.19,
-      "float": "≤ 3.4M",
-      "float_exact": false,
-      "float_source": "sec_edgar",
-      "shares_outstanding": 3425978,
-      "stage": "قيد المتابعة",
-      "readiness_score": 40,
-      "days_since_peak": 14,
-      "base_support": 0.8,
-      "distance_from_base_pct": 48.75,
-      "has_upcoming_catalyst": false,
-      "catalyst_detail": "",
-      "has_warning": false,
-      "warning_detail": "",
-      "pattern_type": "قاع مزدوج (Double Bottom)",
-      "pattern_detail": {
-        "type": "قاع مزدوج (Double Bottom)",
-        "detail": "قاعان عند 1.32 و1.38 (فارق أقل من 5%)",
-        "level": 1.38,
-        "neckline": 1.65,
-        "bars": 3
-      },
-      "indicators": {
-        "rsi": 45.24,
-        "rsi_prev": 43.26,
-        "ema9": 1.2234,
-        "ema20": 1.2794,
-        "vwap": 1.1724,
-        "rvol": 1.14,
-        "macd_hist": -0.025
-      },
-      "checklist": [
-        {
-          "key": "near_base",
-          "rule": "قريب من منطقة القاع (أقل من 15%)",
-          "points": 20,
-          "status": false,
-          "note": "البعد الحالي عن القاع 48.8% — تجاوز 20% فلا يُوصف السهم بأنه قريب من القاع"
-        },
-        {
-          "key": "pattern",
-          "rule": "قاع مزدوج (Double Bottom)",
-          "points": 15,
-          "status": true
-        },
-        {
-          "key": "stable",
-          "rule": "ثبات الدعم لـ 4 جلسات",
-          "points": 15,
-          "status": true
-        },
-        {
-          "key": "rsi",
-          "rule": "RSI يتحسن من التشبع البيعي",
-          "points": 10,
-          "status": false
-        },
-        {
-          "key": "volume",
-          "rule": "جفاف البيع وهدوء الفوليوم (RVOL <= 0.8x)",
-          "points": 10,
-          "status": false
-        },
-        {
-          "key": "ema20",
-          "rule": "استعادة EMA20 (الإغلاق فوق المتوسط)",
-          "points": 10,
-          "status": false
-        },
-        {
-          "key": "vwap",
-          "rule": "السعر فوق VWAP",
-          "points": 5,
-          "status": true
-        },
-        {
-          "key": "macd",
-          "rule": "تحسن MACD Histogram",
-          "points": 5,
-          "status": true
-        },
-        {
-          "key": "catalyst",
-          "rule": "محفز مستقبلي قادم",
-          "points": 10,
-          "status": false
-        }
-      ],
-      "missing_conditions": [
-        "السعر بعيد عن منطقة القاع (أكثر من 15%)",
-        "RSI لم يبدأ التحسن من منطقة التشبع البيعي بعد",
-        "الفوليوم لم يجف بعد ولا يوجد زخم خفيف مبكر",
-        "السعر لم يستعد EMA20 بعد",
-        "لا يوجد محفز مستقبلي معروف خلال 7–30 يومًا"
-      ],
-      "event_date": "2026-10-06",
-      "event_price": 1.5,
-      "prior_base": 0.8,
-      "prior_high": 1.86,
-      "prior_rally_pct": 132.5,
-      "surge_pct": 132.5,
-      "max_drawdown_pct": 51.61,
-      "drawdown_pct": 36.02,
-      "float_shares": 3425978,
-      "support": {
-        "level": 0.8,
-        "trough_low": 0.9,
-        "stable_sessions": 3,
-        "stable_bars": 4,
-        "near_support": false,
-        "distance_pct": 48.75,
-        "tests": 0,
-        "false_breakdown": false,
-        "holding": true
-      },
-      "technical": {
-        "rsi": 45.24,
-        "rsi_prev": 43.26,
-        "rsi_oversold_recent": false,
-        "rsi_turning_up": true,
-        "ema9": 1.2234,
-        "ema20": 1.2794,
-        "ema50": 1.2985,
-        "ema20_reclaim": false,
-        "ema20_rising": false,
-        "ema50_reclaim": false,
-        "macd": -0.04592,
-        "macd_signal": -0.02093,
-        "macd_hist": -0.025,
-        "macd_hist_prev": -0.02936,
-        "macd_cross": false,
-        "macd_improving": true,
-        "rvol": 1.14,
-        "volume_ratio": 1.14,
-        "body_pct": 4.39,
-        "volume_confirm": false,
-        "positive_confirmations": 2,
-        "vwap": 1.1724,
-        "vwap_reclaim": true,
-        "volume_ok": false,
-        "volume_mode": "none",
-        "rsi_recovery_signal": false,
-        "rsi_min_since_peak": 43.26,
-        "rsi_min_intraday": 37.64,
-        "higher_low": false,
-        "no_new_low": true,
-        "stable_bars": 4,
-        "lower_high_level": 1.37
-      },
-      "signal_flags": {
-        "near_base": false,
-        "pattern": true,
-        "stable": true,
-        "rsi": false,
-        "volume": false,
-        "ema20": false,
-        "vwap": true,
-        "macd": true,
-        "catalyst": false
-      },
-      "points": {
-        "near_base": 0,
-        "pattern": 15,
-        "stable": 15,
-        "rsi": 0,
-        "volume": 0,
-        "ema20": 0,
-        "vwap": 5,
-        "macd": 5,
-        "catalyst": 0
-      },
-      "pattern": {
-        "type": "قاع مزدوج (Double Bottom)",
-        "detail": "قاعان عند 1.32 و1.38 (فارق أقل من 5%)",
-        "level": 1.38,
-        "neckline": 1.65,
-        "bars": 3
-      },
-      "chart_levels": {
-        "support": 0.8,
-        "neckline": 1.65,
-        "resistance": 1.37,
-        "prior_high": 1.86
-      },
-      "plan": {
-        "entry_price": 1.19,
-        "entry": 1.19,
-        "entry_low": 0.9,
-        "entry_high": 1.19,
-        "stop_loss": 0.784,
-        "stop": 0.784,
-        "stop_basis": "أدنى قاع تشكّل بعد القمة −2%",
-        "stop_pct": -34.1,
-        "target_1": 1.37,
-        "target_2": 1.86,
-        "tp1_basis": "آخر Lower High",
-        "targets": [
-          1.37,
-          1.86
-        ],
-        "targets_detail": [
-          {
-            "price": 1.37,
-            "gain_pct": 15.1
-          },
-          {
-            "price": 1.86,
-            "gain_pct": 56.3
-          }
-        ],
-        "final_100_target": 1.86,
-        "ready": false
-      },
-      "status": "قيد المتابعة",
-      "ready": false,
-      "semi_ready": false,
-      "news": {
-        "warnings": [],
-        "catalysts": [],
-        "temp_excluded": false,
-        "headlines_count": 0,
-        "earnings_dates_count": 0
-      },
-      "ticker": "DUKRW",
-      "computed_at": "2026-10-27T23:40:28.812945+00:00",
-      "float_status": "bound",
-      "technical_4h": {
-        "rsi": 46.68,
-        "rsi_prev": 40.14,
-        "rsi_oversold_recent": false,
-        "rsi_turning_up": true,
-        "ema9": 1.2019,
-        "ema20": 1.2841,
-        "ema50": 1.3244,
-        "ema20_reclaim": false,
-        "ema20_rising": false,
-        "ema50_reclaim": false,
-        "macd": -0.06654,
-        "macd_signal": -0.02514,
-        "macd_hist": -0.0414,
-        "macd_hist_prev": -0.04842,
-        "macd_cross": false,
-        "macd_improving": true,
-        "rvol": 0.32,
-        "volume_ratio": 0.32,
-        "body_pct": 0.88,
-        "volume_confirm": false,
-        "positive_confirmations": 2
-      },
-      "technical_1h": {
-        "rsi": 45.01,
-        "rsi_prev": 35.83,
-        "rsi_oversold_recent": false,
-        "rsi_turning_up": true,
-        "ema9": 1.1787,
-        "ema20": 1.2792,
-        "ema50": 1.3876,
-        "ema20_reclaim": false,
-        "ema20_rising": false,
-        "ema50_reclaim": false,
-        "macd": -0.1019,
-        "macd_signal": -0.07692,
-        "macd_hist": -0.02498,
-        "macd_hist_prev": -0.03308,
-        "macd_cross": false,
-        "macd_improving": true,
-        "rvol": 0.58,
-        "volume_ratio": 0.58,
-        "body_pct": 0.88,
-        "volume_confirm": false,
-        "positive_confirmations": 2
-      },
-      "chart": [
-        {
-          "date": "2026-09-15",
-          "open": 1.32,
-          "high": 1.5,
-          "low": 1.32,
-          "close": 1.5,
-          "volume": 10200,
-          "rsi": null
-        },
-        {
-          "date": "2026-09-16",
-          "open": 1.4,
-          "high": 1.65,
-          "low": 1.3,
-          "close": 1.39,
-          "volume": 8000,
-          "rsi": null,
-          "swing_low": true
-        },
-        {
-          "date": "2026-09-17",
-          "open": 1.41,
-          "high": 1.41,
-          "low": 1.4,
-          "close": 1.4,
-          "volume": 1800,
-          "rsi": null,
-          "swing_low": false
-        },
-        {
-          "date": "2026-09-18",
-          "open": 1.38,
-          "high": 1.39,
-          "low": 0.8,
-          "close": 1.39,
-          "volume": 2500,
-          "rsi": null,
-          "swing_low": true
-        },
-        {
-          "date": "2026-09-21",
-          "open": 1.39,
-          "high": 1.39,
-          "low": 1.39,
-          "close": 1.39,
-          "volume": 0,
-          "rsi": null,
-          "swing_low": false
-        },
-        {
-          "date": "2026-09-22",
-          "open": 1.32,
-          "high": 1.32,
-          "low": 1.1,
-          "close": 1.1,
-          "volume": 1600,
-          "rsi": null,
-          "swing_low": true
-        },
-        {
-          "date": "2026-09-23",
-          "open": 1.3,
-          "high": 1.3,
-          "low": 1.18,
-          "close": 1.3,
-          "volume": 3300,
-          "rsi": null,
-          "swing_low": false
-        },
-        {
-          "date": "2026-09-24",
-          "open": 1.68,
-          "high": 1.68,
-          "low": 1.21,
-          "close": 1.21,
-          "volume": 2400,
-          "rsi": null,
-          "swing_low": false
-        },
-        {
-          "date": "2026-09-25",
-          "open": 1.0,
-          "high": 1.35,
-          "low": 1.0,
-          "close": 1.35,
-          "volume": 600,
-          "rsi": null,
-          "swing_low": true
-        },
-        {
-          "date": "2026-09-28",
-          "open": 1.35,
-          "high": 1.35,
-          "low": 1.35,
-          "close": 1.35,
-          "volume": 0,
-          "rsi": null,
-          "swing_low": false
-        },
-        {
-          "date": "2026-09-29",
-          "open": 1.35,
-          "high": 1.35,
-          "low": 1.23,
-          "close": 1.34,
-          "volume": 12800,
-          "rsi": null,
-          "swing_low": true
-        },
-        {
-          "date": "2026-09-30",
-          "open": 1.61,
-          "high": 1.75,
-          "low": 1.39,
-          "close": 1.49,
-          "volume": 9000,
-          "rsi": null,
-          "swing_low": false
-        },
-        {
-          "date": "2026-10-01",
-          "open": 1.37,
-          "high": 1.86,
-          "low": 1.37,
-          "close": 1.63,
-          "volume": 17300,
-          "rsi": null,
-          "swing_low": false
-        },
-        {
-          "date": "2026-10-02",
-          "open": 1.6,
-          "high": 1.85,
-          "low": 1.35,
-          "close": 1.35,
-          "volume": 4500,
-          "rsi": null,
-          "swing_low": true
-        },
-        {
-          "date": "2026-10-05",
-          "open": 1.37,
-          "high": 1.75,
-          "low": 1.37,
-          "close": 1.55,
-          "volume": 12300,
-          "rsi": 51.53,
-          "swing_low": false
-        },
-        {
-          "date": "2026-10-06",
-          "open": 1.6,
-          "high": 1.86,
-          "low": 1.47,
-          "close": 1.5,
-          "volume": 23600,
-          "rsi": 49.89,
-          "swing_low": false
-        },
-        {
-          "date": "2026-10-07",
-          "open": 1.5,
-          "high": 1.5,
-          "low": 1.5,
-          "close": 1.5,
-          "volume": 0,
-          "rsi": 49.89,
-          "swing_low": false
-        },
-        {
-          "date": "2026-10-08",
-          "open": 1.34,
-          "high": 1.34,
-          "low": 1.34,
-          "close": 1.34,
-          "volume": 600,
-          "rsi": 44.59,
-          "swing_low": true
-        },
-        {
-          "date": "2026-10-09",
-          "open": 1.48,
-          "high": 1.75,
-          "low": 1.36,
-          "close": 1.36,
-          "volume": 9500,
-          "rsi": 45.37,
-          "swing_low": false
-        },
-        {
-          "date": "2026-10-12",
-          "open": 1.36,
-          "high": 1.36,
-          "low": 1.07,
-          "close": 1.25,
-          "volume": 4500,
-          "rsi": 41.88,
-          "swing_low": true
-        },
-        {
-          "date": "2026-10-13",
-          "open": 1.14,
-          "high": 1.4,
-          "low": 1.13,
-          "close": 1.4,
-          "volume": 1700,
-          "rsi": 47.78,
-          "swing_low": false
-        },
-        {
-          "date": "2026-10-14",
-          "open": 1.23,
-          "high": 1.3,
-          "low": 1.12,
-          "close": 1.3,
-          "volume": 6400,
-          "rsi": 44.54,
-          "swing_low": true
-        },
-        {
-          "date": "2026-10-15",
-          "open": 1.44,
-          "high": 1.64,
-          "low": 1.34,
-          "close": 1.4,
-          "volume": 20700,
-          "rsi": 48.32,
-          "swing_low": false
-        },
-        {
-          "date": "2026-10-16",
-          "open": 1.38,
-          "high": 1.38,
-          "low": 1.16,
-          "close": 1.19,
-          "volume": 4500,
-          "rsi": 41.86,
-          "swing_low": true
-        },
-        {
-          "date": "2026-10-19",
-          "open": 1.19,
-          "high": 1.19,
-          "low": 1.19,
-          "close": 1.19,
-          "volume": 0,
-          "rsi": 41.86,
-          "swing_low": false
-        },
-        {
-          "date": "2026-10-20",
-          "open": 1.24,
-          "high": 1.37,
-          "low": 1.2,
-          "close": 1.2,
-          "volume": 1900,
-          "rsi": 42.29,
-          "swing_low": false
-        },
-        {
-          "date": "2026-10-21",
-          "open": 0.9,
-          "high": 1.24,
-          "low": 0.9,
-          "close": 1.24,
-          "volume": 600,
-          "rsi": 44.05,
-          "swing_low": true
-        },
-        {
-          "date": "2026-10-22",
-          "open": 1.15,
-          "high": 1.15,
-          "low": 1.15,
-          "close": 1.15,
-          "volume": 200,
-          "rsi": 41.01,
-          "swing_low": false
-        },
-        {
-          "date": "2026-10-23",
-          "open": 1.15,
-          "high": 1.15,
-          "low": 1.15,
-          "close": 1.15,
-          "volume": 0,
-          "rsi": 41.01,
-          "swing_low": false
-        },
-        {
-          "date": "2026-10-26",
-          "open": 1.14,
-          "high": 1.2,
-          "low": 1.14,
-          "close": 1.19,
-          "volume": 7400,
-          "rsi": 43.04
-        }
-      ],
-      "discovered_at": "2026-10-21T23:09:47.803395+00:00"
     },
     {
       "price": 2.155,
