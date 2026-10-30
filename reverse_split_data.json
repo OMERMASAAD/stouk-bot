@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-29T21:00:34.036530+00:00",
+  "updated_at": "2026-10-29T23:57:37.981777+00:00",
   "count": 13,
   "rules": {
     "lookback_days": 60,
@@ -6909,26 +6909,26 @@
         "ratio": 0.08333333333333333,
         "ratio_label": "1-for-12",
         "age_days": 24,
-        "trading_days_since_split": 18,
+        "trading_days_since_split": 17,
         "opening_price": 4.8,
         "split_day_high": 4.815,
         "split_day_close": 4.56,
         "split_day_volume": 287300
       },
-      "price": 0.9915,
+      "price": 0.89,
       "peak_after_split": 4.815,
       "peak_date": "2026-10-05",
       "max_rally_pct": 0.31,
-      "drop_pct": 79.41,
+      "drop_pct": 81.52,
       "base_support": 0.821,
       "support": {
         "level": 0.821,
-        "tests": 3,
+        "tests": 2,
         "stable_sessions": 5,
         "sessions_above_support": 5,
-        "distance_pct": 20.77,
-        "range_pct": 41.29,
-        "last_test_date": "2026-10-29",
+        "distance_pct": 8.4,
+        "range_pct": 52.25,
+        "last_test_date": "2026-10-28",
         "holding": false
       },
       "stable_days": 5,
@@ -6954,46 +6954,64 @@
         "hammer_recent": false
       },
       "moving_averages": {
-        "price": 0.9915,
-        "ema20": 2.6074,
-        "ema30": 3.5049,
-        "ema50": 4.7841,
+        "price": 0.89,
+        "ema20": 2.7775,
+        "ema30": 3.6782,
+        "ema50": 4.9389,
         "distance_pct": {
-          "ema20": -61.97,
-          "ema30": -71.71,
-          "ema50": -79.28
+          "ema20": -67.96,
+          "ema30": -75.8,
+          "ema50": -81.98
         }
       },
       "indicators": {
-        "ema20": 2.6074,
-        "ema30": 3.5049,
-        "ema50": 4.78412,
-        "vwap": 1.83069,
-        "rsi": 17.03804,
-        "rsi_prev": 14.70469,
-        "macd": -1.42943,
-        "macd_signal": -1.37053,
-        "macd_hist": -0.05889,
-        "macd_hist_prev": -0.11156,
-        "rvol": 0.61032
+        "ema20": 2.7775,
+        "ema30": 3.67824,
+        "ema50": 4.93893,
+        "vwap": 1.93149,
+        "rsi": 14.70469,
+        "rsi_prev": 14.48465,
+        "macd": -1.46737,
+        "macd_signal": -1.35581,
+        "macd_hist": -0.11156,
+        "macd_hist_prev": -0.15621,
+        "rvol": 0.50898
       },
       "wedge": {
         "detected": false,
-        "upper_slope": -0.27877,
-        "lower_slope": -0.26031,
-        "upper_now": 0.3362,
-        "lower_now": 0.2161,
+        "upper_slope": -0.29199,
+        "lower_slope": -0.27291,
+        "upper_now": 0.4652,
+        "lower_now": 0.3335,
         "upper_break": true,
-        "bars": 19
+        "bars": 18
       },
       "plan": {
-        "entry": 0.3362,
+        "entry": 0.4652,
         "stop": 0.8046,
-        "target_1": 0.4563,
+        "target_1": 0.5969,
         "target_main": 4.815,
         "target_main_label": "قمة شمعة يوم التقسيم"
       },
       "chart": [
+        {
+          "date": "2026-06-23",
+          "open": 9.972,
+          "high": 10.188,
+          "low": 9.84,
+          "close": 9.924,
+          "volume": 49492,
+          "ema20": 9.7459,
+          "ema30": 9.8158,
+          "ema50": 9.9536,
+          "vwap": 9.4733,
+          "rsi": 26.59,
+          "macd": -0.01738,
+          "macd_signal": -0.18117,
+          "macd_hist": 0.16379,
+          "hammer": false,
+          "swing_low": false
+        },
         {
           "date": "2026-06-24",
           "open": 9.924,
@@ -8595,24 +8613,6 @@
           "macd_hist": -0.11156,
           "hammer": false,
           "swing_low": true
-        },
-        {
-          "date": "2026-10-29",
-          "open": 0.8932,
-          "high": 1.01,
-          "low": 0.8591,
-          "close": 0.9915,
-          "volume": 709923,
-          "ema20": 2.6074,
-          "ema30": 3.5049,
-          "ema50": 4.7841,
-          "vwap": 1.8307,
-          "rsi": 17.04,
-          "macd": -1.42943,
-          "macd_signal": -1.37053,
-          "macd_hist": -0.05889,
-          "hammer": false,
-          "swing_low": false
         }
       ],
       "news": {
@@ -8632,25 +8632,25 @@
         "ratio": 0.02,
         "ratio_label": "1-for-50",
         "age_days": 45,
-        "trading_days_since_split": 33,
+        "trading_days_since_split": 32,
         "opening_price": 16.74,
         "split_day_high": 16.9,
         "split_day_close": 13.88,
         "split_day_volume": 762600
       },
-      "price": 3.79,
+      "price": 3.66,
       "peak_after_split": 16.9,
       "peak_date": "2026-09-14",
       "max_rally_pct": 0.96,
-      "drop_pct": 77.57,
+      "drop_pct": 78.34,
       "base_support": 3.24,
       "support": {
         "level": 3.24,
         "tests": 2,
         "stable_sessions": 5,
         "sessions_above_support": 5,
-        "distance_pct": 16.98,
-        "range_pct": 24.54,
+        "distance_pct": 12.96,
+        "range_pct": 15.74,
         "last_test_date": "2026-10-27",
         "holding": false
       },
@@ -8677,46 +8677,64 @@
         "hammer_recent": false
       },
       "moving_averages": {
-        "price": 3.79,
-        "ema20": 4.6975,
-        "ema30": 5.8836,
-        "ema50": 8.2046,
+        "price": 3.66,
+        "ema20": 4.793,
+        "ema30": 6.028,
+        "ema50": 8.3848,
         "distance_pct": {
-          "ema20": -19.32,
-          "ema30": -35.58,
-          "ema50": -53.81
+          "ema20": -23.64,
+          "ema30": -39.28,
+          "ema50": -56.35
         }
       },
       "indicators": {
-        "ema20": 4.69747,
-        "ema30": 5.8836,
-        "ema50": 8.20465,
-        "vwap": 4.68926,
-        "rsi": 29.24913,
-        "rsi_prev": 27.15223,
-        "macd": -1.46609,
-        "macd_signal": -1.76767,
-        "macd_hist": 0.30158,
-        "macd_hist_prev": 0.27435,
-        "rvol": 1.03703
+        "ema20": 4.79299,
+        "ema30": 6.02798,
+        "ema50": 8.38484,
+        "vwap": 4.78149,
+        "rsi": 27.15223,
+        "rsi_prev": 25.25337,
+        "macd": -1.56871,
+        "macd_signal": -1.84306,
+        "macd_hist": 0.27435,
+        "macd_hist_prev": 0.24801,
+        "rvol": 0.39059
       },
       "wedge": {
         "detected": false,
-        "upper_slope": -0.27987,
-        "lower_slope": -0.23847,
-        "upper_now": 1.9109,
-        "lower_now": 1.8577,
+        "upper_slope": -0.31314,
+        "lower_slope": -0.26706,
+        "upper_now": 1.7211,
+        "lower_now": 1.7017,
         "upper_break": true,
         "bars": 32
       },
       "plan": {
-        "entry": 1.9109,
+        "entry": 1.7211,
         "stop": 3.1752,
-        "target_1": 1.9641,
+        "target_1": 1.7405,
         "target_main": 16.9,
         "target_main_label": "قمة شمعة يوم التقسيم"
       },
       "chart": [
+        {
+          "date": "2026-06-23",
+          "open": 20.05,
+          "high": 20.5,
+          "low": 18.75,
+          "close": 19.0,
+          "volume": 113968,
+          "ema20": 24.7432,
+          "ema30": 25.4884,
+          "ema50": 26.2462,
+          "vwap": 24.9377,
+          "rsi": 15.01,
+          "macd": -1.57314,
+          "macd_signal": -0.87598,
+          "macd_hist": -0.69716,
+          "hammer": false,
+          "swing_low": false
+        },
         {
           "date": "2026-06-24",
           "open": 20.0,
@@ -10316,24 +10334,6 @@
           "macd": -1.56871,
           "macd_signal": -1.84306,
           "macd_hist": 0.27435,
-          "hammer": false,
-          "swing_low": false
-        },
-        {
-          "date": "2026-10-29",
-          "open": 3.6,
-          "high": 4.035,
-          "low": 3.5403,
-          "close": 3.79,
-          "volume": 387954,
-          "ema20": 4.6975,
-          "ema30": 5.8836,
-          "ema50": 8.2046,
-          "vwap": 4.6893,
-          "rsi": 29.25,
-          "macd": -1.46609,
-          "macd_signal": -1.76767,
-          "macd_hist": 0.30158,
           "hammer": false,
           "swing_low": false
         }
@@ -15490,7 +15490,7 @@
         },
         {
           "date": "2026-10-29",
-          "open": 3.22,
+          "open": 3.0793,
           "high": 3.47,
           "low": 3.0001,
           "close": 3.3,
@@ -17205,7 +17205,7 @@
         },
         {
           "date": "2026-10-29",
-          "open": 2.04,
+          "open": 2.07,
           "high": 2.1299,
           "low": 2.04,
           "close": 2.09,
@@ -18928,7 +18928,7 @@
         },
         {
           "date": "2026-10-29",
-          "open": 1.47,
+          "open": 1.485,
           "high": 1.555,
           "low": 1.43,
           "close": 1.55,
