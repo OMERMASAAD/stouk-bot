@@ -1,5 +1,5 @@
 {
- "updated_at": "2026-11-03T21:15:31.779503+00:00",
+ "updated_at": "2026-11-03T21:44:35.960829+00:00",
  "session_date": "2026-11-03",
  "master_count": 241,
  "master_built_on": "2026-11-03",
@@ -637,35 +637,35 @@
    ]
   },
   {
-   "price": 2.5795,
+   "price": 2.4301,
    "day_high": 8.8983,
    "day_low": 1.75,
-   "drop_pct": -71.0,
+   "drop_pct": -72.7,
    "hold_min": 5,
    "hold_needed": 60,
-   "base_low": 2.5795,
+   "base_low": 2.34,
    "near_low": false,
-   "dist_from_low_pct": 47.4,
-   "target": 3.2244,
+   "dist_from_low_pct": 38.9,
+   "target": 3.0376,
    "target_pct": 25.0,
    "rsi": 33.4,
-   "rsi_min": 31.0,
+   "rsi_min": 28.6,
    "obv": "ضعيف",
    "macd": "سلبي",
    "checks": {
     "base": false,
-    "rsi": false,
+    "rsi": true,
     "obv": false,
     "macd": false
    },
    "complete": false,
-   "strength_score": 0,
+   "strength_score": 20,
    "strength_label": "يحتاج متابعة",
    "volume_last": 0,
-   "volume_avg": 237166,
+   "volume_avg": 159751,
    "rvol": 0.0,
    "dollar_volume": 0.0,
-   "last_bar": "2026-11-03T16:15:32-05:00",
+   "last_bar": "2026-11-03T16:40:00-05:00",
    "ticker": "PARA",
    "float": 521103,
    "float_status": "bound",
@@ -717,49 +717,24 @@
       "macd": false
      },
      "rvol": 0.0
+    },
+    {
+     "last_bar": "2026-11-03T16:40:00-05:00",
+     "price": 2.4301,
+     "drop_pct": -72.7,
+     "hold_min": 5,
+     "strength_score": 20,
+     "complete": false,
+     "checks": {
+      "base": false,
+      "rsi": true,
+      "obv": false,
+      "macd": false
+     },
+     "rvol": 0.0
     }
    ],
    "chart": [
-    {
-     "time": "2026-11-03T10:20:00-05:00",
-     "open": 5.94,
-     "high": 6.1,
-     "low": 5.66,
-     "close": 5.92,
-     "volume": 1713502
-    },
-    {
-     "time": "2026-11-03T10:25:00-05:00",
-     "open": 5.9333,
-     "high": 6.48,
-     "low": 5.7,
-     "close": 6.365,
-     "volume": 1350492
-    },
-    {
-     "time": "2026-11-03T10:30:00-05:00",
-     "open": 6.34,
-     "high": 6.39,
-     "low": 4.39,
-     "close": 4.39,
-     "volume": 2796993
-    },
-    {
-     "time": "2026-11-03T10:35:00-05:00",
-     "open": 4.39,
-     "high": 4.39,
-     "low": 4.39,
-     "close": 4.39,
-     "volume": 37706
-    },
-    {
-     "time": "2026-11-03T10:40:00-05:00",
-     "open": 4.66,
-     "high": 5.33,
-     "low": 4.41,
-     "close": 5.1528,
-     "volume": 2436490
-    },
     {
      "time": "2026-11-03T10:45:00-05:00",
      "open": 5.1701,
@@ -1289,29 +1264,69 @@
      "volume": 0
     },
     {
-     "time": "2026-11-03T16:15:32-05:00",
-     "open": 2.5795,
-     "high": 2.5795,
-     "low": 2.5795,
-     "close": 2.5795,
+     "time": "2026-11-03T16:15:00-05:00",
+     "open": 2.5696,
+     "high": 2.5799,
+     "low": 2.45,
+     "close": 2.4586,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:20:00-05:00",
+     "open": 2.45,
+     "high": 2.4797,
+     "low": 2.41,
+     "close": 2.4346,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:25:00-05:00",
+     "open": 2.43,
+     "high": 2.54,
+     "low": 2.43,
+     "close": 2.479,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:30:00-05:00",
+     "open": 2.4995,
+     "high": 2.53,
+     "low": 2.46,
+     "close": 2.5,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:35:00-05:00",
+     "open": 2.4885,
+     "high": 5.1,
+     "low": 2.34,
+     "close": 2.3487,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:40:00-05:00",
+     "open": 2.37,
+     "high": 2.4789,
+     "low": 2.34,
+     "close": 2.4301,
      "volume": 0
     }
    ]
   },
   {
-   "price": 1.26,
+   "price": 1.27,
    "day_high": 4.25,
    "day_low": 1.16,
-   "drop_pct": -70.4,
-   "hold_min": 10,
+   "drop_pct": -70.1,
+   "hold_min": 20,
    "hold_needed": 60,
-   "base_low": 1.2368,
+   "base_low": 1.22,
    "near_low": false,
-   "dist_from_low_pct": 8.6,
-   "target": 1.575,
+   "dist_from_low_pct": 9.5,
+   "target": 1.5875,
    "target_pct": 25.0,
-   "rsi": 41.2,
-   "rsi_min": 36.2,
+   "rsi": 46.6,
+   "rsi_min": 32.9,
    "obv": "ضعيف",
    "macd": "سلبي",
    "checks": {
@@ -1324,10 +1339,10 @@
    "strength_score": 0,
    "strength_label": "يحتاج متابعة",
    "volume_last": 0,
-   "volume_avg": 24946,
+   "volume_avg": 19204,
    "rvol": 0.0,
    "dollar_volume": 0.0,
-   "last_bar": "2026-11-03T16:15:37-05:00",
+   "last_bar": "2026-11-03T16:40:00-05:00",
    "ticker": "CNSY",
    "float": 7589625,
    "float_status": "unverified",
@@ -1364,49 +1379,24 @@
       "macd": false
      },
      "rvol": 0.0
+    },
+    {
+     "last_bar": "2026-11-03T16:40:00-05:00",
+     "price": 1.27,
+     "drop_pct": -70.1,
+     "hold_min": 20,
+     "strength_score": 0,
+     "complete": false,
+     "checks": {
+      "base": false,
+      "rsi": false,
+      "obv": false,
+      "macd": false
+     },
+     "rvol": 0.0
     }
    ],
    "chart": [
-    {
-     "time": "2026-11-03T09:50:00-05:00",
-     "open": 1.81,
-     "high": 1.81,
-     "low": 1.8,
-     "close": 1.81,
-     "volume": 221
-    },
-    {
-     "time": "2026-11-03T10:10:00-05:00",
-     "open": 1.79,
-     "high": 2.65,
-     "low": 1.79,
-     "close": 2.2309,
-     "volume": 1933584
-    },
-    {
-     "time": "2026-11-03T10:15:00-05:00",
-     "open": 2.24,
-     "high": 3.0,
-     "low": 2.2,
-     "close": 2.885,
-     "volume": 4654675
-    },
-    {
-     "time": "2026-11-03T10:20:00-05:00",
-     "open": 2.88,
-     "high": 3.29,
-     "low": 2.3501,
-     "close": 3.29,
-     "volume": 3658705
-    },
-    {
-     "time": "2026-11-03T10:35:00-05:00",
-     "open": 3.75,
-     "high": 4.25,
-     "low": 3.52,
-     "close": 3.9215,
-     "volume": 3552292
-    },
     {
      "time": "2026-11-03T10:40:00-05:00",
      "open": 3.935,
@@ -1936,28 +1926,68 @@
      "volume": 0
     },
     {
-     "time": "2026-11-03T16:15:37-05:00",
-     "open": 1.26,
+     "time": "2026-11-03T16:15:00-05:00",
+     "open": 1.23,
      "high": 1.26,
-     "low": 1.26,
-     "close": 1.26,
+     "low": 1.21,
+     "close": 1.21,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:20:00-05:00",
+     "open": 1.21,
+     "high": 1.24,
+     "low": 1.2,
+     "close": 1.24,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:25:00-05:00",
+     "open": 1.24,
+     "high": 1.24,
+     "low": 1.22,
+     "close": 1.24,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:30:00-05:00",
+     "open": 1.24,
+     "high": 1.24,
+     "low": 1.24,
+     "close": 1.24,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:35:00-05:00",
+     "open": 1.23,
+     "high": 1.2402,
+     "low": 1.23,
+     "close": 1.2402,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:40:00-05:00",
+     "open": 1.24,
+     "high": 1.27,
+     "low": 1.23,
+     "close": 1.27,
      "volume": 0
     }
    ]
   },
   {
-   "price": 0.6634,
+   "price": 0.6835,
    "day_high": 1.5,
    "day_low": 0.62,
-   "drop_pct": -55.8,
-   "hold_min": 5,
+   "drop_pct": -54.4,
+   "hold_min": 25,
    "hold_needed": 60,
-   "base_low": 0.6634,
+   "base_low": 0.6834,
    "near_low": false,
-   "dist_from_low_pct": 7.0,
-   "target": 0.8293,
+   "dist_from_low_pct": 10.2,
+   "target": 0.8544,
    "target_pct": 25.0,
-   "rsi": 38.2,
+   "rsi": 44.9,
    "rsi_min": 36.9,
    "obv": "انحراف إيجابي",
    "macd": "هيستوجرام أخضر",
@@ -1971,10 +2001,10 @@
    "strength_score": 35,
    "strength_label": "يحتاج متابعة",
    "volume_last": 0,
-   "volume_avg": 57939,
+   "volume_avg": 42657,
    "rvol": 0.0,
    "dollar_volume": 0.0,
-   "last_bar": "2026-11-03T16:15:26-05:00",
+   "last_bar": "2026-11-03T16:40:00-05:00",
    "ticker": "CRIS",
    "float": 2425078,
    "float_status": "bound",
@@ -2011,49 +2041,24 @@
       "macd": true
      },
      "rvol": 0.0
+    },
+    {
+     "last_bar": "2026-11-03T16:40:00-05:00",
+     "price": 0.6835,
+     "drop_pct": -54.4,
+     "hold_min": 25,
+     "strength_score": 35,
+     "complete": false,
+     "checks": {
+      "base": false,
+      "rsi": false,
+      "obv": true,
+      "macd": true
+     },
+     "rvol": 0.0
     }
    ],
    "chart": [
-    {
-     "time": "2026-11-03T10:20:00-05:00",
-     "open": 0.7653,
-     "high": 0.7699,
-     "low": 0.755,
-     "close": 0.765,
-     "volume": 13058
-    },
-    {
-     "time": "2026-11-03T10:25:00-05:00",
-     "open": 0.765,
-     "high": 0.7674,
-     "low": 0.7648,
-     "close": 0.7648,
-     "volume": 17204
-    },
-    {
-     "time": "2026-11-03T10:30:00-05:00",
-     "open": 0.7572,
-     "high": 0.7602,
-     "low": 0.7502,
-     "close": 0.7502,
-     "volume": 16588
-    },
-    {
-     "time": "2026-11-03T10:35:00-05:00",
-     "open": 0.7501,
-     "high": 0.7596,
-     "low": 0.7501,
-     "close": 0.7596,
-     "volume": 4708
-    },
-    {
-     "time": "2026-11-03T10:40:00-05:00",
-     "open": 0.7689,
-     "high": 0.7689,
-     "low": 0.7514,
-     "close": 0.7677,
-     "volume": 11517
-    },
     {
      "time": "2026-11-03T10:45:00-05:00",
      "open": 0.765,
@@ -2583,29 +2588,69 @@
      "volume": 0
     },
     {
-     "time": "2026-11-03T16:15:26-05:00",
-     "open": 0.6634,
-     "high": 0.6634,
-     "low": 0.6634,
-     "close": 0.6634,
+     "time": "2026-11-03T16:15:00-05:00",
+     "open": 0.6599,
+     "high": 0.7051,
+     "low": 0.6599,
+     "close": 0.67,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:20:00-05:00",
+     "open": 0.685,
+     "high": 0.7045,
+     "low": 0.685,
+     "close": 0.6905,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:25:00-05:00",
+     "open": 0.685,
+     "high": 0.7,
+     "low": 0.6834,
+     "close": 0.6998,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:30:00-05:00",
+     "open": 0.6911,
+     "high": 0.6977,
+     "low": 0.6834,
+     "close": 0.6859,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:35:00-05:00",
+     "open": 0.6977,
+     "high": 0.6995,
+     "low": 0.6909,
+     "close": 0.6966,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:40:00-05:00",
+     "open": 0.691,
+     "high": 0.6916,
+     "low": 0.6835,
+     "close": 0.6835,
      "volume": 0
     }
    ]
   },
   {
-   "price": 0.5327,
+   "price": 0.5545,
    "day_high": 1.02,
    "day_low": 0.4599,
-   "drop_pct": -47.8,
-   "hold_min": 5,
+   "drop_pct": -45.6,
+   "hold_min": 10,
    "hold_needed": 60,
-   "base_low": 0.5327,
+   "base_low": 0.55,
    "near_low": false,
-   "dist_from_low_pct": 15.8,
-   "target": 0.6659,
+   "dist_from_low_pct": 20.6,
+   "target": 0.6931,
    "target_pct": 25.0,
-   "rsi": 43.7,
-   "rsi_min": 42.2,
+   "rsi": 48.6,
+   "rsi_min": 43.7,
    "obv": "ضعيف",
    "macd": "تقاطع",
    "checks": {
@@ -2618,10 +2663,10 @@
    "strength_score": 15,
    "strength_label": "يحتاج متابعة",
    "volume_last": 0,
-   "volume_avg": 23168,
+   "volume_avg": 17221,
    "rvol": 0.0,
    "dollar_volume": 0.0,
-   "last_bar": "2026-11-03T16:10:00-05:00",
+   "last_bar": "2026-11-03T16:35:00-05:00",
    "ticker": "ZNB",
    "float": 4550126,
    "float_status": "bound",
@@ -2658,49 +2703,24 @@
       "macd": true
      },
      "rvol": 0.0
+    },
+    {
+     "last_bar": "2026-11-03T16:35:00-05:00",
+     "price": 0.5545,
+     "drop_pct": -45.6,
+     "hold_min": 10,
+     "strength_score": 15,
+     "complete": false,
+     "checks": {
+      "base": false,
+      "rsi": false,
+      "obv": false,
+      "macd": true
+     },
+     "rvol": 0.0
     }
    ],
    "chart": [
-    {
-     "time": "2026-11-02T17:30:00-05:00",
-     "open": 0.458,
-     "high": 0.458,
-     "low": 0.458,
-     "close": 0.458,
-     "volume": 0
-    },
-    {
-     "time": "2026-11-02T17:35:00-05:00",
-     "open": 0.4581,
-     "high": 0.4581,
-     "low": 0.4581,
-     "close": 0.4581,
-     "volume": 0
-    },
-    {
-     "time": "2026-11-02T18:35:00-05:00",
-     "open": 0.4899,
-     "high": 0.4899,
-     "low": 0.4899,
-     "close": 0.4899,
-     "volume": 0
-    },
-    {
-     "time": "2026-11-02T18:55:00-05:00",
-     "open": 0.4672,
-     "high": 0.4672,
-     "low": 0.4672,
-     "close": 0.4672,
-     "volume": 0
-    },
-    {
-     "time": "2026-11-03T07:00:00-05:00",
-     "open": 0.4982,
-     "high": 0.4982,
-     "low": 0.4982,
-     "close": 0.4982,
-     "volume": 0
-    },
     {
      "time": "2026-11-03T07:10:00-05:00",
      "open": 0.4982,
@@ -3236,6 +3256,46 @@
      "low": 0.5327,
      "close": 0.5327,
      "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:15:00-05:00",
+     "open": 0.55,
+     "high": 0.55,
+     "low": 0.55,
+     "close": 0.55,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:20:00-05:00",
+     "open": 0.55,
+     "high": 0.5501,
+     "low": 0.55,
+     "close": 0.5501,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:25:00-05:00",
+     "open": 0.579,
+     "high": 0.579,
+     "low": 0.579,
+     "close": 0.579,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:30:00-05:00",
+     "open": 0.552,
+     "high": 0.5521,
+     "low": 0.552,
+     "close": 0.552,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:35:00-05:00",
+     "open": 0.5505,
+     "high": 0.5545,
+     "low": 0.55,
+     "close": 0.5545,
+     "volume": 0
     }
    ]
   },
@@ -3251,24 +3311,24 @@
    "dist_from_low_pct": 21.4,
    "target": 2.125,
    "target_pct": 25.0,
-   "rsi": 49.9,
+   "rsi": 49.0,
    "rsi_min": 38.2,
    "obv": "انحراف إيجابي",
-   "macd": "سلبي",
+   "macd": "هيستوجرام أخضر",
    "checks": {
     "base": false,
     "rsi": false,
     "obv": true,
-    "macd": false
+    "macd": true
    },
    "complete": false,
-   "strength_score": 20,
+   "strength_score": 35,
    "strength_label": "يحتاج متابعة",
    "volume_last": 0,
-   "volume_avg": 25608,
+   "volume_avg": 18455,
    "rvol": 0.0,
    "dollar_volume": 0.0,
-   "last_bar": "2026-11-03T16:10:00-05:00",
+   "last_bar": "2026-11-03T16:40:00-05:00",
    "ticker": "BIVI",
    "float": 7542638,
    "float_status": "unverified",
@@ -3305,57 +3365,24 @@
       "macd": false
      },
      "rvol": 0.0
+    },
+    {
+     "last_bar": "2026-11-03T16:40:00-05:00",
+     "price": 1.7,
+     "drop_pct": -36.1,
+     "hold_min": 5,
+     "strength_score": 35,
+     "complete": false,
+     "checks": {
+      "base": false,
+      "rsi": false,
+      "obv": true,
+      "macd": true
+     },
+     "rvol": 0.0
     }
    ],
    "chart": [
-    {
-     "time": "2026-11-03T09:50:00-05:00",
-     "open": 1.44,
-     "high": 1.44,
-     "low": 1.44,
-     "close": 1.44,
-     "volume": 201
-    },
-    {
-     "time": "2026-11-03T10:00:00-05:00",
-     "open": 1.44,
-     "high": 1.44,
-     "low": 1.44,
-     "close": 1.44,
-     "volume": 701
-    },
-    {
-     "time": "2026-11-03T10:05:00-05:00",
-     "open": 1.4476,
-     "high": 1.4476,
-     "low": 1.4201,
-     "close": 1.4201,
-     "volume": 1515
-    },
-    {
-     "time": "2026-11-03T10:10:00-05:00",
-     "open": 1.45,
-     "high": 1.47,
-     "low": 1.45,
-     "close": 1.47,
-     "volume": 1692
-    },
-    {
-     "time": "2026-11-03T10:20:00-05:00",
-     "open": 1.4732,
-     "high": 1.49,
-     "low": 1.4732,
-     "close": 1.49,
-     "volume": 4658
-    },
-    {
-     "time": "2026-11-03T10:25:00-05:00",
-     "open": 1.475,
-     "high": 1.475,
-     "low": 1.475,
-     "close": 1.475,
-     "volume": 950
-    },
     {
      "time": "2026-11-03T10:40:00-05:00",
      "open": 1.475,
@@ -3883,6 +3910,54 @@
      "low": 1.7,
      "close": 1.7,
      "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:15:00-05:00",
+     "open": 1.71,
+     "high": 1.72,
+     "low": 1.69,
+     "close": 1.69,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:20:00-05:00",
+     "open": 1.7,
+     "high": 1.72,
+     "low": 1.6898,
+     "close": 1.72,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:25:00-05:00",
+     "open": 1.71,
+     "high": 1.74,
+     "low": 1.71,
+     "close": 1.74,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:30:00-05:00",
+     "open": 1.71,
+     "high": 1.71,
+     "low": 1.71,
+     "close": 1.71,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:35:00-05:00",
+     "open": 1.73,
+     "high": 1.8,
+     "low": 1.73,
+     "close": 1.75,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:40:00-05:00",
+     "open": 1.72,
+     "high": 1.72,
+     "low": 1.7,
+     "close": 1.7,
+     "volume": 0
     }
    ]
   },
@@ -3891,15 +3966,15 @@
    "day_high": 1.14,
    "day_low": 0.5923,
    "drop_pct": -36.0,
-   "hold_min": 20,
+   "hold_min": 30,
    "hold_needed": 60,
-   "base_low": 0.7283,
+   "base_low": 0.705,
    "near_low": false,
    "dist_from_low_pct": 23.2,
    "target": 0.9125,
    "target_pct": 25.0,
-   "rsi": 50.8,
-   "rsi_min": 49.6,
+   "rsi": 50.9,
+   "rsi_min": 46.6,
    "obv": "صاعد",
    "macd": "سلبي",
    "checks": {
@@ -3912,10 +3987,10 @@
    "strength_score": 20,
    "strength_label": "يحتاج متابعة",
    "volume_last": 0,
-   "volume_avg": 75154,
+   "volume_avg": 57977,
    "rvol": 0.0,
    "dollar_volume": 0.0,
-   "last_bar": "2026-11-03T16:15:24-05:00",
+   "last_bar": "2026-11-03T16:40:00-05:00",
    "ticker": "SGRX",
    "float": 3641061,
    "float_status": "bound",
@@ -3967,49 +4042,24 @@
       "macd": false
      },
      "rvol": 0.0
+    },
+    {
+     "last_bar": "2026-11-03T16:40:00-05:00",
+     "price": 0.73,
+     "drop_pct": -36.0,
+     "hold_min": 30,
+     "strength_score": 20,
+     "complete": false,
+     "checks": {
+      "base": false,
+      "rsi": false,
+      "obv": true,
+      "macd": false
+     },
+     "rvol": 0.0
     }
    ],
    "chart": [
-    {
-     "time": "2026-11-03T10:20:00-05:00",
-     "open": 0.6506,
-     "high": 0.67,
-     "low": 0.635,
-     "close": 0.6449,
-     "volume": 261464
-    },
-    {
-     "time": "2026-11-03T10:25:00-05:00",
-     "open": 0.6439,
-     "high": 0.6586,
-     "low": 0.62,
-     "close": 0.6364,
-     "volume": 233163
-    },
-    {
-     "time": "2026-11-03T10:30:00-05:00",
-     "open": 0.6364,
-     "high": 0.65,
-     "low": 0.6351,
-     "close": 0.6432,
-     "volume": 230923
-    },
-    {
-     "time": "2026-11-03T10:35:00-05:00",
-     "open": 0.6411,
-     "high": 0.6411,
-     "low": 0.5923,
-     "close": 0.6027,
-     "volume": 374662
-    },
-    {
-     "time": "2026-11-03T10:40:00-05:00",
-     "open": 0.608,
-     "high": 0.6315,
-     "low": 0.6011,
-     "close": 0.6271,
-     "volume": 259548
-    },
     {
      "time": "2026-11-03T10:45:00-05:00",
      "open": 0.6255,
@@ -4539,28 +4589,730 @@
      "volume": 0
     },
     {
-     "time": "2026-11-03T16:15:24-05:00",
+     "time": "2026-11-03T16:15:00-05:00",
+     "open": 0.73,
+     "high": 0.7301,
+     "low": 0.705,
+     "close": 0.716,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:20:00-05:00",
+     "open": 0.7159,
+     "high": 0.738,
+     "low": 0.7159,
+     "close": 0.738,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:25:00-05:00",
+     "open": 0.721,
+     "high": 0.74,
+     "low": 0.721,
+     "close": 0.7271,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:30:00-05:00",
+     "open": 0.731,
+     "high": 0.731,
+     "low": 0.7305,
+     "close": 0.7305,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:35:00-05:00",
      "open": 0.73,
      "high": 0.73,
-     "low": 0.73,
+     "low": 0.7201,
+     "close": 0.723,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:40:00-05:00",
+     "open": 0.72,
+     "high": 0.73,
+     "low": 0.72,
      "close": 0.73,
      "volume": 0
     }
    ]
   },
   {
-   "price": 2.9137,
+   "price": 0.5481,
+   "day_high": 0.8351,
+   "day_low": 0.5136,
+   "drop_pct": -34.4,
+   "hold_min": 200,
+   "hold_needed": 60,
+   "base_low": 0.5414,
+   "near_low": false,
+   "dist_from_low_pct": 6.7,
+   "target": 0.6851,
+   "target_pct": 25.0,
+   "rsi": 45.7,
+   "rsi_min": 37.5,
+   "obv": "صاعد",
+   "macd": "هيستوجرام أخضر",
+   "checks": {
+    "base": false,
+    "rsi": false,
+    "obv": true,
+    "macd": true
+   },
+   "complete": false,
+   "strength_score": 35,
+   "strength_label": "يحتاج متابعة",
+   "volume_last": 0,
+   "volume_avg": 11609,
+   "rvol": 0.0,
+   "dollar_volume": 0.0,
+   "last_bar": "2026-11-03T16:40:32-05:00",
+   "ticker": "JAGX",
+   "float": 2323373,
+   "float_status": "bound",
+   "detected_at": "2026-11-03T19:26:06.035034+00:00",
+   "still_valid": true,
+   "had_base": false,
+   "history": [
+    {
+     "last_bar": "2026-11-03T14:20:00-05:00",
+     "price": 0.5541,
+     "drop_pct": -33.6,
+     "hold_min": 75,
+     "strength_score": 15,
+     "complete": false,
+     "checks": {
+      "base": false,
+      "rsi": false,
+      "obv": false,
+      "macd": true
+     },
+     "rvol": 0.44
+    },
+    {
+     "last_bar": "2026-11-03T16:10:00-05:00",
+     "price": 0.5584,
+     "drop_pct": -33.1,
+     "hold_min": 170,
+     "strength_score": 35,
+     "complete": false,
+     "checks": {
+      "base": false,
+      "rsi": false,
+      "obv": true,
+      "macd": true
+     },
+     "rvol": 0.0
+    },
+    {
+     "last_bar": "2026-11-03T16:40:32-05:00",
+     "price": 0.5481,
+     "drop_pct": -34.4,
+     "hold_min": 200,
+     "strength_score": 35,
+     "complete": false,
+     "checks": {
+      "base": false,
+      "rsi": false,
+      "obv": true,
+      "macd": true
+     },
+     "rvol": 0.0
+    }
+   ],
+   "chart": [
+    {
+     "time": "2026-11-03T10:40:00-05:00",
+     "open": 0.5804,
+     "high": 0.5983,
+     "low": 0.5804,
+     "close": 0.5983,
+     "volume": 34681
+    },
+    {
+     "time": "2026-11-03T10:45:00-05:00",
+     "open": 0.6,
+     "high": 0.6,
+     "low": 0.5929,
+     "close": 0.5953,
+     "volume": 22681
+    },
+    {
+     "time": "2026-11-03T10:50:00-05:00",
+     "open": 0.5937,
+     "high": 0.5985,
+     "low": 0.5921,
+     "close": 0.5955,
+     "volume": 23542
+    },
+    {
+     "time": "2026-11-03T10:55:00-05:00",
+     "open": 0.5982,
+     "high": 0.6,
+     "low": 0.5927,
+     "close": 0.5962,
+     "volume": 12154
+    },
+    {
+     "time": "2026-11-03T11:00:00-05:00",
+     "open": 0.6052,
+     "high": 0.6115,
+     "low": 0.5925,
+     "close": 0.6115,
+     "volume": 22709
+    },
+    {
+     "time": "2026-11-03T11:05:00-05:00",
+     "open": 0.619,
+     "high": 0.6199,
+     "low": 0.6026,
+     "close": 0.6026,
+     "volume": 13738
+    },
+    {
+     "time": "2026-11-03T11:10:00-05:00",
+     "open": 0.6035,
+     "high": 0.6096,
+     "low": 0.6035,
+     "close": 0.6054,
+     "volume": 5107
+    },
+    {
+     "time": "2026-11-03T11:15:00-05:00",
+     "open": 0.6111,
+     "high": 0.6111,
+     "low": 0.5951,
+     "close": 0.5953,
+     "volume": 17039
+    },
+    {
+     "time": "2026-11-03T11:20:00-05:00",
+     "open": 0.5983,
+     "high": 0.6023,
+     "low": 0.575,
+     "close": 0.583,
+     "volume": 41270
+    },
+    {
+     "time": "2026-11-03T11:25:00-05:00",
+     "open": 0.5831,
+     "high": 0.5844,
+     "low": 0.575,
+     "close": 0.5801,
+     "volume": 23030
+    },
+    {
+     "time": "2026-11-03T11:30:00-05:00",
+     "open": 0.5823,
+     "high": 0.5845,
+     "low": 0.56,
+     "close": 0.57,
+     "volume": 50086
+    },
+    {
+     "time": "2026-11-03T11:35:00-05:00",
+     "open": 0.5699,
+     "high": 0.57,
+     "low": 0.54,
+     "close": 0.5446,
+     "volume": 93198
+    },
+    {
+     "time": "2026-11-03T11:40:00-05:00",
+     "open": 0.549,
+     "high": 0.5525,
+     "low": 0.5362,
+     "close": 0.5525,
+     "volume": 82317
+    },
+    {
+     "time": "2026-11-03T11:45:00-05:00",
+     "open": 0.55,
+     "high": 0.5523,
+     "low": 0.5136,
+     "close": 0.5499,
+     "volume": 64429
+    },
+    {
+     "time": "2026-11-03T11:50:00-05:00",
+     "open": 0.5248,
+     "high": 0.55,
+     "low": 0.5248,
+     "close": 0.55,
+     "volume": 31490
+    },
+    {
+     "time": "2026-11-03T11:55:00-05:00",
+     "open": 0.5499,
+     "high": 0.55,
+     "low": 0.5452,
+     "close": 0.55,
+     "volume": 35053
+    },
+    {
+     "time": "2026-11-03T12:00:00-05:00",
+     "open": 0.5486,
+     "high": 0.5486,
+     "low": 0.5433,
+     "close": 0.5452,
+     "volume": 76518
+    },
+    {
+     "time": "2026-11-03T12:05:00-05:00",
+     "open": 0.556,
+     "high": 0.5668,
+     "low": 0.5451,
+     "close": 0.5476,
+     "volume": 20560
+    },
+    {
+     "time": "2026-11-03T12:10:00-05:00",
+     "open": 0.5499,
+     "high": 0.58,
+     "low": 0.5495,
+     "close": 0.5625,
+     "volume": 19975
+    },
+    {
+     "time": "2026-11-03T12:15:00-05:00",
+     "open": 0.551,
+     "high": 0.5699,
+     "low": 0.551,
+     "close": 0.5699,
+     "volume": 27503
+    },
+    {
+     "time": "2026-11-03T12:20:00-05:00",
+     "open": 0.5468,
+     "high": 0.5684,
+     "low": 0.535,
+     "close": 0.535,
+     "volume": 8001
+    },
+    {
+     "time": "2026-11-03T12:25:00-05:00",
+     "open": 0.54,
+     "high": 0.5556,
+     "low": 0.535,
+     "close": 0.5503,
+     "volume": 21093
+    },
+    {
+     "time": "2026-11-03T12:30:00-05:00",
+     "open": 0.5478,
+     "high": 0.5556,
+     "low": 0.5414,
+     "close": 0.5414,
+     "volume": 7155
+    },
+    {
+     "time": "2026-11-03T12:35:00-05:00",
+     "open": 0.5407,
+     "high": 0.55,
+     "low": 0.5407,
+     "close": 0.5477,
+     "volume": 16547
+    },
+    {
+     "time": "2026-11-03T12:40:00-05:00",
+     "open": 0.5407,
+     "high": 0.5454,
+     "low": 0.5407,
+     "close": 0.5453,
+     "volume": 7499
+    },
+    {
+     "time": "2026-11-03T12:45:00-05:00",
+     "open": 0.5429,
+     "high": 0.55,
+     "low": 0.5429,
+     "close": 0.5465,
+     "volume": 7504
+    },
+    {
+     "time": "2026-11-03T12:50:00-05:00",
+     "open": 0.55,
+     "high": 0.55,
+     "low": 0.543,
+     "close": 0.55,
+     "volume": 26737
+    },
+    {
+     "time": "2026-11-03T12:55:00-05:00",
+     "open": 0.549,
+     "high": 0.549,
+     "low": 0.5431,
+     "close": 0.5481,
+     "volume": 2725
+    },
+    {
+     "time": "2026-11-03T13:00:00-05:00",
+     "open": 0.5481,
+     "high": 0.5482,
+     "low": 0.5431,
+     "close": 0.5482,
+     "volume": 2567
+    },
+    {
+     "time": "2026-11-03T13:05:00-05:00",
+     "open": 0.5465,
+     "high": 0.5503,
+     "low": 0.5416,
+     "close": 0.55,
+     "volume": 18840
+    },
+    {
+     "time": "2026-11-03T13:10:00-05:00",
+     "open": 0.55,
+     "high": 0.5539,
+     "low": 0.5486,
+     "close": 0.5539,
+     "volume": 9964
+    },
+    {
+     "time": "2026-11-03T13:15:00-05:00",
+     "open": 0.5533,
+     "high": 0.5566,
+     "low": 0.5533,
+     "close": 0.5566,
+     "volume": 11519
+    },
+    {
+     "time": "2026-11-03T13:20:00-05:00",
+     "open": 0.5621,
+     "high": 0.5701,
+     "low": 0.5621,
+     "close": 0.565,
+     "volume": 4987
+    },
+    {
+     "time": "2026-11-03T13:25:00-05:00",
+     "open": 0.5649,
+     "high": 0.5649,
+     "low": 0.562,
+     "close": 0.562,
+     "volume": 1183
+    },
+    {
+     "time": "2026-11-03T13:30:00-05:00",
+     "open": 0.5571,
+     "high": 0.5571,
+     "low": 0.5545,
+     "close": 0.5557,
+     "volume": 23611
+    },
+    {
+     "time": "2026-11-03T13:35:00-05:00",
+     "open": 0.5574,
+     "high": 0.5574,
+     "low": 0.5565,
+     "close": 0.5565,
+     "volume": 2230
+    },
+    {
+     "time": "2026-11-03T13:40:00-05:00",
+     "open": 0.5561,
+     "high": 0.5645,
+     "low": 0.5561,
+     "close": 0.563,
+     "volume": 9311
+    },
+    {
+     "time": "2026-11-03T13:45:00-05:00",
+     "open": 0.5601,
+     "high": 0.5615,
+     "low": 0.5601,
+     "close": 0.5604,
+     "volume": 3447
+    },
+    {
+     "time": "2026-11-03T13:50:00-05:00",
+     "open": 0.5603,
+     "high": 0.5616,
+     "low": 0.5601,
+     "close": 0.5616,
+     "volume": 11868
+    },
+    {
+     "time": "2026-11-03T13:55:00-05:00",
+     "open": 0.5629,
+     "high": 0.5645,
+     "low": 0.56,
+     "close": 0.56,
+     "volume": 43272
+    },
+    {
+     "time": "2026-11-03T14:00:00-05:00",
+     "open": 0.5575,
+     "high": 0.5575,
+     "low": 0.5502,
+     "close": 0.5525,
+     "volume": 15716
+    },
+    {
+     "time": "2026-11-03T14:05:00-05:00",
+     "open": 0.5592,
+     "high": 0.5623,
+     "low": 0.5535,
+     "close": 0.5535,
+     "volume": 10207
+    },
+    {
+     "time": "2026-11-03T14:10:00-05:00",
+     "open": 0.56,
+     "high": 0.56,
+     "low": 0.5516,
+     "close": 0.5517,
+     "volume": 7507
+    },
+    {
+     "time": "2026-11-03T14:15:00-05:00",
+     "open": 0.55,
+     "high": 0.55,
+     "low": 0.546,
+     "close": 0.547,
+     "volume": 22153
+    },
+    {
+     "time": "2026-11-03T14:20:00-05:00",
+     "open": 0.56,
+     "high": 0.56,
+     "low": 0.554,
+     "close": 0.5541,
+     "volume": 7524
+    },
+    {
+     "time": "2026-11-03T14:30:00-05:00",
+     "open": 0.5599,
+     "high": 0.5599,
+     "low": 0.554,
+     "close": 0.5551,
+     "volume": 10586
+    },
+    {
+     "time": "2026-11-03T14:35:00-05:00",
+     "open": 0.5578,
+     "high": 0.5578,
+     "low": 0.5551,
+     "close": 0.5551,
+     "volume": 4429
+    },
+    {
+     "time": "2026-11-03T14:40:00-05:00",
+     "open": 0.5551,
+     "high": 0.5551,
+     "low": 0.55,
+     "close": 0.55,
+     "volume": 1985
+    },
+    {
+     "time": "2026-11-03T14:45:00-05:00",
+     "open": 0.5501,
+     "high": 0.554,
+     "low": 0.5501,
+     "close": 0.5521,
+     "volume": 26075
+    },
+    {
+     "time": "2026-11-03T14:50:00-05:00",
+     "open": 0.55,
+     "high": 0.5571,
+     "low": 0.55,
+     "close": 0.5559,
+     "volume": 9631
+    },
+    {
+     "time": "2026-11-03T14:55:00-05:00",
+     "open": 0.5599,
+     "high": 0.5599,
+     "low": 0.5549,
+     "close": 0.5549,
+     "volume": 2325
+    },
+    {
+     "time": "2026-11-03T15:00:00-05:00",
+     "open": 0.5488,
+     "high": 0.5488,
+     "low": 0.5466,
+     "close": 0.5476,
+     "volume": 9035
+    },
+    {
+     "time": "2026-11-03T15:05:00-05:00",
+     "open": 0.5499,
+     "high": 0.5499,
+     "low": 0.5461,
+     "close": 0.5465,
+     "volume": 19499
+    },
+    {
+     "time": "2026-11-03T15:10:00-05:00",
+     "open": 0.5464,
+     "high": 0.5465,
+     "low": 0.5462,
+     "close": 0.5464,
+     "volume": 39537
+    },
+    {
+     "time": "2026-11-03T15:15:00-05:00",
+     "open": 0.5463,
+     "high": 0.5463,
+     "low": 0.5462,
+     "close": 0.5463,
+     "volume": 11793
+    },
+    {
+     "time": "2026-11-03T15:20:00-05:00",
+     "open": 0.5461,
+     "high": 0.5461,
+     "low": 0.5419,
+     "close": 0.5419,
+     "volume": 15324
+    },
+    {
+     "time": "2026-11-03T15:25:00-05:00",
+     "open": 0.5416,
+     "high": 0.5444,
+     "low": 0.5415,
+     "close": 0.5419,
+     "volume": 15376
+    },
+    {
+     "time": "2026-11-03T15:30:00-05:00",
+     "open": 0.5422,
+     "high": 0.545,
+     "low": 0.542,
+     "close": 0.5435,
+     "volume": 8195
+    },
+    {
+     "time": "2026-11-03T15:35:00-05:00",
+     "open": 0.5432,
+     "high": 0.5462,
+     "low": 0.5414,
+     "close": 0.5438,
+     "volume": 14847
+    },
+    {
+     "time": "2026-11-03T15:40:00-05:00",
+     "open": 0.5438,
+     "high": 0.5462,
+     "low": 0.5415,
+     "close": 0.5449,
+     "volume": 11330
+    },
+    {
+     "time": "2026-11-03T15:45:00-05:00",
+     "open": 0.5414,
+     "high": 0.5448,
+     "low": 0.5414,
+     "close": 0.5428,
+     "volume": 14206
+    },
+    {
+     "time": "2026-11-03T15:50:00-05:00",
+     "open": 0.5415,
+     "high": 0.545,
+     "low": 0.5415,
+     "close": 0.545,
+     "volume": 12072
+    },
+    {
+     "time": "2026-11-03T15:55:00-05:00",
+     "open": 0.5432,
+     "high": 0.5574,
+     "low": 0.5432,
+     "close": 0.5518,
+     "volume": 70004
+    },
+    {
+     "time": "2026-11-03T16:00:00-05:00",
+     "open": 0.5575,
+     "high": 0.5598,
+     "low": 0.5575,
+     "close": 0.5598,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:05:00-05:00",
+     "open": 0.5599,
+     "high": 0.5599,
+     "low": 0.5525,
+     "close": 0.5574,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:10:00-05:00",
+     "open": 0.5598,
+     "high": 0.5598,
+     "low": 0.5436,
+     "close": 0.5584,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:15:00-05:00",
+     "open": 0.5584,
+     "high": 0.5597,
+     "low": 0.5578,
+     "close": 0.5597,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:20:00-05:00",
+     "open": 0.5446,
+     "high": 0.5598,
+     "low": 0.5446,
+     "close": 0.5598,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:25:00-05:00",
+     "open": 0.5598,
+     "high": 0.5598,
+     "low": 0.5501,
+     "close": 0.5501,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:30:00-05:00",
+     "open": 0.5501,
+     "high": 0.5559,
+     "low": 0.5501,
+     "close": 0.5559,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:35:00-05:00",
+     "open": 0.5473,
+     "high": 0.5473,
+     "low": 0.5473,
+     "close": 0.5473,
+     "volume": 0
+    },
+    {
+     "time": "2026-11-03T16:40:32-05:00",
+     "open": 0.5481,
+     "high": 0.5481,
+     "low": 0.5481,
+     "close": 0.5481,
+     "volume": 0
+    }
+   ]
+  },
+  {
+   "price": 2.98,
    "day_high": 4.4,
    "day_low": 2.39,
-   "drop_pct": -33.8,
-   "hold_min": 5,
+   "drop_pct": -32.3,
+   "hold_min": 10,
    "hold_needed": 60,
-   "base_low": 2.9137,
+   "base_low": 2.89,
    "near_low": false,
-   "dist_from_low_pct": 21.9,
-   "target": 3.6421,
+   "dist_from_low_pct": 24.7,
+   "target": 3.725,
    "target_pct": 25.0,
-   "rsi": 48.8,
+   "rsi": 51.4,
    "rsi_min": 31.7,
    "obv": "ضعيف",
    "macd": "سلبي",
@@ -4574,10 +5326,10 @@
    "strength_score": 0,
    "strength_label": "يحتاج متابعة",
    "volume_last": 0,
-   "volume_avg": 5641,
+   "volume_avg": 4963,
    "rvol": 0.0,
    "dollar_volume": 0.0,
-   "last_bar": "2026-11-03T16:13:27-05:00",
+   "last_bar": "2026-11-03T16:35:09-05:00",
    "ticker": "DTST",
    "float": 2337738,
    "float_status": "bound",
@@ -4614,33 +5366,24 @@
       "macd": false
      },
      "rvol": 0.0
+    },
+    {
+     "last_bar": "2026-11-03T16:35:09-05:00",
+     "price": 2.98,
+     "drop_pct": -32.3,
+     "hold_min": 10,
+     "strength_score": 0,
+     "complete": false,
+     "checks": {
+      "base": false,
+      "rsi": false,
+      "obv": false,
+      "macd": false
+     },
+     "rvol": 0.0
     }
    ],
    "chart": [
-    {
-     "time": "2026-11-03T09:55:00-05:00",
-     "open": 3.3392,
-     "high": 3.8,
-     "low": 3.3392,
-     "close": 3.8,
-     "volume": 66476
-    },
-    {
-     "time": "2026-11-03T10:00:00-05:00",
-     "open": 3.69,
-     "high": 4.2999,
-     "low": 3.53,
-     "close": 3.91,
-     "volume": 917367
-    },
-    {
-     "time": "2026-11-03T10:05:00-05:00",
-     "open": 3.93,
-     "high": 4.28,
-     "low": 3.61,
-     "close": 4.1453,
-     "volume": 1637980
-    },
     {
      "time": "2026-11-03T10:10:00-05:00",
      "open": 4.1999,
@@ -5186,658 +5929,35 @@
      "volume": 0
     },
     {
-     "time": "2026-11-03T16:13:27-05:00",
-     "open": 2.9137,
+     "time": "2026-11-03T16:10:00-05:00",
+     "open": 2.7963,
      "high": 2.9137,
-     "low": 2.9137,
+     "low": 2.7817,
      "close": 2.9137,
      "volume": 0
-    }
-   ]
-  },
-  {
-   "price": 0.5584,
-   "day_high": 0.8351,
-   "day_low": 0.5136,
-   "drop_pct": -33.1,
-   "hold_min": 170,
-   "hold_needed": 60,
-   "base_low": 0.5414,
-   "near_low": false,
-   "dist_from_low_pct": 8.7,
-   "target": 0.698,
-   "target_pct": 25.0,
-   "rsi": 58.3,
-   "rsi_min": 37.5,
-   "obv": "صاعد",
-   "macd": "هيستوجرام أخضر",
-   "checks": {
-    "base": false,
-    "rsi": false,
-    "obv": true,
-    "macd": true
-   },
-   "complete": false,
-   "strength_score": 35,
-   "strength_label": "يحتاج متابعة",
-   "volume_last": 0,
-   "volume_avg": 14283,
-   "rvol": 0.0,
-   "dollar_volume": 0.0,
-   "last_bar": "2026-11-03T16:10:00-05:00",
-   "ticker": "JAGX",
-   "float": 2323373,
-   "float_status": "bound",
-   "detected_at": "2026-11-03T19:26:06.035034+00:00",
-   "still_valid": true,
-   "had_base": false,
-   "history": [
-    {
-     "last_bar": "2026-11-03T14:20:00-05:00",
-     "price": 0.5541,
-     "drop_pct": -33.6,
-     "hold_min": 75,
-     "strength_score": 15,
-     "complete": false,
-     "checks": {
-      "base": false,
-      "rsi": false,
-      "obv": false,
-      "macd": true
-     },
-     "rvol": 0.44
-    },
-    {
-     "last_bar": "2026-11-03T16:10:00-05:00",
-     "price": 0.5584,
-     "drop_pct": -33.1,
-     "hold_min": 170,
-     "strength_score": 35,
-     "complete": false,
-     "checks": {
-      "base": false,
-      "rsi": false,
-      "obv": true,
-      "macd": true
-     },
-     "rvol": 0.0
-    }
-   ],
-   "chart": [
-    {
-     "time": "2026-11-03T10:10:00-05:00",
-     "open": 0.63,
-     "high": 0.6464,
-     "low": 0.59,
-     "close": 0.6084,
-     "volume": 169275
-    },
-    {
-     "time": "2026-11-03T10:15:00-05:00",
-     "open": 0.605,
-     "high": 0.6098,
-     "low": 0.5701,
-     "close": 0.5901,
-     "volume": 55981
-    },
-    {
-     "time": "2026-11-03T10:20:00-05:00",
-     "open": 0.5997,
-     "high": 0.6043,
-     "low": 0.5901,
-     "close": 0.6043,
-     "volume": 32674
-    },
-    {
-     "time": "2026-11-03T10:25:00-05:00",
-     "open": 0.6022,
-     "high": 0.6022,
-     "low": 0.6,
-     "close": 0.6001,
-     "volume": 28287
-    },
-    {
-     "time": "2026-11-03T10:30:00-05:00",
-     "open": 0.6052,
-     "high": 0.6052,
-     "low": 0.5851,
-     "close": 0.5875,
-     "volume": 17933
-    },
-    {
-     "time": "2026-11-03T10:35:00-05:00",
-     "open": 0.5953,
-     "high": 0.5953,
-     "low": 0.5808,
-     "close": 0.5832,
-     "volume": 10907
-    },
-    {
-     "time": "2026-11-03T10:40:00-05:00",
-     "open": 0.5804,
-     "high": 0.5983,
-     "low": 0.5804,
-     "close": 0.5983,
-     "volume": 34681
-    },
-    {
-     "time": "2026-11-03T10:45:00-05:00",
-     "open": 0.6,
-     "high": 0.6,
-     "low": 0.5929,
-     "close": 0.5953,
-     "volume": 22681
-    },
-    {
-     "time": "2026-11-03T10:50:00-05:00",
-     "open": 0.5937,
-     "high": 0.5985,
-     "low": 0.5921,
-     "close": 0.5955,
-     "volume": 23542
-    },
-    {
-     "time": "2026-11-03T10:55:00-05:00",
-     "open": 0.5982,
-     "high": 0.6,
-     "low": 0.5927,
-     "close": 0.5962,
-     "volume": 12154
-    },
-    {
-     "time": "2026-11-03T11:00:00-05:00",
-     "open": 0.6052,
-     "high": 0.6115,
-     "low": 0.5925,
-     "close": 0.6115,
-     "volume": 22709
-    },
-    {
-     "time": "2026-11-03T11:05:00-05:00",
-     "open": 0.619,
-     "high": 0.6199,
-     "low": 0.6026,
-     "close": 0.6026,
-     "volume": 13738
-    },
-    {
-     "time": "2026-11-03T11:10:00-05:00",
-     "open": 0.6035,
-     "high": 0.6096,
-     "low": 0.6035,
-     "close": 0.6054,
-     "volume": 5107
-    },
-    {
-     "time": "2026-11-03T11:15:00-05:00",
-     "open": 0.6111,
-     "high": 0.6111,
-     "low": 0.5951,
-     "close": 0.5953,
-     "volume": 17039
-    },
-    {
-     "time": "2026-11-03T11:20:00-05:00",
-     "open": 0.5983,
-     "high": 0.6023,
-     "low": 0.575,
-     "close": 0.583,
-     "volume": 41270
-    },
-    {
-     "time": "2026-11-03T11:25:00-05:00",
-     "open": 0.5831,
-     "high": 0.5844,
-     "low": 0.575,
-     "close": 0.5801,
-     "volume": 23030
-    },
-    {
-     "time": "2026-11-03T11:30:00-05:00",
-     "open": 0.5823,
-     "high": 0.5845,
-     "low": 0.56,
-     "close": 0.57,
-     "volume": 50086
-    },
-    {
-     "time": "2026-11-03T11:35:00-05:00",
-     "open": 0.5699,
-     "high": 0.57,
-     "low": 0.54,
-     "close": 0.5446,
-     "volume": 93198
-    },
-    {
-     "time": "2026-11-03T11:40:00-05:00",
-     "open": 0.549,
-     "high": 0.5525,
-     "low": 0.5362,
-     "close": 0.5525,
-     "volume": 82317
-    },
-    {
-     "time": "2026-11-03T11:45:00-05:00",
-     "open": 0.55,
-     "high": 0.5523,
-     "low": 0.5136,
-     "close": 0.5499,
-     "volume": 64429
-    },
-    {
-     "time": "2026-11-03T11:50:00-05:00",
-     "open": 0.5248,
-     "high": 0.55,
-     "low": 0.5248,
-     "close": 0.55,
-     "volume": 31490
-    },
-    {
-     "time": "2026-11-03T11:55:00-05:00",
-     "open": 0.5499,
-     "high": 0.55,
-     "low": 0.5452,
-     "close": 0.55,
-     "volume": 35053
-    },
-    {
-     "time": "2026-11-03T12:00:00-05:00",
-     "open": 0.5486,
-     "high": 0.5486,
-     "low": 0.5433,
-     "close": 0.5452,
-     "volume": 76518
-    },
-    {
-     "time": "2026-11-03T12:05:00-05:00",
-     "open": 0.556,
-     "high": 0.5668,
-     "low": 0.5451,
-     "close": 0.5476,
-     "volume": 20560
-    },
-    {
-     "time": "2026-11-03T12:10:00-05:00",
-     "open": 0.5499,
-     "high": 0.58,
-     "low": 0.5495,
-     "close": 0.5625,
-     "volume": 19975
-    },
-    {
-     "time": "2026-11-03T12:15:00-05:00",
-     "open": 0.551,
-     "high": 0.5699,
-     "low": 0.551,
-     "close": 0.5699,
-     "volume": 27503
-    },
-    {
-     "time": "2026-11-03T12:20:00-05:00",
-     "open": 0.5468,
-     "high": 0.5684,
-     "low": 0.535,
-     "close": 0.535,
-     "volume": 8001
-    },
-    {
-     "time": "2026-11-03T12:25:00-05:00",
-     "open": 0.54,
-     "high": 0.5556,
-     "low": 0.535,
-     "close": 0.5503,
-     "volume": 21093
-    },
-    {
-     "time": "2026-11-03T12:30:00-05:00",
-     "open": 0.5478,
-     "high": 0.5556,
-     "low": 0.5414,
-     "close": 0.5414,
-     "volume": 7155
-    },
-    {
-     "time": "2026-11-03T12:35:00-05:00",
-     "open": 0.5407,
-     "high": 0.55,
-     "low": 0.5407,
-     "close": 0.5477,
-     "volume": 16547
-    },
-    {
-     "time": "2026-11-03T12:40:00-05:00",
-     "open": 0.5407,
-     "high": 0.5454,
-     "low": 0.5407,
-     "close": 0.5453,
-     "volume": 7499
-    },
-    {
-     "time": "2026-11-03T12:45:00-05:00",
-     "open": 0.5429,
-     "high": 0.55,
-     "low": 0.5429,
-     "close": 0.5465,
-     "volume": 7504
-    },
-    {
-     "time": "2026-11-03T12:50:00-05:00",
-     "open": 0.55,
-     "high": 0.55,
-     "low": 0.543,
-     "close": 0.55,
-     "volume": 26737
-    },
-    {
-     "time": "2026-11-03T12:55:00-05:00",
-     "open": 0.549,
-     "high": 0.549,
-     "low": 0.5431,
-     "close": 0.5481,
-     "volume": 2725
-    },
-    {
-     "time": "2026-11-03T13:00:00-05:00",
-     "open": 0.5481,
-     "high": 0.5482,
-     "low": 0.5431,
-     "close": 0.5482,
-     "volume": 2567
-    },
-    {
-     "time": "2026-11-03T13:05:00-05:00",
-     "open": 0.5465,
-     "high": 0.5503,
-     "low": 0.5416,
-     "close": 0.55,
-     "volume": 18840
-    },
-    {
-     "time": "2026-11-03T13:10:00-05:00",
-     "open": 0.55,
-     "high": 0.5539,
-     "low": 0.5486,
-     "close": 0.5539,
-     "volume": 9964
-    },
-    {
-     "time": "2026-11-03T13:15:00-05:00",
-     "open": 0.5533,
-     "high": 0.5566,
-     "low": 0.5533,
-     "close": 0.5566,
-     "volume": 11519
-    },
-    {
-     "time": "2026-11-03T13:20:00-05:00",
-     "open": 0.5621,
-     "high": 0.5701,
-     "low": 0.5621,
-     "close": 0.565,
-     "volume": 4987
-    },
-    {
-     "time": "2026-11-03T13:25:00-05:00",
-     "open": 0.5649,
-     "high": 0.5649,
-     "low": 0.562,
-     "close": 0.562,
-     "volume": 1183
-    },
-    {
-     "time": "2026-11-03T13:30:00-05:00",
-     "open": 0.5571,
-     "high": 0.5571,
-     "low": 0.5545,
-     "close": 0.5557,
-     "volume": 23611
-    },
-    {
-     "time": "2026-11-03T13:35:00-05:00",
-     "open": 0.5574,
-     "high": 0.5574,
-     "low": 0.5565,
-     "close": 0.5565,
-     "volume": 2230
-    },
-    {
-     "time": "2026-11-03T13:40:00-05:00",
-     "open": 0.5561,
-     "high": 0.5645,
-     "low": 0.5561,
-     "close": 0.563,
-     "volume": 9311
-    },
-    {
-     "time": "2026-11-03T13:45:00-05:00",
-     "open": 0.5601,
-     "high": 0.5615,
-     "low": 0.5601,
-     "close": 0.5604,
-     "volume": 3447
-    },
-    {
-     "time": "2026-11-03T13:50:00-05:00",
-     "open": 0.5603,
-     "high": 0.5616,
-     "low": 0.5601,
-     "close": 0.5616,
-     "volume": 11868
-    },
-    {
-     "time": "2026-11-03T13:55:00-05:00",
-     "open": 0.5629,
-     "high": 0.5645,
-     "low": 0.56,
-     "close": 0.56,
-     "volume": 43272
-    },
-    {
-     "time": "2026-11-03T14:00:00-05:00",
-     "open": 0.5575,
-     "high": 0.5575,
-     "low": 0.5502,
-     "close": 0.5525,
-     "volume": 15716
-    },
-    {
-     "time": "2026-11-03T14:05:00-05:00",
-     "open": 0.5592,
-     "high": 0.5623,
-     "low": 0.5535,
-     "close": 0.5535,
-     "volume": 10207
-    },
-    {
-     "time": "2026-11-03T14:10:00-05:00",
-     "open": 0.56,
-     "high": 0.56,
-     "low": 0.5516,
-     "close": 0.5517,
-     "volume": 7507
-    },
-    {
-     "time": "2026-11-03T14:15:00-05:00",
-     "open": 0.55,
-     "high": 0.55,
-     "low": 0.546,
-     "close": 0.547,
-     "volume": 22153
-    },
-    {
-     "time": "2026-11-03T14:20:00-05:00",
-     "open": 0.56,
-     "high": 0.56,
-     "low": 0.554,
-     "close": 0.5541,
-     "volume": 7524
-    },
-    {
-     "time": "2026-11-03T14:30:00-05:00",
-     "open": 0.5599,
-     "high": 0.5599,
-     "low": 0.554,
-     "close": 0.5551,
-     "volume": 10586
-    },
-    {
-     "time": "2026-11-03T14:35:00-05:00",
-     "open": 0.5578,
-     "high": 0.5578,
-     "low": 0.5551,
-     "close": 0.5551,
-     "volume": 4429
-    },
-    {
-     "time": "2026-11-03T14:40:00-05:00",
-     "open": 0.5551,
-     "high": 0.5551,
-     "low": 0.55,
-     "close": 0.55,
-     "volume": 1985
-    },
-    {
-     "time": "2026-11-03T14:45:00-05:00",
-     "open": 0.5501,
-     "high": 0.554,
-     "low": 0.5501,
-     "close": 0.5521,
-     "volume": 26075
-    },
-    {
-     "time": "2026-11-03T14:50:00-05:00",
-     "open": 0.55,
-     "high": 0.5571,
-     "low": 0.55,
-     "close": 0.5559,
-     "volume": 9631
-    },
-    {
-     "time": "2026-11-03T14:55:00-05:00",
-     "open": 0.5599,
-     "high": 0.5599,
-     "low": 0.5549,
-     "close": 0.5549,
-     "volume": 2325
-    },
-    {
-     "time": "2026-11-03T15:00:00-05:00",
-     "open": 0.5488,
-     "high": 0.5488,
-     "low": 0.5466,
-     "close": 0.5476,
-     "volume": 9035
-    },
-    {
-     "time": "2026-11-03T15:05:00-05:00",
-     "open": 0.5499,
-     "high": 0.5499,
-     "low": 0.5461,
-     "close": 0.5465,
-     "volume": 19499
-    },
-    {
-     "time": "2026-11-03T15:10:00-05:00",
-     "open": 0.5464,
-     "high": 0.5465,
-     "low": 0.5462,
-     "close": 0.5464,
-     "volume": 39537
-    },
-    {
-     "time": "2026-11-03T15:15:00-05:00",
-     "open": 0.5463,
-     "high": 0.5463,
-     "low": 0.5462,
-     "close": 0.5463,
-     "volume": 11793
-    },
-    {
-     "time": "2026-11-03T15:20:00-05:00",
-     "open": 0.5461,
-     "high": 0.5461,
-     "low": 0.5419,
-     "close": 0.5419,
-     "volume": 15324
-    },
-    {
-     "time": "2026-11-03T15:25:00-05:00",
-     "open": 0.5416,
-     "high": 0.5444,
-     "low": 0.5415,
-     "close": 0.5419,
-     "volume": 15376
-    },
-    {
-     "time": "2026-11-03T15:30:00-05:00",
-     "open": 0.5422,
-     "high": 0.545,
-     "low": 0.542,
-     "close": 0.5435,
-     "volume": 8195
-    },
-    {
-     "time": "2026-11-03T15:35:00-05:00",
-     "open": 0.5432,
-     "high": 0.5462,
-     "low": 0.5414,
-     "close": 0.5438,
-     "volume": 14847
-    },
-    {
-     "time": "2026-11-03T15:40:00-05:00",
-     "open": 0.5438,
-     "high": 0.5462,
-     "low": 0.5415,
-     "close": 0.5449,
-     "volume": 11330
-    },
-    {
-     "time": "2026-11-03T15:45:00-05:00",
-     "open": 0.5414,
-     "high": 0.5448,
-     "low": 0.5414,
-     "close": 0.5428,
-     "volume": 14206
-    },
-    {
-     "time": "2026-11-03T15:50:00-05:00",
-     "open": 0.5415,
-     "high": 0.545,
-     "low": 0.5415,
-     "close": 0.545,
-     "volume": 12072
-    },
-    {
-     "time": "2026-11-03T15:55:00-05:00",
-     "open": 0.5432,
-     "high": 0.5574,
-     "low": 0.5432,
-     "close": 0.5518,
-     "volume": 70004
     },
     {
-     "time": "2026-11-03T16:00:00-05:00",
-     "open": 0.5575,
-     "high": 0.5598,
-     "low": 0.5575,
-     "close": 0.5598,
+     "time": "2026-11-03T16:25:00-05:00",
+     "open": 2.8,
+     "high": 2.8,
+     "low": 2.8,
+     "close": 2.8,
      "volume": 0
     },
     {
-     "time": "2026-11-03T16:05:00-05:00",
-     "open": 0.5599,
-     "high": 0.5599,
-     "low": 0.5525,
-     "close": 0.5574,
+     "time": "2026-11-03T16:30:00-05:00",
+     "open": 2.89,
+     "high": 2.9232,
+     "low": 2.89,
+     "close": 2.9232,
      "volume": 0
     },
     {
-     "time": "2026-11-03T16:10:00-05:00",
-     "open": 0.5598,
-     "high": 0.5598,
-     "low": 0.5573,
-     "close": 0.5584,
+     "time": "2026-11-03T16:35:09-05:00",
+     "open": 2.98,
+     "high": 2.98,
+     "low": 2.98,
+     "close": 2.98,
      "volume": 0
     }
    ]
@@ -5871,7 +5991,7 @@
    "volume_avg": 4443,
    "rvol": 0.0,
    "dollar_volume": 0.0,
-   "last_bar": "2026-11-03T16:10:04-05:00",
+   "last_bar": "2026-11-03T16:10:00-05:00",
    "ticker": "EZGO",
    "float": 2305899,
    "float_status": "bound",
@@ -5896,6 +6016,21 @@
     },
     {
      "last_bar": "2026-11-03T16:10:04-05:00",
+     "price": 0.553,
+     "drop_pct": -30.9,
+     "hold_min": 20,
+     "strength_score": 0,
+     "complete": false,
+     "checks": {
+      "base": false,
+      "rsi": false,
+      "obv": false,
+      "macd": false
+     },
+     "rvol": 0.0
+    },
+    {
+     "last_bar": "2026-11-03T16:10:00-05:00",
      "price": 0.553,
      "drop_pct": -30.9,
      "hold_min": 20,
@@ -6480,7 +6615,7 @@
      "volume": 0
     },
     {
-     "time": "2026-11-03T16:10:04-05:00",
+     "time": "2026-11-03T16:10:00-05:00",
      "open": 0.553,
      "high": 0.553,
      "low": 0.553,
@@ -6493,22 +6628,12 @@
  "purged": [],
  "diagnostics": {
   "reasons": {
-   "no_drop": 213,
+   "no_drop": 216,
    "ok": 9,
-   "stale": 6,
-   "no_data": 13
+   "no_data": 16
   }
  },
  "scan_log": [
-  {
-   "at": "2026-10-15T17:25:23.711938+00:00",
-   "ok": true,
-   "coverage_pct": 100.0,
-   "frames": 278,
-   "master": 278,
-   "items": 6,
-   "complete": 0
-  },
   {
    "at": "2026-10-15T19:53:12.610337+00:00",
    "ok": true,
@@ -7363,10 +7488,19 @@
    "master": 241,
    "items": 10,
    "complete": 0
+  },
+  {
+   "at": "2026-11-03T21:44:35.960829+00:00",
+   "ok": true,
+   "coverage_pct": 100.0,
+   "frames": 241,
+   "master": 241,
+   "items": 10,
+   "complete": 0
   }
  ],
  "last_scan": {
-  "at": "2026-11-03T21:15:31.779503+00:00",
+  "at": "2026-11-03T21:44:35.960829+00:00",
   "ok": true,
   "coverage_pct": 100.0,
   "frames": 241,
