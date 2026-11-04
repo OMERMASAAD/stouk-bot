@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-03T21:35:52.527718+00:00",
+  "updated_at": "2026-11-04T00:32:17.978143+00:00",
   "strategy": "Bottom Radar — Second Leg Setup",
   "count": 5,
   "diagnostics": {
@@ -17,8 +17,8 @@
       "sec_edgar": 3
     },
     "float_status": {
-      "bound": 40,
       "too_big": 22,
+      "bound": 40,
       "unverified": 9,
       "unknown": 1
     },
@@ -29,15 +29,15 @@
     },
     "reject_reasons": {
       "float_too_big": 22,
-      "breakdown": 5,
       "peak_is_last_bar": 7,
-      "no_return_to_base": 33
+      "no_return_to_base": 33,
+      "breakdown": 5
     },
     "news": {
       "tickers_with_headlines": 40,
       "tickers_with_earnings_dates": 0,
       "headlines_total": 150,
-      "warnings_found": 1,
+      "warnings_found": 0,
       "catalysts_found": 0
     },
     "near_misses": [
@@ -437,7 +437,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "RYOJ",
-      "computed_at": "2026-11-03T21:35:52.527718+00:00",
+      "computed_at": "2026-11-04T00:32:17.978143+00:00",
       "float_status": "unverified",
       "float_unverified": true,
       "technical_4h": {
@@ -1013,7 +1013,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "LHSW",
-      "computed_at": "2026-11-03T21:35:52.527718+00:00",
+      "computed_at": "2026-11-04T00:32:17.978143+00:00",
       "float_status": "bound",
       "technical_4h": {
         "rsi": 51.53,
@@ -1508,7 +1508,7 @@
         "volume_mode": "dry",
         "rsi_recovery_signal": false,
         "rsi_min_since_peak": 45.26,
-        "rsi_min_intraday": 38.62,
+        "rsi_min_intraday": 38.55,
         "higher_low": false,
         "no_new_low": false,
         "stable_bars": 1,
@@ -1589,23 +1589,23 @@
         "earnings_dates_count": 0
       },
       "ticker": "SPHL",
-      "computed_at": "2026-11-03T21:35:52.527718+00:00",
+      "computed_at": "2026-11-04T00:32:17.978143+00:00",
       "float_status": "bound",
       "technical_4h": {
-        "rsi": 46.24,
-        "rsi_prev": 46.81,
+        "rsi": 46.2,
+        "rsi_prev": 46.77,
         "rsi_oversold_recent": false,
         "rsi_turning_up": false,
-        "ema9": 2.3404,
-        "ema20": 2.4269,
-        "ema50": 2.4473,
+        "ema9": 2.3409,
+        "ema20": 2.4274,
+        "ema50": 2.4476,
         "ema20_reclaim": false,
         "ema20_rising": false,
         "ema50_reclaim": false,
-        "macd": -0.0705,
-        "macd_signal": -0.0315,
-        "macd_hist": -0.039,
-        "macd_hist_prev": -0.04286,
+        "macd": -0.0704,
+        "macd_signal": -0.03126,
+        "macd_hist": -0.03913,
+        "macd_hist_prev": -0.04296,
         "macd_cross": false,
         "macd_improving": true,
         "rvol": 0.02,
@@ -1615,24 +1615,24 @@
         "positive_confirmations": 1
       },
       "technical_1h": {
-        "rsi": 44.83,
-        "rsi_prev": 46.14,
+        "rsi": 44.8,
+        "rsi_prev": 46.11,
         "rsi_oversold_recent": false,
         "rsi_turning_up": false,
-        "ema9": 2.2961,
-        "ema20": 2.3408,
-        "ema50": 2.3835,
+        "ema9": 2.2962,
+        "ema20": 2.3411,
+        "ema50": 2.3838,
         "ema20_reclaim": false,
         "ema20_rising": false,
         "ema50_reclaim": false,
-        "macd": -0.04762,
-        "macd_signal": -0.04085,
-        "macd_hist": -0.00677,
-        "macd_hist_prev": -0.00725,
+        "macd": -0.04771,
+        "macd_signal": -0.04083,
+        "macd_hist": -0.00688,
+        "macd_hist_prev": -0.00737,
         "macd_cross": false,
         "macd_improving": true,
-        "rvol": 1.46,
-        "volume_ratio": 1.46,
+        "rvol": 1.42,
+        "volume_ratio": 1.42,
         "body_pct": 3.42,
         "volume_confirm": true,
         "positive_confirmations": 2
@@ -2165,7 +2165,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "YMAT",
-      "computed_at": "2026-11-03T21:35:52.527718+00:00",
+      "computed_at": "2026-11-04T00:32:17.978143+00:00",
       "float_status": "bound",
       "technical_4h": {
         "rsi": 39.71,
@@ -2509,7 +2509,7 @@
           "high": 1.43,
           "low": 1.03,
           "close": 1.23,
-          "volume": 749060,
+          "volume": 760469,
           "rsi": 43.04
         }
       ],
@@ -2741,7 +2741,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "DUKRW",
-      "computed_at": "2026-11-03T21:35:52.527718+00:00",
+      "computed_at": "2026-11-04T00:32:17.978143+00:00",
       "float_status": "bound",
       "technical_4h": {
         "rsi": 43.4,
