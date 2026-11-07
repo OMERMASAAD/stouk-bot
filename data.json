@@ -1,12 +1,12 @@
 {
-  "updated_at": "2026-11-07T00:02:16.711204+00:00",
+  "updated_at": "2026-11-07T03:27:41.794599+00:00",
   "strategy": "Bottom Radar — Second Leg Setup",
   "count": 10,
   "diagnostics": {
     "symbols_total": 6931,
     "data_coverage_pct": 93.0,
-    "price_pass": 1229,
-    "prior_rally_pass": 287,
+    "price_pass": 1232,
+    "prior_rally_pass": 288,
     "days_since_peak_pass": 60,
     "float_available": 60,
     "float_exact": 0,
@@ -17,8 +17,8 @@
       "sec_edgar": 3
     },
     "float_status": {
-      "bound": 35,
       "unverified": 7,
+      "bound": 35,
       "too_big": 18
     },
     "sec_status": {
@@ -33,10 +33,10 @@
     },
     "news": {
       "tickers_with_headlines": 36,
-      "tickers_with_earnings_dates": 7,
+      "tickers_with_earnings_dates": 0,
       "headlines_total": 148,
       "warnings_found": 1,
-      "catalysts_found": 7
+      "catalysts_found": 0
     },
     "near_misses": [
       {
@@ -59,7 +59,7 @@
         "ticker": "CRMT",
         "reason": "peak_is_last_bar",
         "price": 1.44,
-        "rally_pct": 203.5,
+        "rally_pct": 205.3,
         "days_since_peak": 0,
         "float": 8338478
       },
@@ -83,7 +83,7 @@
         "ticker": "BESS",
         "reason": "peak_is_last_bar",
         "price": 3.03,
-        "rally_pct": 102.6,
+        "rally_pct": 107.2,
         "days_since_peak": 0,
         "float": 7097573
       },
@@ -91,7 +91,7 @@
         "ticker": "GOGO",
         "reason": "float_too_big",
         "price": 3.88,
-        "rally_pct": 101.3,
+        "rally_pct": 101.5,
         "days_since_peak": 0,
         "float": 135507862
       },
@@ -239,7 +239,7 @@
         "rsi_prev": 43.13,
         "ema9": 1.3682,
         "ema20": 1.3805,
-        "vwap": 1.2362,
+        "vwap": 1.2369,
         "rvol": 0.2,
         "macd_hist": 0.01372
       },
@@ -349,7 +349,7 @@
         "body_pct": 6.4,
         "volume_confirm": false,
         "positive_confirmations": 1,
-        "vwap": 1.2362,
+        "vwap": 1.2369,
         "vwap_reclaim": true,
         "volume_ok": true,
         "volume_mode": "dry",
@@ -442,24 +442,13 @@
             "age_days": 3
           }
         ],
-        "catalysts": [
-          {
-            "type": "📅 نتائج مالية",
-            "title": "موعد إعلان النتائج المالية",
-            "date": "2026-11-09",
-            "url": "",
-            "source": "Yahoo Finance (calendar)",
-            "kind": "calendar",
-            "days_until": 2,
-            "importance": "عالية"
-          }
-        ],
+        "catalysts": [],
         "temp_excluded": true,
         "headlines_count": 10,
-        "earnings_dates_count": 1
+        "earnings_dates_count": 0
       },
       "ticker": "BIVI",
-      "computed_at": "2026-11-07T00:02:16.711204+00:00",
+      "computed_at": "2026-11-07T03:27:41.794599+00:00",
       "float_status": "bound",
       "technical_4h": {
         "rsi": 49.68,
@@ -801,9 +790,9 @@
           "date": "2026-11-06",
           "open": 1.25,
           "high": 1.38,
-          "low": 1.2301,
+          "low": 1.23,
           "close": 1.33,
-          "volume": 175801,
+          "volume": 181800,
           "rsi": 46.83
         }
       ],
@@ -837,7 +826,7 @@
         "rsi_prev": 37.78,
         "ema9": 2.4673,
         "ema20": 2.6159,
-        "vwap": 2.4713,
+        "vwap": 2.4714,
         "rvol": 0.06,
         "macd_hist": 0.05167
       },
@@ -946,7 +935,7 @@
         "body_pct": 2.52,
         "volume_confirm": false,
         "positive_confirmations": 0,
-        "vwap": 2.4713,
+        "vwap": 2.4714,
         "vwap_reclaim": false,
         "volume_ok": true,
         "volume_mode": "dry",
@@ -1033,7 +1022,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "RYOJ",
-      "computed_at": "2026-11-07T00:02:16.711204+00:00",
+      "computed_at": "2026-11-07T03:27:41.794599+00:00",
       "float_status": "unverified",
       "float_unverified": true,
       "technical_4h": {
@@ -1053,8 +1042,8 @@
         "macd_hist_prev": -0.00787,
         "macd_cross": false,
         "macd_improving": false,
-        "rvol": 0.3,
-        "volume_ratio": 0.3,
+        "rvol": 0.29,
+        "volume_ratio": 0.29,
         "body_pct": 0.87,
         "volume_confirm": false,
         "positive_confirmations": 0
@@ -1076,8 +1065,8 @@
         "macd_hist_prev": -0.0227,
         "macd_cross": false,
         "macd_improving": false,
-        "rvol": 0.48,
-        "volume_ratio": 0.48,
+        "rvol": 0.45,
+        "volume_ratio": 0.45,
         "body_pct": 0.0,
         "volume_confirm": false,
         "positive_confirmations": 0
@@ -1375,10 +1364,10 @@
         {
           "date": "2026-11-06",
           "open": 2.38,
-          "high": 2.37,
+          "high": 2.38,
           "low": 2.29,
           "close": 2.32,
-          "volume": 7993,
+          "volume": 8000,
           "rsi": 34.17
         }
       ],
@@ -1412,7 +1401,7 @@
         "rsi_prev": 46.81,
         "ema9": 2.3703,
         "ema20": 2.4238,
-        "vwap": 2.3399,
+        "vwap": 2.3398,
         "rvol": 0.0,
         "macd_hist": -0.0309
       },
@@ -1519,10 +1508,10 @@
         "macd_improving": false,
         "rvol": 0.0,
         "volume_ratio": 0.0,
-        "body_pct": 3.31,
+        "body_pct": 3.32,
         "volume_confirm": false,
         "positive_confirmations": 0,
-        "vwap": 2.3399,
+        "vwap": 2.3398,
         "vwap_reclaim": false,
         "volume_ok": true,
         "volume_mode": "dry",
@@ -1609,7 +1598,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "SPHL",
-      "computed_at": "2026-11-07T00:02:16.711204+00:00",
+      "computed_at": "2026-11-07T03:27:41.794599+00:00",
       "float_status": "bound",
       "technical_4h": {
         "rsi": 28.92,
@@ -1949,11 +1938,11 @@
         },
         {
           "date": "2026-11-06",
-          "open": 2.3478,
-          "high": 2.3478,
+          "open": 2.348,
+          "high": 2.348,
           "low": 2.26,
           "close": 2.27,
-          "volume": 11822,
+          "volume": 11900,
           "rsi": 43.43
         }
       ],
@@ -2183,7 +2172,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "GIXI",
-      "computed_at": "2026-11-07T00:02:16.711204+00:00",
+      "computed_at": "2026-11-07T03:27:41.794599+00:00",
       "float_status": "bound",
       "technical_4h": {
         "rsi": 45.51,
@@ -2527,7 +2516,7 @@
           "high": 3.71,
           "low": 3.49,
           "close": 3.64,
-          "volume": 11756,
+          "volume": 11800,
           "rsi": 38.15
         }
       ],
@@ -2561,7 +2550,7 @@
         "rsi_prev": 40.33,
         "ema9": 4.0503,
         "ema20": 4.6682,
-        "vwap": 3.3201,
+        "vwap": 3.3133,
         "rvol": 0.03,
         "macd_hist": 0.14477
       },
@@ -2635,12 +2624,12 @@
       "prior_high": 8.4,
       "prior_rally_pct": 174.87,
       "surge_pct": 174.87,
-      "max_drawdown_pct": 62.74,
+      "max_drawdown_pct": 62.98,
       "drawdown_pct": 61.43,
       "float_shares": 1363271,
       "support": {
         "level": 3.056,
-        "trough_low": 3.1301,
+        "trough_low": 3.11,
         "stable_sessions": 0,
         "stable_bars": 1,
         "near_support": true,
@@ -2671,7 +2660,7 @@
         "body_pct": 6.36,
         "volume_confirm": false,
         "positive_confirmations": 0,
-        "vwap": 3.3201,
+        "vwap": 3.3133,
         "vwap_reclaim": false,
         "volume_ok": true,
         "volume_mode": "dry",
@@ -2721,7 +2710,7 @@
       "plan": {
         "entry_price": 3.24,
         "entry": 3.24,
-        "entry_low": 3.1301,
+        "entry_low": 3.11,
         "entry_high": 3.24,
         "stop_loss": 2.9949,
         "stop": 2.9949,
@@ -2758,7 +2747,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "LHSW",
-      "computed_at": "2026-11-07T00:02:16.711204+00:00",
+      "computed_at": "2026-11-07T03:27:41.794599+00:00",
       "float_status": "bound",
       "technical_4h": {
         "rsi": 33.04,
@@ -2800,8 +2789,8 @@
         "macd_hist_prev": -0.04841,
         "macd_cross": false,
         "macd_improving": true,
-        "rvol": 0.56,
-        "volume_ratio": 0.56,
+        "rvol": 0.53,
+        "volume_ratio": 0.53,
         "body_pct": 0.93,
         "volume_confirm": false,
         "positive_confirmations": 2
@@ -3099,10 +3088,10 @@
         {
           "date": "2026-11-06",
           "open": 3.46,
-          "high": 3.5903,
-          "low": 3.1301,
+          "high": 3.59,
+          "low": 3.11,
           "close": 3.24,
-          "volume": 14925,
+          "volume": 14900,
           "rsi": 38.65
         }
       ],
@@ -3137,7 +3126,7 @@
         "ema9": 2.1018,
         "ema20": 2.366,
         "vwap": 1.06,
-        "rvol": 0.3,
+        "rvol": 0.35,
         "macd_hist": -0.06209
       },
       "checklist": [
@@ -3242,8 +3231,8 @@
         "macd_hist_prev": 0.01403,
         "macd_cross": false,
         "macd_improving": false,
-        "rvol": 0.3,
-        "volume_ratio": 0.3,
+        "rvol": 0.35,
+        "volume_ratio": 0.35,
         "body_pct": 7.14,
         "volume_confirm": false,
         "positive_confirmations": 0,
@@ -3334,7 +3323,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "ELPW",
-      "computed_at": "2026-11-07T00:02:16.711204+00:00",
+      "computed_at": "2026-11-07T03:27:41.794599+00:00",
       "float_status": "bound",
       "technical_4h": {
         "rsi": 33.75,
@@ -3678,7 +3667,7 @@
           "high": 1.18,
           "low": 0.96,
           "close": 1.04,
-          "volume": 1626408,
+          "volume": 1866000,
           "rsi": 20.93
         }
       ],
@@ -3712,8 +3701,8 @@
         "rsi_prev": 39.86,
         "ema9": 1.4474,
         "ema20": 1.6182,
-        "vwap": 1.2214,
-        "rvol": 0.0,
+        "vwap": 1.221,
+        "rvol": 0.01,
         "macd_hist": -0.11806
       },
       "checklist": [
@@ -3819,12 +3808,12 @@
         "macd_hist_prev": -0.10859,
         "macd_cross": false,
         "macd_improving": false,
-        "rvol": 0.0,
-        "volume_ratio": 0.0,
+        "rvol": 0.01,
+        "volume_ratio": 0.01,
         "body_pct": 7.08,
         "volume_confirm": false,
         "positive_confirmations": 0,
-        "vwap": 1.2214,
+        "vwap": 1.221,
         "vwap_reclaim": false,
         "volume_ok": false,
         "volume_mode": "none",
@@ -3911,7 +3900,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "YMAT",
-      "computed_at": "2026-11-07T00:02:16.711204+00:00",
+      "computed_at": "2026-11-07T03:27:41.794599+00:00",
       "float_status": "bound",
       "technical_4h": {
         "rsi": 32.12,
@@ -3953,8 +3942,8 @@
         "macd_hist_prev": 0.00022,
         "macd_cross": false,
         "macd_improving": true,
-        "rvol": 0.19,
-        "volume_ratio": 0.19,
+        "rvol": 0.2,
+        "volume_ratio": 0.2,
         "body_pct": 0.1,
         "volume_confirm": false,
         "positive_confirmations": 1
@@ -4255,7 +4244,7 @@
           "high": 1.13,
           "low": 1.05,
           "close": 1.05,
-          "volume": 66457,
+          "volume": 71500,
           "rsi": 39.94
         }
       ],
@@ -5644,7 +5633,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "YHC",
-      "computed_at": "2026-11-07T00:02:16.711204+00:00",
+      "computed_at": "2026-11-07T03:27:41.794599+00:00",
       "float_status": "bound",
       "technical_4h": {
         "rsi": 39.87,
@@ -5988,7 +5977,7 @@
           "high": 1.82,
           "low": 1.32,
           "close": 1.51,
-          "volume": 71762,
+          "volume": 72100,
           "rsi": 40.55
         }
       ],
