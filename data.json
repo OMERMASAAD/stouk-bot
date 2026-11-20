@@ -1,42 +1,42 @@
 {
-  "updated_at": "2026-11-20T01:44:09.781830+00:00",
+  "updated_at": "2026-11-20T04:36:32.172090+00:00",
   "strategy": "Bottom Radar — Second Leg Setup",
   "count": 11,
   "diagnostics": {
     "symbols_total": 6922,
     "data_coverage_pct": 93.1,
-    "price_pass": 1263,
-    "prior_rally_pass": 293,
-    "days_since_peak_pass": 82,
-    "float_available": 82,
+    "price_pass": 1272,
+    "prior_rally_pass": 294,
+    "days_since_peak_pass": 83,
+    "float_available": 83,
     "float_exact": 2,
-    "float_pass": 58,
+    "float_pass": 59,
     "float_mode": "auto",
     "float_sources": {
-      "yahoo_outstanding": 78,
+      "yahoo_outstanding": 79,
       "sec_edgar": 2,
       "yahoo_float": 2
     },
     "float_status": {
+      "unverified": 17,
       "bound": 41,
       "too_big": 24,
-      "unverified": 16,
       "exact": 1
     },
     "sec_status": {
-      "skipped": 80,
+      "skipped": 81,
       "used": 2
     },
     "reject_reasons": {
       "float_too_big": 24,
-      "no_return_to_base": 39,
-      "peak_is_last_bar": 9,
-      "breakdown": 5
+      "no_return_to_base": 40,
+      "breakdown": 5,
+      "peak_is_last_bar": 9
     },
     "news": {
-      "tickers_with_headlines": 48,
+      "tickers_with_headlines": 49,
       "tickers_with_earnings_dates": 0,
-      "headlines_total": 206,
+      "headlines_total": 216,
       "warnings_found": 0,
       "catalysts_found": 0
     },
@@ -76,7 +76,7 @@
       {
         "ticker": "COSM",
         "reason": "peak_is_last_bar",
-        "price": 2.95,
+        "price": 2.87,
         "rally_pct": 1638.0,
         "days_since_peak": 0,
         "float": 5031689
@@ -90,6 +90,14 @@
         "float": 2639467
       },
       {
+        "ticker": "MPU",
+        "reason": "peak_is_last_bar",
+        "price": 4.76,
+        "rally_pct": 320.3,
+        "days_since_peak": 0,
+        "float": 3421292
+      },
+      {
         "ticker": "NCPL",
         "reason": "peak_is_last_bar",
         "price": 2.89,
@@ -98,36 +106,12 @@
         "float": 8018428
       },
       {
-        "ticker": "HIHO",
-        "reason": "peak_is_last_bar",
-        "price": 1.61,
-        "rally_pct": 176.8,
-        "days_since_peak": 0,
-        "float": 4626676
-      },
-      {
         "ticker": "NUAI",
         "reason": "float_too_big",
         "price": 3.99,
         "rally_pct": 155.4,
         "days_since_peak": 0,
         "float": 140569465
-      },
-      {
-        "ticker": "TTEC",
-        "reason": "float_too_big",
-        "price": 3.19,
-        "rally_pct": 150.0,
-        "days_since_peak": 0,
-        "float": 20359149
-      },
-      {
-        "ticker": "MPU",
-        "reason": "peak_is_last_bar",
-        "price": 2.84,
-        "rally_pct": 145.8,
-        "days_since_peak": 0,
-        "float": 3421292
       },
       {
         "ticker": "AZI",
@@ -154,12 +138,28 @@
         "float": 50854199
       },
       {
+        "ticker": "MRKR",
+        "reason": "peak_is_last_bar",
+        "price": 1.32,
+        "rally_pct": 107.4,
+        "days_since_peak": 0,
+        "float": 16673127
+      },
+      {
         "ticker": "DFSC",
         "reason": "no_return_to_base",
         "price": 2.96,
         "rally_pct": 867.9,
         "days_since_peak": 1,
         "float": 510444
+      },
+      {
+        "ticker": "SGRX",
+        "reason": "no_return_to_base",
+        "price": 2.49,
+        "rally_pct": 821.7,
+        "days_since_peak": 1,
+        "float": 3641061
       }
     ]
   },
@@ -437,7 +437,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "ONCO",
-      "computed_at": "2026-11-20T01:44:09.781830+00:00",
+      "computed_at": "2026-11-20T04:36:32.172090+00:00",
       "float_status": "bound",
       "technical_4h": {
         "rsi": 24.83,
@@ -930,7 +930,7 @@
         "volume_mode": "dry",
         "rsi_recovery_signal": false,
         "rsi_min_since_peak": 45.27,
-        "rsi_min_intraday": 41.84,
+        "rsi_min_intraday": 41.85,
         "higher_low": false,
         "no_new_low": true,
         "stable_bars": 12,
@@ -1011,7 +1011,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "SPHL",
-      "computed_at": "2026-11-20T01:44:09.781830+00:00",
+      "computed_at": "2026-11-20T04:36:32.172090+00:00",
       "float_status": "bound",
       "technical_4h": {
         "rsi": 56.11,
@@ -1024,14 +1024,14 @@
         "ema20_reclaim": true,
         "ema20_rising": true,
         "ema50_reclaim": true,
-        "macd": 0.0315,
-        "macd_signal": 0.02274,
+        "macd": 0.03151,
+        "macd_signal": 0.02275,
         "macd_hist": 0.00876,
         "macd_hist_prev": 0.00955,
         "macd_cross": false,
         "macd_improving": false,
-        "rvol": 0.34,
-        "volume_ratio": 0.34,
+        "rvol": 0.42,
+        "volume_ratio": 0.42,
         "body_pct": 0.22,
         "volume_confirm": false,
         "positive_confirmations": 2
@@ -1053,8 +1053,8 @@
         "macd_hist_prev": 0.00493,
         "macd_cross": false,
         "macd_improving": false,
-        "rvol": 0.54,
-        "volume_ratio": 0.54,
+        "rvol": 0.75,
+        "volume_ratio": 0.75,
         "body_pct": 0.22,
         "volume_confirm": false,
         "positive_confirmations": 2
@@ -1586,7 +1586,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "YHC",
-      "computed_at": "2026-11-20T01:44:09.781830+00:00",
+      "computed_at": "2026-11-20T04:36:32.172090+00:00",
       "float_status": "bound",
       "technical_4h": {
         "rsi": 56.96,
@@ -4469,7 +4469,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "NOMA",
-      "computed_at": "2026-11-20T01:44:09.781830+00:00",
+      "computed_at": "2026-11-20T04:36:32.172090+00:00",
       "float_status": "unverified",
       "float_unverified": true,
       "technical_4h": {
@@ -5046,7 +5046,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "ADXN",
-      "computed_at": "2026-11-20T01:44:09.781830+00:00",
+      "computed_at": "2026-11-20T04:36:32.172090+00:00",
       "float_status": "bound",
       "technical_4h": {
         "rsi": 49.77,
