@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-11-26T05:41:27.678649+00:00",
+  "updated_at": "2026-11-26T21:06:39.847923+00:00",
   "strategy": "Bottom Radar — Second Leg Setup",
   "count": 8,
   "diagnostics": {
     "symbols_total": 6911,
     "data_coverage_pct": 93.2,
-    "price_pass": 1236,
+    "price_pass": 1235,
     "prior_rally_pass": 280,
     "days_since_peak_pass": 83,
     "float_available": 83,
@@ -29,13 +29,13 @@
     "reject_reasons": {
       "float_too_big": 28,
       "no_return_to_base": 38,
-      "peak_is_last_bar": 7,
-      "breakdown": 2
+      "breakdown": 2,
+      "peak_is_last_bar": 7
     },
     "news": {
       "tickers_with_headlines": 48,
       "tickers_with_earnings_dates": 0,
-      "headlines_total": 207,
+      "headlines_total": 206,
       "warnings_found": 0,
       "catalysts_found": 0
     },
@@ -354,7 +354,7 @@
         "volume_mode": "dry",
         "rsi_recovery_signal": false,
         "rsi_min_since_peak": 37.65,
-        "rsi_min_intraday": 40.0,
+        "rsi_min_intraday": 39.98,
         "higher_low": false,
         "no_new_low": true,
         "stable_bars": 7,
@@ -435,24 +435,24 @@
         "earnings_dates_count": 0
       },
       "ticker": "NOMA",
-      "computed_at": "2026-11-26T05:41:27.678649+00:00",
+      "computed_at": "2026-11-26T21:06:39.847923+00:00",
       "float_status": "unverified",
       "float_unverified": true,
       "technical_4h": {
-        "rsi": 52.31,
-        "rsi_prev": 50.73,
+        "rsi": 52.32,
+        "rsi_prev": 50.72,
         "rsi_oversold_recent": false,
         "rsi_turning_up": true,
-        "ema9": 1.2501,
-        "ema20": 1.2182,
-        "ema50": 1.164,
+        "ema9": 1.2504,
+        "ema20": 1.2186,
+        "ema50": 1.1643,
         "ema20_reclaim": true,
         "ema20_rising": false,
         "ema50_reclaim": true,
-        "macd": 0.04156,
-        "macd_signal": 0.0464,
-        "macd_hist": -0.00483,
-        "macd_hist_prev": -0.00441,
+        "macd": 0.04154,
+        "macd_signal": 0.04652,
+        "macd_hist": -0.00498,
+        "macd_hist_prev": -0.00456,
         "macd_cross": false,
         "macd_improving": false,
         "rvol": 0.04,
@@ -467,15 +467,15 @@
         "rsi_oversold_recent": false,
         "rsi_turning_up": true,
         "ema9": 1.2195,
-        "ema20": 1.2382,
-        "ema50": 1.2273,
+        "ema20": 1.2384,
+        "ema50": 1.2275,
         "ema20_reclaim": true,
         "ema20_rising": false,
         "ema50_reclaim": true,
-        "macd": -0.01035,
-        "macd_signal": 0.00362,
-        "macd_hist": -0.01398,
-        "macd_hist_prev": -0.02155,
+        "macd": -0.01046,
+        "macd_signal": 0.00354,
+        "macd_hist": -0.01399,
+        "macd_hist_prev": -0.02157,
         "macd_cross": false,
         "macd_improving": true,
         "rvol": 0.34,
@@ -1010,7 +1010,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "ADXN",
-      "computed_at": "2026-11-26T05:41:27.678649+00:00",
+      "computed_at": "2026-11-26T21:06:39.847923+00:00",
       "float_status": "bound",
       "technical_4h": {
         "rsi": 59.56,
@@ -1388,8 +1388,8 @@
         "rsi_prev": 49.92,
         "ema9": 0.9981,
         "ema20": 0.986,
-        "vwap": 0.9864,
-        "rvol": 0.09,
+        "vwap": 0.9866,
+        "rvol": 0.1,
         "macd_hist": 0.01642
       },
       "checklist": [
@@ -1492,12 +1492,12 @@
         "macd_hist_prev": 0.01955,
         "macd_cross": false,
         "macd_improving": false,
-        "rvol": 0.09,
-        "volume_ratio": 0.09,
+        "rvol": 0.1,
+        "volume_ratio": 0.1,
         "body_pct": 0.99,
         "volume_confirm": false,
         "positive_confirmations": 2,
-        "vwap": 0.9864,
+        "vwap": 0.9866,
         "vwap_reclaim": true,
         "volume_ok": true,
         "volume_mode": "dry",
@@ -1584,7 +1584,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "MRKR",
-      "computed_at": "2026-11-26T05:41:27.678649+00:00",
+      "computed_at": "2026-11-26T21:06:39.847923+00:00",
       "float_status": "unverified",
       "float_unverified": true,
       "technical_4h": {
@@ -1929,7 +1929,7 @@
           "high": 1.03,
           "low": 0.95,
           "close": 1.0,
-          "volume": 178700,
+          "volume": 200900,
           "rsi": 52.05
         }
       ],
@@ -2159,7 +2159,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "MWYN",
-      "computed_at": "2026-11-26T05:41:27.678649+00:00",
+      "computed_at": "2026-11-26T21:06:39.847923+00:00",
       "float_status": "unverified",
       "float_unverified": true,
       "technical_4h": {
@@ -2735,7 +2735,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "OFAL",
-      "computed_at": "2026-11-26T05:41:27.678649+00:00",
+      "computed_at": "2026-11-26T21:06:39.847923+00:00",
       "float_status": "bound",
       "technical_4h": {
         "rsi": 37.5,
@@ -3310,7 +3310,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "ONCO",
-      "computed_at": "2026-11-26T05:41:27.678649+00:00",
+      "computed_at": "2026-11-26T21:06:39.847923+00:00",
       "float_status": "bound",
       "technical_4h": {
         "rsi": 49.9,
@@ -3885,7 +3885,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "LGVN",
-      "computed_at": "2026-11-26T05:41:27.678649+00:00",
+      "computed_at": "2026-11-26T21:06:39.847923+00:00",
       "float_status": "bound",
       "technical_4h": {
         "rsi": 33.46,
@@ -4460,7 +4460,7 @@
         "earnings_dates_count": 0
       },
       "ticker": "NTHI",
-      "computed_at": "2026-11-26T05:41:27.678649+00:00",
+      "computed_at": "2026-11-26T21:06:39.847923+00:00",
       "float_status": "unverified",
       "float_unverified": true,
       "technical_4h": {
