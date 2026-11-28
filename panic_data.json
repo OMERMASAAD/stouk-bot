@@ -1,5 +1,5 @@
 {
- "updated_at": "2026-11-28T00:40:56.185386+00:00",
+ "updated_at": "2026-11-28T02:40:00.040065+00:00",
  "session_date": "2026-11-27",
  "master_count": 224,
  "master_built_on": "2026-11-27",
@@ -7,19 +7,11 @@
  "purged": [],
  "diagnostics": {
   "reasons": {
-   "stale": 224
+   "stale": 223,
+   "no_data": 1
   }
  },
  "scan_log": [
-  {
-   "at": "2026-11-06T15:25:51.778229+00:00",
-   "ok": true,
-   "coverage_pct": 100.0,
-   "frames": 229,
-   "master": 229,
-   "items": 3,
-   "complete": 0
-  },
   {
    "at": "2026-11-06T19:09:32.055923+00:00",
    "ok": true,
@@ -874,13 +866,22 @@
    "master": 224,
    "items": 0,
    "complete": 0
+  },
+  {
+   "at": "2026-11-28T02:40:00.040065+00:00",
+   "ok": true,
+   "coverage_pct": 99.6,
+   "frames": 223,
+   "master": 224,
+   "items": 0,
+   "complete": 0
   }
  ],
  "last_scan": {
-  "at": "2026-11-28T00:40:56.185386+00:00",
+  "at": "2026-11-28T02:40:00.040065+00:00",
   "ok": true,
-  "coverage_pct": 100.0,
-  "frames": 224,
+  "coverage_pct": 99.6,
+  "frames": 223,
   "master": 224,
   "items": 0,
   "complete": 0
